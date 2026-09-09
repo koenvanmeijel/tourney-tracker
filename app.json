@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Tourney Tracker",
+    "slug": "tourney-tracker",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "tourneytracker",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.koenvanmeijel.tourneytracker",
+      "adaptiveIcon": {
+        "backgroundColor": "#808080",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#808080"
+        }
+      ],
+      "expo-sqlite",
+      "expo-sharing",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Tourney Tracker to access your photos to attach them to an event.",
+          "cameraPermission": "Allow Tourney Tracker to access your camera to attach a photo to an event.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "33ba6596-b372-407d-997b-3813fb2bdcbc"
+      }
+    },
+    "owner": "kvmhex"
+  }
+}

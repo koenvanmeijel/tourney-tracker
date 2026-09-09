@@ -1,0 +1,7680 @@
+{
+ "dexNumbers": {
+  "bulbasaur": 1,
+  "ivysaur": 2,
+  "venusaur": 3,
+  "venusaurmega": 3,
+  "venusaurgmax": 3,
+  "charmander": 4,
+  "charmeleon": 5,
+  "charizard": 6,
+  "charizardmegax": 6,
+  "charizardmegay": 6,
+  "charizardgmax": 6,
+  "squirtle": 7,
+  "wartortle": 8,
+  "blastoise": 9,
+  "blastoisemega": 9,
+  "blastoisegmax": 9,
+  "caterpie": 10,
+  "metapod": 11,
+  "butterfree": 12,
+  "butterfreegmax": 12,
+  "weedle": 13,
+  "kakuna": 14,
+  "beedrill": 15,
+  "beedrillmega": 15,
+  "pidgey": 16,
+  "pidgeotto": 17,
+  "pidgeot": 18,
+  "pidgeotmega": 18,
+  "rattata": 19,
+  "rattataalola": 19,
+  "raticate": 20,
+  "raticatealola": 20,
+  "raticatealolatotem": 20,
+  "spearow": 21,
+  "fearow": 22,
+  "ekans": 23,
+  "arbok": 24,
+  "pikachu": 25,
+  "pikachucosplay": 25,
+  "pikachurockstar": 25,
+  "pikachubelle": 25,
+  "pikachupopstar": 25,
+  "pikachuphd": 25,
+  "pikachulibre": 25,
+  "pikachuoriginal": 25,
+  "pikachuhoenn": 25,
+  "pikachusinnoh": 25,
+  "pikachuunova": 25,
+  "pikachukalos": 25,
+  "pikachualola": 25,
+  "pikachupartner": 25,
+  "pikachustarter": 25,
+  "pikachugmax": 25,
+  "pikachuworld": 25,
+  "raichu": 26,
+  "raichualola": 26,
+  "raichumegax": 26,
+  "raichumegay": 26,
+  "sandshrew": 27,
+  "sandshrewalola": 27,
+  "sandslash": 28,
+  "sandslashalola": 28,
+  "nidoranf": 29,
+  "nidorina": 30,
+  "nidoqueen": 31,
+  "nidoranm": 32,
+  "nidorino": 33,
+  "nidoking": 34,
+  "clefairy": 35,
+  "clefable": 36,
+  "clefablemega": 36,
+  "vulpix": 37,
+  "vulpixalola": 37,
+  "ninetales": 38,
+  "ninetalesalola": 38,
+  "jigglypuff": 39,
+  "wigglytuff": 40,
+  "zubat": 41,
+  "golbat": 42,
+  "oddish": 43,
+  "gloom": 44,
+  "vileplume": 45,
+  "paras": 46,
+  "parasect": 47,
+  "venonat": 48,
+  "venomoth": 49,
+  "diglett": 50,
+  "diglettalola": 50,
+  "dugtrio": 51,
+  "dugtrioalola": 51,
+  "meowth": 52,
+  "meowthalola": 52,
+  "meowthgalar": 52,
+  "meowthgmax": 52,
+  "persian": 53,
+  "persianalola": 53,
+  "psyduck": 54,
+  "golduck": 55,
+  "mankey": 56,
+  "primeape": 57,
+  "growlithe": 58,
+  "growlithehisui": 58,
+  "arcanine": 59,
+  "arcaninehisui": 59,
+  "poliwag": 60,
+  "poliwhirl": 61,
+  "poliwrath": 62,
+  "abra": 63,
+  "kadabra": 64,
+  "alakazam": 65,
+  "alakazammega": 65,
+  "machop": 66,
+  "machoke": 67,
+  "machamp": 68,
+  "machampgmax": 68,
+  "bellsprout": 69,
+  "weepinbell": 70,
+  "victreebel": 71,
+  "victreebelmega": 71,
+  "tentacool": 72,
+  "tentacruel": 73,
+  "geodude": 74,
+  "geodudealola": 74,
+  "graveler": 75,
+  "graveleralola": 75,
+  "golem": 76,
+  "golemalola": 76,
+  "ponyta": 77,
+  "ponytagalar": 77,
+  "rapidash": 78,
+  "rapidashgalar": 78,
+  "slowpoke": 79,
+  "slowpokegalar": 79,
+  "slowbro": 80,
+  "slowbromega": 80,
+  "slowbrogalar": 80,
+  "magnemite": 81,
+  "magneton": 82,
+  "farfetchd": 83,
+  "farfetchdgalar": 83,
+  "doduo": 84,
+  "dodrio": 85,
+  "seel": 86,
+  "dewgong": 87,
+  "grimer": 88,
+  "grimeralola": 88,
+  "muk": 89,
+  "mukalola": 89,
+  "shellder": 90,
+  "cloyster": 91,
+  "gastly": 92,
+  "haunter": 93,
+  "gengar": 94,
+  "gengarmega": 94,
+  "gengargmax": 94,
+  "onix": 95,
+  "drowzee": 96,
+  "hypno": 97,
+  "krabby": 98,
+  "kingler": 99,
+  "kinglergmax": 99,
+  "voltorb": 100,
+  "voltorbhisui": 100,
+  "electrode": 101,
+  "electrodehisui": 101,
+  "exeggcute": 102,
+  "exeggutor": 103,
+  "exeggutoralola": 103,
+  "cubone": 104,
+  "marowak": 105,
+  "marowakalola": 105,
+  "marowakalolatotem": 105,
+  "hitmonlee": 106,
+  "hitmonchan": 107,
+  "lickitung": 108,
+  "koffing": 109,
+  "weezing": 110,
+  "weezinggalar": 110,
+  "rhyhorn": 111,
+  "rhydon": 112,
+  "chansey": 113,
+  "tangela": 114,
+  "kangaskhan": 115,
+  "kangaskhanmega": 115,
+  "horsea": 116,
+  "seadra": 117,
+  "goldeen": 118,
+  "seaking": 119,
+  "staryu": 120,
+  "starmie": 121,
+  "starmiemega": 121,
+  "mrmime": 122,
+  "mrmimegalar": 122,
+  "scyther": 123,
+  "jynx": 124,
+  "electabuzz": 125,
+  "magmar": 126,
+  "pinsir": 127,
+  "pinsirmega": 127,
+  "tauros": 128,
+  "taurospaldeacombat": 128,
+  "taurospaldeablaze": 128,
+  "taurospaldeaaqua": 128,
+  "magikarp": 129,
+  "gyarados": 130,
+  "gyaradosmega": 130,
+  "lapras": 131,
+  "laprasgmax": 131,
+  "ditto": 132,
+  "eevee": 133,
+  "eeveestarter": 133,
+  "eeveegmax": 133,
+  "vaporeon": 134,
+  "jolteon": 135,
+  "flareon": 136,
+  "porygon": 137,
+  "omanyte": 138,
+  "omastar": 139,
+  "kabuto": 140,
+  "kabutops": 141,
+  "aerodactyl": 142,
+  "aerodactylmega": 142,
+  "snorlax": 143,
+  "snorlaxgmax": 143,
+  "articuno": 144,
+  "articunogalar": 144,
+  "zapdos": 145,
+  "zapdosgalar": 145,
+  "moltres": 146,
+  "moltresgalar": 146,
+  "dratini": 147,
+  "dragonair": 148,
+  "dragonite": 149,
+  "dragonitemega": 149,
+  "mewtwo": 150,
+  "mewtwomegax": 150,
+  "mewtwomegay": 150,
+  "mew": 151,
+  "chikorita": 152,
+  "bayleef": 153,
+  "meganium": 154,
+  "meganiummega": 154,
+  "cyndaquil": 155,
+  "quilava": 156,
+  "typhlosion": 157,
+  "typhlosionhisui": 157,
+  "totodile": 158,
+  "croconaw": 159,
+  "feraligatr": 160,
+  "feraligatrmega": 160,
+  "sentret": 161,
+  "furret": 162,
+  "hoothoot": 163,
+  "noctowl": 164,
+  "ledyba": 165,
+  "ledian": 166,
+  "spinarak": 167,
+  "ariados": 168,
+  "crobat": 169,
+  "chinchou": 170,
+  "lanturn": 171,
+  "pichu": 172,
+  "pichuspikyeared": 172,
+  "cleffa": 173,
+  "igglybuff": 174,
+  "togepi": 175,
+  "togetic": 176,
+  "natu": 177,
+  "xatu": 178,
+  "mareep": 179,
+  "flaaffy": 180,
+  "ampharos": 181,
+  "ampharosmega": 181,
+  "bellossom": 182,
+  "marill": 183,
+  "azumarill": 184,
+  "sudowoodo": 185,
+  "politoed": 186,
+  "hoppip": 187,
+  "skiploom": 188,
+  "jumpluff": 189,
+  "aipom": 190,
+  "sunkern": 191,
+  "sunflora": 192,
+  "yanma": 193,
+  "wooper": 194,
+  "wooperpaldea": 194,
+  "quagsire": 195,
+  "espeon": 196,
+  "umbreon": 197,
+  "murkrow": 198,
+  "slowking": 199,
+  "slowkinggalar": 199,
+  "misdreavus": 200,
+  "unown": 201,
+  "unownb": 201,
+  "unownc": 201,
+  "unownd": 201,
+  "unowne": 201,
+  "unownf": 201,
+  "unowng": 201,
+  "unownh": 201,
+  "unowni": 201,
+  "unownj": 201,
+  "unownk": 201,
+  "unownl": 201,
+  "unownm": 201,
+  "unownn": 201,
+  "unowno": 201,
+  "unownp": 201,
+  "unownq": 201,
+  "unownr": 201,
+  "unowns": 201,
+  "unownt": 201,
+  "unownu": 201,
+  "unownv": 201,
+  "unownw": 201,
+  "unownx": 201,
+  "unowny": 201,
+  "unownz": 201,
+  "unownexclamation": 201,
+  "unownquestion": 201,
+  "wobbuffet": 202,
+  "girafarig": 203,
+  "pineco": 204,
+  "forretress": 205,
+  "dunsparce": 206,
+  "gligar": 207,
+  "steelix": 208,
+  "steelixmega": 208,
+  "snubbull": 209,
+  "granbull": 210,
+  "qwilfish": 211,
+  "qwilfishhisui": 211,
+  "scizor": 212,
+  "scizormega": 212,
+  "shuckle": 213,
+  "heracross": 214,
+  "heracrossmega": 214,
+  "sneasel": 215,
+  "sneaselhisui": 215,
+  "teddiursa": 216,
+  "ursaring": 217,
+  "slugma": 218,
+  "magcargo": 219,
+  "swinub": 220,
+  "piloswine": 221,
+  "corsola": 222,
+  "corsolagalar": 222,
+  "remoraid": 223,
+  "octillery": 224,
+  "delibird": 225,
+  "mantine": 226,
+  "skarmory": 227,
+  "skarmorymega": 227,
+  "houndour": 228,
+  "houndoom": 229,
+  "houndoommega": 229,
+  "kingdra": 230,
+  "phanpy": 231,
+  "donphan": 232,
+  "porygon2": 233,
+  "stantler": 234,
+  "smeargle": 235,
+  "tyrogue": 236,
+  "hitmontop": 237,
+  "smoochum": 238,
+  "elekid": 239,
+  "magby": 240,
+  "miltank": 241,
+  "blissey": 242,
+  "raikou": 243,
+  "entei": 244,
+  "suicune": 245,
+  "larvitar": 246,
+  "pupitar": 247,
+  "tyranitar": 248,
+  "tyranitarmega": 248,
+  "lugia": 249,
+  "hooh": 250,
+  "celebi": 251,
+  "treecko": 252,
+  "grovyle": 253,
+  "sceptile": 254,
+  "sceptilemega": 254,
+  "torchic": 255,
+  "combusken": 256,
+  "blaziken": 257,
+  "blazikenmega": 257,
+  "mudkip": 258,
+  "marshtomp": 259,
+  "swampert": 260,
+  "swampertmega": 260,
+  "poochyena": 261,
+  "mightyena": 262,
+  "zigzagoon": 263,
+  "zigzagoongalar": 263,
+  "linoone": 264,
+  "linoonegalar": 264,
+  "wurmple": 265,
+  "silcoon": 266,
+  "beautifly": 267,
+  "cascoon": 268,
+  "dustox": 269,
+  "lotad": 270,
+  "lombre": 271,
+  "ludicolo": 272,
+  "seedot": 273,
+  "nuzleaf": 274,
+  "shiftry": 275,
+  "taillow": 276,
+  "swellow": 277,
+  "wingull": 278,
+  "pelipper": 279,
+  "ralts": 280,
+  "kirlia": 281,
+  "gardevoir": 282,
+  "gardevoirmega": 282,
+  "surskit": 283,
+  "masquerain": 284,
+  "shroomish": 285,
+  "breloom": 286,
+  "slakoth": 287,
+  "vigoroth": 288,
+  "slaking": 289,
+  "nincada": 290,
+  "ninjask": 291,
+  "shedinja": 292,
+  "whismur": 293,
+  "loudred": 294,
+  "exploud": 295,
+  "makuhita": 296,
+  "hariyama": 297,
+  "azurill": 298,
+  "nosepass": 299,
+  "skitty": 300,
+  "delcatty": 301,
+  "sableye": 302,
+  "sableyemega": 302,
+  "mawile": 303,
+  "mawilemega": 303,
+  "aron": 304,
+  "lairon": 305,
+  "aggron": 306,
+  "aggronmega": 306,
+  "meditite": 307,
+  "medicham": 308,
+  "medichammega": 308,
+  "electrike": 309,
+  "manectric": 310,
+  "manectricmega": 310,
+  "plusle": 311,
+  "minun": 312,
+  "volbeat": 313,
+  "illumise": 314,
+  "roselia": 315,
+  "gulpin": 316,
+  "swalot": 317,
+  "carvanha": 318,
+  "sharpedo": 319,
+  "sharpedomega": 319,
+  "wailmer": 320,
+  "wailord": 321,
+  "numel": 322,
+  "camerupt": 323,
+  "cameruptmega": 323,
+  "torkoal": 324,
+  "spoink": 325,
+  "grumpig": 326,
+  "spinda": 327,
+  "trapinch": 328,
+  "vibrava": 329,
+  "flygon": 330,
+  "cacnea": 331,
+  "cacturne": 332,
+  "swablu": 333,
+  "altaria": 334,
+  "altariamega": 334,
+  "zangoose": 335,
+  "seviper": 336,
+  "lunatone": 337,
+  "solrock": 338,
+  "barboach": 339,
+  "whiscash": 340,
+  "corphish": 341,
+  "crawdaunt": 342,
+  "baltoy": 343,
+  "claydol": 344,
+  "lileep": 345,
+  "cradily": 346,
+  "anorith": 347,
+  "armaldo": 348,
+  "feebas": 349,
+  "milotic": 350,
+  "castform": 351,
+  "castformsunny": 351,
+  "castformrainy": 351,
+  "castformsnowy": 351,
+  "kecleon": 352,
+  "shuppet": 353,
+  "banette": 354,
+  "banettemega": 354,
+  "duskull": 355,
+  "dusclops": 356,
+  "tropius": 357,
+  "chimecho": 358,
+  "chimechomega": 358,
+  "absol": 359,
+  "absolmega": 359,
+  "absolmegaz": 359,
+  "wynaut": 360,
+  "snorunt": 361,
+  "glalie": 362,
+  "glaliemega": 362,
+  "spheal": 363,
+  "sealeo": 364,
+  "walrein": 365,
+  "clamperl": 366,
+  "huntail": 367,
+  "gorebyss": 368,
+  "relicanth": 369,
+  "luvdisc": 370,
+  "bagon": 371,
+  "shelgon": 372,
+  "salamence": 373,
+  "salamencemega": 373,
+  "beldum": 374,
+  "metang": 375,
+  "metagross": 376,
+  "metagrossmega": 376,
+  "regirock": 377,
+  "regice": 378,
+  "registeel": 379,
+  "latias": 380,
+  "latiasmega": 380,
+  "latios": 381,
+  "latiosmega": 381,
+  "kyogre": 382,
+  "kyogreprimal": 382,
+  "groudon": 383,
+  "groudonprimal": 383,
+  "rayquaza": 384,
+  "rayquazamega": 384,
+  "jirachi": 385,
+  "deoxys": 386,
+  "deoxysattack": 386,
+  "deoxysdefense": 386,
+  "deoxysspeed": 386,
+  "turtwig": 387,
+  "grotle": 388,
+  "torterra": 389,
+  "chimchar": 390,
+  "monferno": 391,
+  "infernape": 392,
+  "piplup": 393,
+  "prinplup": 394,
+  "empoleon": 395,
+  "starly": 396,
+  "staravia": 397,
+  "staraptor": 398,
+  "staraptormega": 398,
+  "bidoof": 399,
+  "bibarel": 400,
+  "kricketot": 401,
+  "kricketune": 402,
+  "shinx": 403,
+  "luxio": 404,
+  "luxray": 405,
+  "budew": 406,
+  "roserade": 407,
+  "cranidos": 408,
+  "rampardos": 409,
+  "shieldon": 410,
+  "bastiodon": 411,
+  "burmy": 412,
+  "burmysandy": 412,
+  "burmytrash": 412,
+  "wormadam": 413,
+  "wormadamsandy": 413,
+  "wormadamtrash": 413,
+  "mothim": 414,
+  "combee": 415,
+  "vespiquen": 416,
+  "pachirisu": 417,
+  "buizel": 418,
+  "floatzel": 419,
+  "cherubi": 420,
+  "cherrim": 421,
+  "cherrimsunshine": 421,
+  "shellos": 422,
+  "shelloseast": 422,
+  "gastrodon": 423,
+  "gastrodoneast": 423,
+  "ambipom": 424,
+  "drifloon": 425,
+  "drifblim": 426,
+  "buneary": 427,
+  "lopunny": 428,
+  "lopunnymega": 428,
+  "mismagius": 429,
+  "honchkrow": 430,
+  "glameow": 431,
+  "purugly": 432,
+  "chingling": 433,
+  "stunky": 434,
+  "skuntank": 435,
+  "bronzor": 436,
+  "bronzong": 437,
+  "bonsly": 438,
+  "mimejr": 439,
+  "happiny": 440,
+  "chatot": 441,
+  "spiritomb": 442,
+  "gible": 443,
+  "gabite": 444,
+  "garchomp": 445,
+  "garchompmega": 445,
+  "garchompmegaz": 445,
+  "munchlax": 446,
+  "riolu": 447,
+  "lucario": 448,
+  "lucariomega": 448,
+  "lucariomegaz": 448,
+  "hippopotas": 449,
+  "hippowdon": 450,
+  "skorupi": 451,
+  "drapion": 452,
+  "croagunk": 453,
+  "toxicroak": 454,
+  "carnivine": 455,
+  "finneon": 456,
+  "lumineon": 457,
+  "mantyke": 458,
+  "snover": 459,
+  "abomasnow": 460,
+  "abomasnowmega": 460,
+  "weavile": 461,
+  "magnezone": 462,
+  "lickilicky": 463,
+  "rhyperior": 464,
+  "tangrowth": 465,
+  "electivire": 466,
+  "magmortar": 467,
+  "togekiss": 468,
+  "yanmega": 469,
+  "leafeon": 470,
+  "glaceon": 471,
+  "gliscor": 472,
+  "mamoswine": 473,
+  "porygonz": 474,
+  "gallade": 475,
+  "gallademega": 475,
+  "probopass": 476,
+  "dusknoir": 477,
+  "froslass": 478,
+  "froslassmega": 478,
+  "rotom": 479,
+  "rotomheat": 479,
+  "rotomwash": 479,
+  "rotomfrost": 479,
+  "rotomfan": 479,
+  "rotommow": 479,
+  "uxie": 480,
+  "mesprit": 481,
+  "azelf": 482,
+  "dialga": 483,
+  "dialgaorigin": 483,
+  "palkia": 484,
+  "palkiaorigin": 484,
+  "heatran": 485,
+  "heatranmega": 485,
+  "regigigas": 486,
+  "giratina": 487,
+  "giratinaorigin": 487,
+  "cresselia": 488,
+  "phione": 489,
+  "manaphy": 490,
+  "darkrai": 491,
+  "darkraimega": 491,
+  "shaymin": 492,
+  "shayminsky": 492,
+  "arceus": 493,
+  "arceusbug": 493,
+  "arceusdark": 493,
+  "arceusdragon": 493,
+  "arceuselectric": 493,
+  "arceusfairy": 493,
+  "arceusfighting": 493,
+  "arceusfire": 493,
+  "arceusflying": 493,
+  "arceusghost": 493,
+  "arceusgrass": 493,
+  "arceusground": 493,
+  "arceusice": 493,
+  "arceuspoison": 493,
+  "arceuspsychic": 493,
+  "arceusrock": 493,
+  "arceussteel": 493,
+  "arceuswater": 493,
+  "victini": 494,
+  "snivy": 495,
+  "servine": 496,
+  "serperior": 497,
+  "tepig": 498,
+  "pignite": 499,
+  "emboar": 500,
+  "emboarmega": 500,
+  "oshawott": 501,
+  "dewott": 502,
+  "samurott": 503,
+  "samurotthisui": 503,
+  "patrat": 504,
+  "watchog": 505,
+  "lillipup": 506,
+  "herdier": 507,
+  "stoutland": 508,
+  "purrloin": 509,
+  "liepard": 510,
+  "pansage": 511,
+  "simisage": 512,
+  "pansear": 513,
+  "simisear": 514,
+  "panpour": 515,
+  "simipour": 516,
+  "munna": 517,
+  "musharna": 518,
+  "pidove": 519,
+  "tranquill": 520,
+  "unfezant": 521,
+  "blitzle": 522,
+  "zebstrika": 523,
+  "roggenrola": 524,
+  "boldore": 525,
+  "gigalith": 526,
+  "woobat": 527,
+  "swoobat": 528,
+  "drilbur": 529,
+  "excadrill": 530,
+  "excadrillmega": 530,
+  "audino": 531,
+  "audinomega": 531,
+  "timburr": 532,
+  "gurdurr": 533,
+  "conkeldurr": 534,
+  "tympole": 535,
+  "palpitoad": 536,
+  "seismitoad": 537,
+  "throh": 538,
+  "sawk": 539,
+  "sewaddle": 540,
+  "swadloon": 541,
+  "leavanny": 542,
+  "venipede": 543,
+  "whirlipede": 544,
+  "scolipede": 545,
+  "scolipedemega": 545,
+  "cottonee": 546,
+  "whimsicott": 547,
+  "petilil": 548,
+  "lilligant": 549,
+  "lilliganthisui": 549,
+  "basculin": 550,
+  "basculinbluestriped": 550,
+  "basculinwhitestriped": 550,
+  "sandile": 551,
+  "krokorok": 552,
+  "krookodile": 553,
+  "darumaka": 554,
+  "darumakagalar": 554,
+  "darmanitan": 555,
+  "darmanitanzen": 555,
+  "darmanitangalar": 555,
+  "darmanitangalarzen": 555,
+  "maractus": 556,
+  "dwebble": 557,
+  "crustle": 558,
+  "scraggy": 559,
+  "scrafty": 560,
+  "scraftymega": 560,
+  "sigilyph": 561,
+  "yamask": 562,
+  "yamaskgalar": 562,
+  "cofagrigus": 563,
+  "tirtouga": 564,
+  "carracosta": 565,
+  "archen": 566,
+  "archeops": 567,
+  "trubbish": 568,
+  "garbodor": 569,
+  "garbodorgmax": 569,
+  "zorua": 570,
+  "zoruahisui": 570,
+  "zoroark": 571,
+  "zoroarkhisui": 571,
+  "minccino": 572,
+  "cinccino": 573,
+  "gothita": 574,
+  "gothorita": 575,
+  "gothitelle": 576,
+  "solosis": 577,
+  "duosion": 578,
+  "reuniclus": 579,
+  "ducklett": 580,
+  "swanna": 581,
+  "vanillite": 582,
+  "vanillish": 583,
+  "vanilluxe": 584,
+  "deerling": 585,
+  "deerlingsummer": 585,
+  "deerlingautumn": 585,
+  "deerlingwinter": 585,
+  "sawsbuck": 586,
+  "sawsbucksummer": 586,
+  "sawsbuckautumn": 586,
+  "sawsbuckwinter": 586,
+  "emolga": 587,
+  "karrablast": 588,
+  "escavalier": 589,
+  "foongus": 590,
+  "amoonguss": 591,
+  "frillish": 592,
+  "jellicent": 593,
+  "alomomola": 594,
+  "joltik": 595,
+  "galvantula": 596,
+  "ferroseed": 597,
+  "ferrothorn": 598,
+  "klink": 599,
+  "klang": 600,
+  "klinklang": 601,
+  "tynamo": 602,
+  "eelektrik": 603,
+  "eelektross": 604,
+  "eelektrossmega": 604,
+  "elgyem": 605,
+  "beheeyem": 606,
+  "litwick": 607,
+  "lampent": 608,
+  "chandelure": 609,
+  "chandeluremega": 609,
+  "axew": 610,
+  "fraxure": 611,
+  "haxorus": 612,
+  "cubchoo": 613,
+  "beartic": 614,
+  "cryogonal": 615,
+  "shelmet": 616,
+  "accelgor": 617,
+  "stunfisk": 618,
+  "stunfiskgalar": 618,
+  "mienfoo": 619,
+  "mienshao": 620,
+  "druddigon": 621,
+  "golett": 622,
+  "golurk": 623,
+  "golurkmega": 623,
+  "pawniard": 624,
+  "bisharp": 625,
+  "bouffalant": 626,
+  "rufflet": 627,
+  "braviary": 628,
+  "braviaryhisui": 628,
+  "vullaby": 629,
+  "mandibuzz": 630,
+  "heatmor": 631,
+  "durant": 632,
+  "deino": 633,
+  "zweilous": 634,
+  "hydreigon": 635,
+  "larvesta": 636,
+  "volcarona": 637,
+  "cobalion": 638,
+  "terrakion": 639,
+  "virizion": 640,
+  "tornadus": 641,
+  "tornadustherian": 641,
+  "thundurus": 642,
+  "thundurustherian": 642,
+  "reshiram": 643,
+  "zekrom": 644,
+  "landorus": 645,
+  "landorustherian": 645,
+  "kyurem": 646,
+  "kyuremblack": 646,
+  "kyuremwhite": 646,
+  "keldeo": 647,
+  "keldeoresolute": 647,
+  "meloetta": 648,
+  "meloettapirouette": 648,
+  "genesect": 649,
+  "genesectdouse": 649,
+  "genesectshock": 649,
+  "genesectburn": 649,
+  "genesectchill": 649,
+  "chespin": 650,
+  "quilladin": 651,
+  "chesnaught": 652,
+  "chesnaughtmega": 652,
+  "fennekin": 653,
+  "braixen": 654,
+  "delphox": 655,
+  "delphoxmega": 655,
+  "froakie": 656,
+  "frogadier": 657,
+  "greninja": 658,
+  "greninjabond": 658,
+  "greninjaash": 658,
+  "greninjamega": 658,
+  "bunnelby": 659,
+  "diggersby": 660,
+  "fletchling": 661,
+  "fletchinder": 662,
+  "talonflame": 663,
+  "scatterbug": 664,
+  "spewpa": 665,
+  "vivillon": 666,
+  "vivillonarchipelago": 666,
+  "vivilloncontinental": 666,
+  "vivillonelegant": 666,
+  "vivillongarden": 666,
+  "vivillonhighplains": 666,
+  "vivillonicysnow": 666,
+  "vivillonjungle": 666,
+  "vivillonmarine": 666,
+  "vivillonmodern": 666,
+  "vivillonmonsoon": 666,
+  "vivillonocean": 666,
+  "vivillonpolar": 666,
+  "vivillonriver": 666,
+  "vivillonsandstorm": 666,
+  "vivillonsavanna": 666,
+  "vivillonsun": 666,
+  "vivillontundra": 666,
+  "vivillonfancy": 666,
+  "vivillonpokeball": 666,
+  "litleo": 667,
+  "pyroar": 668,
+  "pyroarmega": 668,
+  "flabebe": 669,
+  "flabebeblue": 669,
+  "flabebeorange": 669,
+  "flabebewhite": 669,
+  "flabebeyellow": 669,
+  "floette": 670,
+  "floetteblue": 670,
+  "floetteorange": 670,
+  "floettewhite": 670,
+  "floetteyellow": 670,
+  "floetteeternal": 670,
+  "floettemega": 670,
+  "florges": 671,
+  "florgesblue": 671,
+  "florgesorange": 671,
+  "florgeswhite": 671,
+  "florgesyellow": 671,
+  "skiddo": 672,
+  "gogoat": 673,
+  "pancham": 674,
+  "pangoro": 675,
+  "furfrou": 676,
+  "furfroudandy": 676,
+  "furfroudebutante": 676,
+  "furfroudiamond": 676,
+  "furfrouheart": 676,
+  "furfroukabuki": 676,
+  "furfroulareine": 676,
+  "furfroumatron": 676,
+  "furfroupharaoh": 676,
+  "furfroustar": 676,
+  "espurr": 677,
+  "meowstic": 678,
+  "meowsticf": 678,
+  "meowsticmmega": 678,
+  "meowsticfmega": 678,
+  "honedge": 679,
+  "doublade": 680,
+  "aegislash": 681,
+  "aegislashblade": 681,
+  "spritzee": 682,
+  "aromatisse": 683,
+  "swirlix": 684,
+  "slurpuff": 685,
+  "inkay": 686,
+  "malamar": 687,
+  "malamarmega": 687,
+  "binacle": 688,
+  "barbaracle": 689,
+  "barbaraclemega": 689,
+  "skrelp": 690,
+  "dragalge": 691,
+  "dragalgemega": 691,
+  "clauncher": 692,
+  "clawitzer": 693,
+  "helioptile": 694,
+  "heliolisk": 695,
+  "tyrunt": 696,
+  "tyrantrum": 697,
+  "amaura": 698,
+  "aurorus": 699,
+  "sylveon": 700,
+  "hawlucha": 701,
+  "hawluchamega": 701,
+  "dedenne": 702,
+  "carbink": 703,
+  "goomy": 704,
+  "sliggoo": 705,
+  "sliggoohisui": 705,
+  "goodra": 706,
+  "goodrahisui": 706,
+  "klefki": 707,
+  "phantump": 708,
+  "trevenant": 709,
+  "pumpkaboo": 710,
+  "pumpkaboosmall": 710,
+  "pumpkaboolarge": 710,
+  "pumpkaboosuper": 710,
+  "gourgeist": 711,
+  "gourgeistsmall": 711,
+  "gourgeistlarge": 711,
+  "gourgeistsuper": 711,
+  "bergmite": 712,
+  "avalugg": 713,
+  "avalugghisui": 713,
+  "noibat": 714,
+  "noivern": 715,
+  "xerneas": 716,
+  "xerneasneutral": 716,
+  "yveltal": 717,
+  "zygarde": 718,
+  "zygarde10": 718,
+  "zygardecomplete": 718,
+  "zygardemega": 718,
+  "diancie": 719,
+  "dianciemega": 719,
+  "hoopa": 720,
+  "hoopaunbound": 720,
+  "volcanion": 721,
+  "rowlet": 722,
+  "dartrix": 723,
+  "decidueye": 724,
+  "decidueyehisui": 724,
+  "litten": 725,
+  "torracat": 726,
+  "incineroar": 727,
+  "popplio": 728,
+  "brionne": 729,
+  "primarina": 730,
+  "pikipek": 731,
+  "trumbeak": 732,
+  "toucannon": 733,
+  "yungoos": 734,
+  "gumshoos": 735,
+  "gumshoostotem": 735,
+  "grubbin": 736,
+  "charjabug": 737,
+  "vikavolt": 738,
+  "vikavolttotem": 738,
+  "crabrawler": 739,
+  "crabominable": 740,
+  "crabominablemega": 740,
+  "oricorio": 741,
+  "oricoriopompom": 741,
+  "oricoriopau": 741,
+  "oricoriosensu": 741,
+  "cutiefly": 742,
+  "ribombee": 743,
+  "ribombeetotem": 743,
+  "rockruff": 744,
+  "rockruffdusk": 744,
+  "lycanroc": 745,
+  "lycanrocmidnight": 745,
+  "lycanrocdusk": 745,
+  "wishiwashi": 746,
+  "wishiwashischool": 746,
+  "mareanie": 747,
+  "toxapex": 748,
+  "mudbray": 749,
+  "mudsdale": 750,
+  "dewpider": 751,
+  "araquanid": 752,
+  "araquanidtotem": 752,
+  "fomantis": 753,
+  "lurantis": 754,
+  "lurantistotem": 754,
+  "morelull": 755,
+  "shiinotic": 756,
+  "salandit": 757,
+  "salazzle": 758,
+  "salazzletotem": 758,
+  "stufful": 759,
+  "bewear": 760,
+  "bounsweet": 761,
+  "steenee": 762,
+  "tsareena": 763,
+  "comfey": 764,
+  "oranguru": 765,
+  "passimian": 766,
+  "wimpod": 767,
+  "golisopod": 768,
+  "golisopodmega": 768,
+  "sandygast": 769,
+  "palossand": 770,
+  "pyukumuku": 771,
+  "typenull": 772,
+  "silvally": 773,
+  "silvallybug": 773,
+  "silvallydark": 773,
+  "silvallydragon": 773,
+  "silvallyelectric": 773,
+  "silvallyfairy": 773,
+  "silvallyfighting": 773,
+  "silvallyfire": 773,
+  "silvallyflying": 773,
+  "silvallyghost": 773,
+  "silvallygrass": 773,
+  "silvallyground": 773,
+  "silvallyice": 773,
+  "silvallypoison": 773,
+  "silvallypsychic": 773,
+  "silvallyrock": 773,
+  "silvallysteel": 773,
+  "silvallywater": 773,
+  "minior": 774,
+  "miniororange": 774,
+  "minioryellow": 774,
+  "miniorgreen": 774,
+  "miniorblue": 774,
+  "miniorindigo": 774,
+  "miniorviolet": 774,
+  "miniormeteor": 774,
+  "komala": 775,
+  "turtonator": 776,
+  "togedemaru": 777,
+  "togedemarutotem": 777,
+  "mimikyu": 778,
+  "mimikyubusted": 778,
+  "mimikyutotem": 778,
+  "mimikyubustedtotem": 778,
+  "bruxish": 779,
+  "drampa": 780,
+  "drampamega": 780,
+  "dhelmise": 781,
+  "jangmoo": 782,
+  "hakamoo": 783,
+  "kommoo": 784,
+  "kommoototem": 784,
+  "tapukoko": 785,
+  "tapulele": 786,
+  "tapubulu": 787,
+  "tapufini": 788,
+  "cosmog": 789,
+  "cosmoem": 790,
+  "solgaleo": 791,
+  "lunala": 792,
+  "nihilego": 793,
+  "buzzwole": 794,
+  "pheromosa": 795,
+  "xurkitree": 796,
+  "celesteela": 797,
+  "kartana": 798,
+  "guzzlord": 799,
+  "necrozma": 800,
+  "necrozmaduskmane": 800,
+  "necrozmadawnwings": 800,
+  "necrozmaultra": 800,
+  "magearna": 801,
+  "magearnaoriginal": 801,
+  "magearnamega": 801,
+  "magearnaoriginalmega": 801,
+  "marshadow": 802,
+  "poipole": 803,
+  "naganadel": 804,
+  "stakataka": 805,
+  "blacephalon": 806,
+  "zeraora": 807,
+  "zeraoramega": 807,
+  "meltan": 808,
+  "melmetal": 809,
+  "melmetalgmax": 809,
+  "grookey": 810,
+  "thwackey": 811,
+  "rillaboom": 812,
+  "rillaboomgmax": 812,
+  "scorbunny": 813,
+  "raboot": 814,
+  "cinderace": 815,
+  "cinderacegmax": 815,
+  "sobble": 816,
+  "drizzile": 817,
+  "inteleon": 818,
+  "inteleongmax": 818,
+  "skwovet": 819,
+  "greedent": 820,
+  "rookidee": 821,
+  "corvisquire": 822,
+  "corviknight": 823,
+  "corviknightgmax": 823,
+  "blipbug": 824,
+  "dottler": 825,
+  "orbeetle": 826,
+  "orbeetlegmax": 826,
+  "nickit": 827,
+  "thievul": 828,
+  "gossifleur": 829,
+  "eldegoss": 830,
+  "wooloo": 831,
+  "dubwool": 832,
+  "chewtle": 833,
+  "drednaw": 834,
+  "drednawgmax": 834,
+  "yamper": 835,
+  "boltund": 836,
+  "rolycoly": 837,
+  "carkol": 838,
+  "coalossal": 839,
+  "coalossalgmax": 839,
+  "applin": 840,
+  "flapple": 841,
+  "flapplegmax": 841,
+  "appletun": 842,
+  "appletungmax": 842,
+  "silicobra": 843,
+  "sandaconda": 844,
+  "sandacondagmax": 844,
+  "cramorant": 845,
+  "cramorantgulping": 845,
+  "cramorantgorging": 845,
+  "arrokuda": 846,
+  "barraskewda": 847,
+  "toxel": 848,
+  "toxtricity": 849,
+  "toxtricitylowkey": 849,
+  "toxtricitygmax": 849,
+  "toxtricitylowkeygmax": 849,
+  "sizzlipede": 850,
+  "centiskorch": 851,
+  "centiskorchgmax": 851,
+  "clobbopus": 852,
+  "grapploct": 853,
+  "sinistea": 854,
+  "sinisteaantique": 854,
+  "polteageist": 855,
+  "polteageistantique": 855,
+  "hatenna": 856,
+  "hattrem": 857,
+  "hatterene": 858,
+  "hatterenegmax": 858,
+  "impidimp": 859,
+  "morgrem": 860,
+  "grimmsnarl": 861,
+  "grimmsnarlgmax": 861,
+  "obstagoon": 862,
+  "perrserker": 863,
+  "cursola": 864,
+  "sirfetchd": 865,
+  "mrrime": 866,
+  "runerigus": 867,
+  "milcery": 868,
+  "alcremie": 869,
+  "alcremierubycream": 869,
+  "alcremiematchacream": 869,
+  "alcremiemintcream": 869,
+  "alcremielemoncream": 869,
+  "alcremiesaltedcream": 869,
+  "alcremierubyswirl": 869,
+  "alcremiecaramelswirl": 869,
+  "alcremierainbowswirl": 869,
+  "alcremiegmax": 869,
+  "falinks": 870,
+  "falinksmega": 870,
+  "pincurchin": 871,
+  "snom": 872,
+  "frosmoth": 873,
+  "stonjourner": 874,
+  "eiscue": 875,
+  "eiscuenoice": 875,
+  "indeedee": 876,
+  "indeedeef": 876,
+  "morpeko": 877,
+  "morpekohangry": 877,
+  "cufant": 878,
+  "copperajah": 879,
+  "copperajahgmax": 879,
+  "dracozolt": 880,
+  "arctozolt": 881,
+  "dracovish": 882,
+  "arctovish": 883,
+  "duraludon": 884,
+  "duraludongmax": 884,
+  "dreepy": 885,
+  "drakloak": 886,
+  "dragapult": 887,
+  "zacian": 888,
+  "zaciancrowned": 888,
+  "zamazenta": 889,
+  "zamazentacrowned": 889,
+  "eternatus": 890,
+  "eternatuseternamax": 890,
+  "kubfu": 891,
+  "urshifu": 892,
+  "urshifurapidstrike": 892,
+  "urshifugmax": 892,
+  "urshifurapidstrikegmax": 892,
+  "zarude": 893,
+  "zarudedada": 893,
+  "regieleki": 894,
+  "regidrago": 895,
+  "glastrier": 896,
+  "spectrier": 897,
+  "calyrex": 898,
+  "calyrexice": 898,
+  "calyrexshadow": 898,
+  "wyrdeer": 899,
+  "kleavor": 900,
+  "ursaluna": 901,
+  "ursalunabloodmoon": 901,
+  "basculegion": 902,
+  "basculegionf": 902,
+  "sneasler": 903,
+  "overqwil": 904,
+  "enamorus": 905,
+  "enamorustherian": 905,
+  "sprigatito": 906,
+  "floragato": 907,
+  "meowscarada": 908,
+  "fuecoco": 909,
+  "crocalor": 910,
+  "skeledirge": 911,
+  "quaxly": 912,
+  "quaxwell": 913,
+  "quaquaval": 914,
+  "lechonk": 915,
+  "oinkologne": 916,
+  "oinkolognef": 916,
+  "tarountula": 917,
+  "spidops": 918,
+  "nymble": 919,
+  "lokix": 920,
+  "pawmi": 921,
+  "pawmo": 922,
+  "pawmot": 923,
+  "tandemaus": 924,
+  "maushold": 925,
+  "mausholdfour": 925,
+  "fidough": 926,
+  "dachsbun": 927,
+  "smoliv": 928,
+  "dolliv": 929,
+  "arboliva": 930,
+  "squawkabilly": 931,
+  "squawkabillyblue": 931,
+  "squawkabillyyellow": 931,
+  "squawkabillywhite": 931,
+  "nacli": 932,
+  "naclstack": 933,
+  "garganacl": 934,
+  "charcadet": 935,
+  "armarouge": 936,
+  "ceruledge": 937,
+  "tadbulb": 938,
+  "bellibolt": 939,
+  "wattrel": 940,
+  "kilowattrel": 941,
+  "maschiff": 942,
+  "mabosstiff": 943,
+  "shroodle": 944,
+  "grafaiai": 945,
+  "bramblin": 946,
+  "brambleghast": 947,
+  "toedscool": 948,
+  "toedscruel": 949,
+  "klawf": 950,
+  "capsakid": 951,
+  "scovillain": 952,
+  "scovillainmega": 952,
+  "rellor": 953,
+  "rabsca": 954,
+  "flittle": 955,
+  "espathra": 956,
+  "tinkatink": 957,
+  "tinkatuff": 958,
+  "tinkaton": 959,
+  "wiglett": 960,
+  "wugtrio": 961,
+  "bombirdier": 962,
+  "finizen": 963,
+  "palafin": 964,
+  "palafinhero": 964,
+  "varoom": 965,
+  "revavroom": 966,
+  "cyclizar": 967,
+  "orthworm": 968,
+  "glimmet": 969,
+  "glimmora": 970,
+  "glimmoramega": 970,
+  "greavard": 971,
+  "houndstone": 972,
+  "flamigo": 973,
+  "cetoddle": 974,
+  "cetitan": 975,
+  "veluza": 976,
+  "dondozo": 977,
+  "tatsugiri": 978,
+  "tatsugiridroopy": 978,
+  "tatsugiristretchy": 978,
+  "tatsugiricurlymega": 978,
+  "tatsugiridroopymega": 978,
+  "tatsugiristretchymega": 978,
+  "annihilape": 979,
+  "clodsire": 980,
+  "farigiraf": 981,
+  "dudunsparce": 982,
+  "dudunsparcethreesegment": 982,
+  "kingambit": 983,
+  "greattusk": 984,
+  "screamtail": 985,
+  "brutebonnet": 986,
+  "fluttermane": 987,
+  "slitherwing": 988,
+  "sandyshocks": 989,
+  "irontreads": 990,
+  "ironbundle": 991,
+  "ironhands": 992,
+  "ironjugulis": 993,
+  "ironmoth": 994,
+  "ironthorns": 995,
+  "frigibax": 996,
+  "arctibax": 997,
+  "baxcalibur": 998,
+  "baxcaliburmega": 998,
+  "gimmighoul": 999,
+  "gimmighoulroaming": 999,
+  "gholdengo": 1000,
+  "wochien": 1001,
+  "chienpao": 1002,
+  "tinglu": 1003,
+  "chiyu": 1004,
+  "roaringmoon": 1005,
+  "ironvaliant": 1006,
+  "koraidon": 1007,
+  "miraidon": 1008,
+  "walkingwake": 1009,
+  "ironleaves": 1010,
+  "dipplin": 1011,
+  "poltchageist": 1012,
+  "poltchageistartisan": 1012,
+  "sinistcha": 1013,
+  "sinistchamasterpiece": 1013,
+  "okidogi": 1014,
+  "munkidori": 1015,
+  "fezandipiti": 1016,
+  "ogerpon": 1017,
+  "ogerponwellspring": 1017,
+  "ogerponhearthflame": 1017,
+  "ogerponcornerstone": 1017,
+  "ogerpontealtera": 1017,
+  "ogerponwellspringtera": 1017,
+  "ogerponhearthflametera": 1017,
+  "ogerponcornerstonetera": 1017,
+  "archaludon": 1018,
+  "hydrapple": 1019,
+  "gougingfire": 1020,
+  "ragingbolt": 1021,
+  "ironboulder": 1022,
+  "ironcrown": 1023,
+  "terapagos": 1024,
+  "terapagosterastal": 1024,
+  "terapagosstellar": 1024,
+  "pecharunt": 1025
+ },
+ "iconOverrides": {
+  "egg": 1033,
+  "pikachubelle": 1034,
+  "pikachulibre": 1035,
+  "pikachuphd": 1036,
+  "pikachupopstar": 1037,
+  "pikachurockstar": 1038,
+  "pikachucosplay": 1039,
+  "unownexclamation": 1040,
+  "unownquestion": 1041,
+  "unownb": 1042,
+  "unownc": 1043,
+  "unownd": 1044,
+  "unowne": 1045,
+  "unownf": 1046,
+  "unowng": 1047,
+  "unownh": 1048,
+  "unowni": 1049,
+  "unownj": 1050,
+  "unownk": 1051,
+  "unownl": 1052,
+  "unownm": 1053,
+  "unownn": 1054,
+  "unowno": 1055,
+  "unownp": 1056,
+  "unownq": 1057,
+  "unownr": 1058,
+  "unowns": 1059,
+  "unownt": 1060,
+  "unownu": 1061,
+  "unownv": 1062,
+  "unownw": 1063,
+  "unownx": 1064,
+  "unowny": 1065,
+  "unownz": 1066,
+  "castformrainy": 1067,
+  "castformsnowy": 1068,
+  "castformsunny": 1069,
+  "deoxysattack": 1070,
+  "deoxysdefense": 1071,
+  "deoxysspeed": 1072,
+  "burmysandy": 1073,
+  "burmytrash": 1074,
+  "wormadamsandy": 1075,
+  "wormadamtrash": 1076,
+  "cherrimsunshine": 1077,
+  "shelloseast": 1078,
+  "gastrodoneast": 1079,
+  "rotomfan": 1080,
+  "rotomfrost": 1081,
+  "rotomheat": 1082,
+  "rotommow": 1083,
+  "rotomwash": 1084,
+  "giratinaorigin": 1085,
+  "shayminsky": 1086,
+  "unfezantf": 1087,
+  "basculinbluestriped": 1088,
+  "darmanitanzen": 1089,
+  "deerlingautumn": 1090,
+  "deerlingsummer": 1091,
+  "deerlingwinter": 1092,
+  "sawsbuckautumn": 1093,
+  "sawsbucksummer": 1094,
+  "sawsbuckwinter": 1095,
+  "frillishf": 1096,
+  "jellicentf": 1097,
+  "tornadustherian": 1098,
+  "thundurustherian": 1099,
+  "landorustherian": 1100,
+  "kyuremblack": 1101,
+  "kyuremwhite": 1102,
+  "keldeoresolute": 1103,
+  "meloettapirouette": 1104,
+  "vivillonarchipelago": 1105,
+  "vivilloncontinental": 1106,
+  "vivillonelegant": 1107,
+  "vivillonfancy": 1108,
+  "vivillongarden": 1109,
+  "vivillonhighplains": 1110,
+  "vivillonicysnow": 1111,
+  "vivillonjungle": 1112,
+  "vivillonmarine": 1113,
+  "vivillonmodern": 1114,
+  "vivillonmonsoon": 1115,
+  "vivillonocean": 1116,
+  "vivillonpokeball": 1117,
+  "vivillonpolar": 1118,
+  "vivillonriver": 1119,
+  "vivillonsandstorm": 1120,
+  "vivillonsavanna": 1121,
+  "vivillonsun": 1122,
+  "vivillontundra": 1123,
+  "pyroarf": 1124,
+  "flabebeblue": 1125,
+  "flabebeorange": 1126,
+  "flabebewhite": 1127,
+  "flabebeyellow": 1128,
+  "floetteblue": 1129,
+  "floetteeternal": 1130,
+  "floetteorange": 1131,
+  "floettewhite": 1132,
+  "floetteyellow": 1133,
+  "florgesblue": 1134,
+  "florgesorange": 1135,
+  "florgeswhite": 1136,
+  "florgesyellow": 1137,
+  "furfroudandy": 1138,
+  "furfroudebutante": 1139,
+  "furfroudiamond": 1140,
+  "furfrouheart": 1141,
+  "furfroukabuki": 1142,
+  "furfroulareine": 1143,
+  "furfroumatron": 1144,
+  "furfroupharaoh": 1145,
+  "furfroustar": 1146,
+  "meowsticf": 1147,
+  "aegislashblade": 1148,
+  "xerneasneutral": 1149,
+  "hoopaunbound": 1150,
+  "rattataalola": 1151,
+  "raticatealola": 1152,
+  "raichualola": 1153,
+  "sandshrewalola": 1154,
+  "sandslashalola": 1155,
+  "vulpixalola": 1156,
+  "ninetalesalola": 1157,
+  "diglettalola": 1158,
+  "dugtrioalola": 1159,
+  "meowthalola": 1160,
+  "persianalola": 1161,
+  "geodudealola": 1162,
+  "graveleralola": 1163,
+  "golemalola": 1164,
+  "grimeralola": 1165,
+  "mukalola": 1166,
+  "exeggutoralola": 1167,
+  "marowakalola": 1168,
+  "greninjaash": 1169,
+  "zygarde10": 1170,
+  "zygardecomplete": 1171,
+  "oricoriopompom": 1172,
+  "oricoriopau": 1173,
+  "oricoriosensu": 1174,
+  "lycanrocmidnight": 1175,
+  "wishiwashischool": 1176,
+  "miniormeteor": 1177,
+  "miniororange": 1178,
+  "minioryellow": 1179,
+  "miniorgreen": 1180,
+  "miniorblue": 1181,
+  "miniorindigo": 1182,
+  "miniorviolet": 1183,
+  "magearnaoriginal": 1184,
+  "pikachuoriginal": 1185,
+  "pikachuhoenn": 1186,
+  "pikachusinnoh": 1187,
+  "pikachuunova": 1188,
+  "pikachukalos": 1189,
+  "pikachualola": 1190,
+  "pikachupartner": 1191,
+  "lycanrocdusk": 1192,
+  "necrozmaduskmane": 1193,
+  "necrozmadawnwings": 1194,
+  "necrozmaultra": 1195,
+  "pikachustarter": 1196,
+  "eeveestarter": 1197,
+  "meowthgalar": 1198,
+  "ponytagalar": 1199,
+  "rapidashgalar": 1200,
+  "farfetchdgalar": 1201,
+  "weezinggalar": 1202,
+  "mrmimegalar": 1203,
+  "corsolagalar": 1204,
+  "zigzagoongalar": 1205,
+  "linoonegalar": 1206,
+  "darumakagalar": 1207,
+  "darmanitangalar": 1208,
+  "darmanitangalarzen": 1209,
+  "yamaskgalar": 1210,
+  "stunfiskgalar": 1211,
+  "cramorantgulping": 1212,
+  "cramorantgorging": 1213,
+  "toxtricitylowkey": 1214,
+  "alcremierubycream": 1215,
+  "alcremiematchacream": 1216,
+  "alcremiemintcream": 1217,
+  "alcremielemoncream": 1218,
+  "alcremiesaltedcream": 1219,
+  "alcremierubyswirl": 1220,
+  "alcremiecaramelswirl": 1221,
+  "alcremierainbowswirl": 1222,
+  "eiscuenoice": 1223,
+  "indeedeef": 1224,
+  "morpekohangry": 1225,
+  "zaciancrowned": 1226,
+  "zamazentacrowned": 1227,
+  "slowpokegalar": 1228,
+  "slowbrogalar": 1229,
+  "zarudedada": 1230,
+  "pikachuworld": 1231,
+  "articunogalar": 1232,
+  "zapdosgalar": 1233,
+  "moltresgalar": 1234,
+  "slowkinggalar": 1235,
+  "calyrexice": 1236,
+  "calyrexshadow": 1237,
+  "growlithehisui": 1238,
+  "arcaninehisui": 1239,
+  "voltorbhisui": 1240,
+  "electrodehisui": 1241,
+  "typhlosionhisui": 1242,
+  "qwilfishhisui": 1243,
+  "sneaselhisui": 1244,
+  "samurotthisui": 1245,
+  "lilliganthisui": 1246,
+  "zoruahisui": 1247,
+  "zoroarkhisui": 1248,
+  "braviaryhisui": 1249,
+  "sliggoohisui": 1250,
+  "goodrahisui": 1251,
+  "avalugghisui": 1252,
+  "decidueyehisui": 1253,
+  "basculegionf": 1254,
+  "enamorustherian": 1255,
+  "taurospaldeacombat": 1256,
+  "taurospaldeablaze": 1257,
+  "taurospaldeaaqua": 1258,
+  "wooperpaldea": 1259,
+  "oinkolognef": 1260,
+  "palafinhero": 1261,
+  "mausholdfour": 1262,
+  "tatsugiridroopy": 1263,
+  "tatsugiristretchy": 1264,
+  "squawkabillyblue": 1265,
+  "squawkabillyyellow": 1266,
+  "squawkabillywhite": 1267,
+  "gimmighoulroaming": 1268,
+  "dialgaorigin": 1269,
+  "palkiaorigin": 1270,
+  "basculinwhitestriped": 1271,
+  "ursalunabloodmoon": 1272,
+  "ogerponwellspring": 1273,
+  "ogerponhearthflame": 1274,
+  "ogerponcornerstone": 1275,
+  "terapagosterastal": 1276,
+  "terapagosstellar": 1277,
+  "arceusbug": 1278,
+  "arceusdark": 1279,
+  "arceusdragon": 1280,
+  "arceuselectric": 1281,
+  "arceusfairy": 1282,
+  "arceusfighting": 1283,
+  "arceusfire": 1284,
+  "arceusflying": 1285,
+  "arceusghost": 1286,
+  "arceusgrass": 1287,
+  "arceusground": 1288,
+  "arceusice": 1289,
+  "arceuspoison": 1290,
+  "arceuspsychic": 1291,
+  "arceusrock": 1292,
+  "arceussteel": 1293,
+  "arceuswater": 1294,
+  "genesectdouse": 1295,
+  "genesectshock": 1296,
+  "genesectburn": 1297,
+  "genesectchill": 1298,
+  "silvallybug": 1299,
+  "silvallydark": 1300,
+  "silvallydragon": 1301,
+  "silvallyelectric": 1302,
+  "silvallyfairy": 1303,
+  "silvallyfighting": 1304,
+  "silvallyfire": 1305,
+  "silvallyflying": 1306,
+  "silvallyghost": 1307,
+  "silvallygrass": 1308,
+  "silvallyground": 1309,
+  "silvallyice": 1310,
+  "silvallypoison": 1311,
+  "silvallypsychic": 1312,
+  "silvallyrock": 1313,
+  "silvallysteel": 1314,
+  "silvallywater": 1315,
+  "greninjabond": 658,
+  "gumshoostotem": 735,
+  "raticatealolatotem": 1152,
+  "marowakalolatotem": 1168,
+  "araquanidtotem": 752,
+  "lurantistotem": 754,
+  "salazzletotem": 758,
+  "vikavolttotem": 738,
+  "togedemarutotem": 777,
+  "mimikyutotem": 778,
+  "mimikyubustedtotem": 778,
+  "ribombeetotem": 743,
+  "kommoototem": 784,
+  "sinisteaantique": 854,
+  "polteageistantique": 855,
+  "poltchageistartisan": 1012,
+  "sinistchamasterpiece": 1013,
+  "ogerpontealtera": 1017,
+  "ogerponwellspringtera": 1273,
+  "ogerponhearthflametera": 1274,
+  "ogerponcornerstonetera": 1275,
+  "toxtricitylowkeygmax": 1389,
+  "venusaurmega": 1320,
+  "charizardmegax": 1321,
+  "charizardmegay": 1322,
+  "blastoisemega": 1323,
+  "beedrillmega": 1324,
+  "pidgeotmega": 1325,
+  "alakazammega": 1326,
+  "slowbromega": 1327,
+  "gengarmega": 1328,
+  "kangaskhanmega": 1329,
+  "pinsirmega": 1330,
+  "gyaradosmega": 1331,
+  "aerodactylmega": 1332,
+  "mewtwomegax": 1333,
+  "mewtwomegay": 1334,
+  "ampharosmega": 1335,
+  "steelixmega": 1336,
+  "scizormega": 1337,
+  "heracrossmega": 1338,
+  "houndoommega": 1339,
+  "tyranitarmega": 1340,
+  "sceptilemega": 1341,
+  "blazikenmega": 1342,
+  "swampertmega": 1343,
+  "gardevoirmega": 1344,
+  "sableyemega": 1345,
+  "mawilemega": 1346,
+  "aggronmega": 1347,
+  "medichammega": 1348,
+  "manectricmega": 1349,
+  "sharpedomega": 1350,
+  "cameruptmega": 1351,
+  "altariamega": 1352,
+  "banettemega": 1353,
+  "absolmega": 1354,
+  "glaliemega": 1355,
+  "salamencemega": 1356,
+  "metagrossmega": 1357,
+  "latiasmega": 1358,
+  "latiosmega": 1359,
+  "kyogreprimal": 1360,
+  "groudonprimal": 1361,
+  "rayquazamega": 1362,
+  "lopunnymega": 1363,
+  "garchompmega": 1364,
+  "lucariomega": 1365,
+  "abomasnowmega": 1366,
+  "gallademega": 1367,
+  "audinomega": 1368,
+  "dianciemega": 1369,
+  "charizardgmax": 1370,
+  "butterfreegmax": 1371,
+  "pikachugmax": 1372,
+  "meowthgmax": 1373,
+  "machampgmax": 1374,
+  "gengargmax": 1375,
+  "kinglergmax": 1376,
+  "laprasgmax": 1377,
+  "eeveegmax": 1378,
+  "snorlaxgmax": 1379,
+  "garbodorgmax": 1380,
+  "melmetalgmax": 1381,
+  "corviknightgmax": 1382,
+  "orbeetlegmax": 1383,
+  "drednawgmax": 1384,
+  "coalossalgmax": 1385,
+  "flapplegmax": 1386,
+  "appletungmax": 1387,
+  "sandacondagmax": 1388,
+  "toxtricitygmax": 1389,
+  "centiskorchgmax": 1390,
+  "hatterenegmax": 1391,
+  "grimmsnarlgmax": 1392,
+  "alcremiegmax": 1393,
+  "copperajahgmax": 1394,
+  "duraludongmax": 1395,
+  "eternatuseternamax": 1396,
+  "venusaurgmax": 1397,
+  "blastoisegmax": 1398,
+  "rillaboomgmax": 1399,
+  "cinderacegmax": 1400,
+  "inteleongmax": 1401,
+  "urshifugmax": 1402,
+  "urshifurapidstrikegmax": 1403,
+  "clefablemega": 1404,
+  "victreebelmega": 1405,
+  "starmiemega": 1406,
+  "dragonitemega": 1407,
+  "meganiummega": 1408,
+  "feraligatrmega": 1409,
+  "skarmorymega": 1410,
+  "froslassmega": 1411,
+  "emboarmega": 1412,
+  "excadrillmega": 1413,
+  "scolipedemega": 1414,
+  "scraftymega": 1415,
+  "eelektrossmega": 1416,
+  "chandeluremega": 1417,
+  "chesnaughtmega": 1418,
+  "delphoxmega": 1419,
+  "greninjamega": 1420,
+  "pyroarmega": 1421,
+  "floettemega": 1422,
+  "malamarmega": 1423,
+  "barbaraclemega": 1424,
+  "dragalgemega": 1425,
+  "hawluchamega": 1426,
+  "zygardemega": 1427,
+  "drampamega": 1428,
+  "falinksmega": 1429,
+  "raichumegax": 1430,
+  "raichumegay": 1431,
+  "chimechomega": 1432,
+  "absolmegaz": 1433,
+  "staraptormega": 1434,
+  "garchompmegaz": 1435,
+  "lucariomegaz": 1436,
+  "heatranmega": 1437,
+  "darkraimega": 1438,
+  "golurkmega": 1439,
+  "meowsticmmega": 1440,
+  "meowsticfmega": 1440,
+  "crabominablemega": 1441,
+  "golisopodmega": 1442,
+  "magearnamega": 1443,
+  "magearnaoriginalmega": 1444,
+  "zeraoramega": 1445,
+  "scovillainmega": 1446,
+  "glimmoramega": 1447,
+  "tatsugiricurlymega": 1448,
+  "tatsugiridroopymega": 1449,
+  "tatsugiristretchymega": 1450,
+  "baxcaliburmega": 1451,
+  "terapagos": 1276,
+  "zacian": 1226,
+  "zamazenta": 1227,
+  "wishiwashi": 1176,
+  "cherrim": 1077
+ },
+ "iconSizes": {
+  "1": [
+   66,
+   63
+  ],
+  "2": [
+   69,
+   66
+  ],
+  "3": [
+   96,
+   78
+  ],
+  "4": [
+   69,
+   63
+  ],
+  "5": [
+   72,
+   75
+  ],
+  "6": [
+   102,
+   87
+  ],
+  "7": [
+   69,
+   57
+  ],
+  "8": [
+   78,
+   72
+  ],
+  "9": [
+   81,
+   78
+  ],
+  "10": [
+   48,
+   54
+  ],
+  "11": [
+   42,
+   60
+  ],
+  "12": [
+   78,
+   78
+  ],
+  "13": [
+   54,
+   57
+  ],
+  "14": [
+   45,
+   60
+  ],
+  "15": [
+   81,
+   75
+  ],
+  "16": [
+   60,
+   57
+  ],
+  "17": [
+   69,
+   66
+  ],
+  "18": [
+   81,
+   75
+  ],
+  "19": [
+   66,
+   69
+  ],
+  "20": [
+   81,
+   69
+  ],
+  "21": [
+   63,
+   54
+  ],
+  "22": [
+   96,
+   72
+  ],
+  "23": [
+   60,
+   69
+  ],
+  "24": [
+   66,
+   75
+  ],
+  "25": [
+   69,
+   66
+  ],
+  "26": [
+   81,
+   78
+  ],
+  "27": [
+   66,
+   60
+  ],
+  "28": [
+   81,
+   72
+  ],
+  "29": [
+   60,
+   63
+  ],
+  "30": [
+   63,
+   72
+  ],
+  "31": [
+   75,
+   75
+  ],
+  "32": [
+   60,
+   66
+  ],
+  "33": [
+   63,
+   72
+  ],
+  "34": [
+   99,
+   81
+  ],
+  "35": [
+   60,
+   63
+  ],
+  "36": [
+   66,
+   75
+  ],
+  "37": [
+   66,
+   66
+  ],
+  "38": [
+   78,
+   75
+  ],
+  "39": [
+   60,
+   66
+  ],
+  "40": [
+   57,
+   81
+  ],
+  "41": [
+   69,
+   66
+  ],
+  "42": [
+   84,
+   72
+  ],
+  "43": [
+   57,
+   63
+  ],
+  "44": [
+   72,
+   69
+  ],
+  "45": [
+   72,
+   75
+  ],
+  "46": [
+   72,
+   66
+  ],
+  "47": [
+   72,
+   72
+  ],
+  "48": [
+   57,
+   84
+  ],
+  "49": [
+   75,
+   78
+  ],
+  "50": [
+   51,
+   48
+  ],
+  "51": [
+   72,
+   72
+  ],
+  "52": [
+   69,
+   69
+  ],
+  "53": [
+   75,
+   72
+  ],
+  "54": [
+   60,
+   69
+  ],
+  "55": [
+   81,
+   69
+  ],
+  "56": [
+   90,
+   66
+  ],
+  "57": [
+   90,
+   75
+  ],
+  "58": [
+   69,
+   72
+  ],
+  "59": [
+   93,
+   87
+  ],
+  "60": [
+   66,
+   51
+  ],
+  "61": [
+   72,
+   63
+  ],
+  "62": [
+   93,
+   69
+  ],
+  "63": [
+   75,
+   69
+  ],
+  "64": [
+   93,
+   81
+  ],
+  "65": [
+   99,
+   87
+  ],
+  "66": [
+   54,
+   66
+  ],
+  "67": [
+   84,
+   72
+  ],
+  "68": [
+   87,
+   72
+  ],
+  "69": [
+   66,
+   51
+  ],
+  "70": [
+   72,
+   66
+  ],
+  "71": [
+   90,
+   75
+  ],
+  "72": [
+   78,
+   72
+  ],
+  "73": [
+   81,
+   72
+  ],
+  "74": [
+   78,
+   51
+  ],
+  "75": [
+   84,
+   72
+  ],
+  "76": [
+   84,
+   69
+  ],
+  "77": [
+   78,
+   75
+  ],
+  "78": [
+   93,
+   84
+  ],
+  "79": [
+   69,
+   69
+  ],
+  "80": [
+   87,
+   75
+  ],
+  "81": [
+   75,
+   51
+  ],
+  "82": [
+   78,
+   72
+  ],
+  "83": [
+   84,
+   72
+  ],
+  "84": [
+   69,
+   60
+  ],
+  "85": [
+   93,
+   81
+  ],
+  "86": [
+   81,
+   75
+  ],
+  "87": [
+   81,
+   75
+  ],
+  "88": [
+   69,
+   60
+  ],
+  "89": [
+   84,
+   81
+  ],
+  "90": [
+   63,
+   60
+  ],
+  "91": [
+   81,
+   78
+  ],
+  "92": [
+   75,
+   69
+  ],
+  "93": [
+   96,
+   84
+  ],
+  "94": [
+   78,
+   78
+  ],
+  "95": [
+   96,
+   87
+  ],
+  "96": [
+   78,
+   72
+  ],
+  "97": [
+   87,
+   84
+  ],
+  "98": [
+   90,
+   69
+  ],
+  "99": [
+   96,
+   78
+  ],
+  "100": [
+   48,
+   48
+  ],
+  "101": [
+   54,
+   54
+  ],
+  "102": [
+   78,
+   60
+  ],
+  "103": [
+   57,
+   78
+  ],
+  "104": [
+   66,
+   63
+  ],
+  "105": [
+   72,
+   69
+  ],
+  "106": [
+   75,
+   63
+  ],
+  "107": [
+   69,
+   66
+  ],
+  "108": [
+   75,
+   60
+  ],
+  "109": [
+   81,
+   81
+  ],
+  "110": [
+   96,
+   90
+  ],
+  "111": [
+   78,
+   66
+  ],
+  "112": [
+   81,
+   75
+  ],
+  "113": [
+   63,
+   66
+  ],
+  "114": [
+   63,
+   60
+  ],
+  "115": [
+   75,
+   69
+  ],
+  "116": [
+   60,
+   57
+  ],
+  "117": [
+   78,
+   66
+  ],
+  "118": [
+   78,
+   63
+  ],
+  "119": [
+   81,
+   66
+  ],
+  "120": [
+   57,
+   57
+  ],
+  "121": [
+   63,
+   60
+  ],
+  "122": [
+   57,
+   60
+  ],
+  "123": [
+   63,
+   63
+  ],
+  "124": [
+   69,
+   66
+  ],
+  "125": [
+   69,
+   72
+  ],
+  "126": [
+   72,
+   75
+  ],
+  "127": [
+   75,
+   69
+  ],
+  "128": [
+   81,
+   69
+  ],
+  "129": [
+   72,
+   78
+  ],
+  "130": [
+   93,
+   87
+  ],
+  "131": [
+   78,
+   69
+  ],
+  "132": [
+   54,
+   45
+  ],
+  "133": [
+   57,
+   60
+  ],
+  "134": [
+   75,
+   69
+  ],
+  "135": [
+   66,
+   69
+  ],
+  "136": [
+   75,
+   69
+  ],
+  "137": [
+   63,
+   60
+  ],
+  "138": [
+   60,
+   60
+  ],
+  "139": [
+   72,
+   72
+  ],
+  "140": [
+   54,
+   45
+  ],
+  "141": [
+   63,
+   69
+  ],
+  "142": [
+   93,
+   72
+  ],
+  "143": [
+   87,
+   78
+  ],
+  "144": [
+   87,
+   66
+  ],
+  "145": [
+   93,
+   63
+  ],
+  "146": [
+   90,
+   60
+  ],
+  "147": [
+   66,
+   60
+  ],
+  "148": [
+   72,
+   72
+  ],
+  "149": [
+   81,
+   72
+  ],
+  "150": [
+   66,
+   75
+  ],
+  "151": [
+   75,
+   81
+  ],
+  "152": [
+   51,
+   63
+  ],
+  "153": [
+   66,
+   75
+  ],
+  "154": [
+   75,
+   87
+  ],
+  "155": [
+   66,
+   60
+  ],
+  "156": [
+   75,
+   66
+  ],
+  "157": [
+   75,
+   81
+  ],
+  "158": [
+   60,
+   60
+  ],
+  "159": [
+   69,
+   81
+  ],
+  "160": [
+   99,
+   84
+  ],
+  "161": [
+   51,
+   81
+  ],
+  "162": [
+   75,
+   69
+  ],
+  "163": [
+   57,
+   66
+  ],
+  "164": [
+   60,
+   75
+  ],
+  "165": [
+   54,
+   60
+  ],
+  "166": [
+   63,
+   69
+  ],
+  "167": [
+   60,
+   48
+  ],
+  "168": [
+   81,
+   72
+  ],
+  "169": [
+   96,
+   75
+  ],
+  "170": [
+   72,
+   63
+  ],
+  "171": [
+   81,
+   69
+  ],
+  "172": [
+   51,
+   63
+  ],
+  "173": [
+   54,
+   54
+  ],
+  "174": [
+   51,
+   60
+  ],
+  "175": [
+   54,
+   60
+  ],
+  "176": [
+   57,
+   69
+  ],
+  "177": [
+   57,
+   60
+  ],
+  "178": [
+   57,
+   69
+  ],
+  "179": [
+   72,
+   66
+  ],
+  "180": [
+   69,
+   72
+  ],
+  "181": [
+   66,
+   81
+  ],
+  "182": [
+   54,
+   69
+  ],
+  "183": [
+   75,
+   57
+  ],
+  "184": [
+   81,
+   78
+  ],
+  "185": [
+   72,
+   69
+  ],
+  "186": [
+   60,
+   81
+  ],
+  "187": [
+   72,
+   66
+  ],
+  "188": [
+   63,
+   57
+  ],
+  "189": [
+   72,
+   72
+  ],
+  "190": [
+   78,
+   63
+  ],
+  "191": [
+   45,
+   60
+  ],
+  "192": [
+   63,
+   69
+  ],
+  "193": [
+   90,
+   54
+  ],
+  "194": [
+   66,
+   57
+  ],
+  "195": [
+   69,
+   66
+  ],
+  "196": [
+   87,
+   69
+  ],
+  "197": [
+   66,
+   69
+  ],
+  "198": [
+   63,
+   69
+  ],
+  "199": [
+   63,
+   84
+  ],
+  "200": [
+   54,
+   63
+  ],
+  "201": [
+   36,
+   69
+  ],
+  "202": [
+   60,
+   69
+  ],
+  "203": [
+   72,
+   75
+  ],
+  "204": [
+   57,
+   63
+  ],
+  "205": [
+   75,
+   60
+  ],
+  "206": [
+   69,
+   63
+  ],
+  "207": [
+   78,
+   78
+  ],
+  "208": [
+   111,
+   90
+  ],
+  "209": [
+   69,
+   66
+  ],
+  "210": [
+   72,
+   75
+  ],
+  "211": [
+   78,
+   63
+  ],
+  "212": [
+   84,
+   87
+  ],
+  "213": [
+   78,
+   72
+  ],
+  "214": [
+   81,
+   78
+  ],
+  "215": [
+   57,
+   69
+  ],
+  "216": [
+   54,
+   66
+  ],
+  "217": [
+   69,
+   75
+  ],
+  "218": [
+   57,
+   69
+  ],
+  "219": [
+   69,
+   72
+  ],
+  "220": [
+   60,
+   45
+  ],
+  "221": [
+   72,
+   69
+  ],
+  "222": [
+   69,
+   66
+  ],
+  "223": [
+   57,
+   54
+  ],
+  "224": [
+   69,
+   69
+  ],
+  "225": [
+   63,
+   75
+  ],
+  "226": [
+   96,
+   63
+  ],
+  "227": [
+   81,
+   75
+  ],
+  "228": [
+   63,
+   66
+  ],
+  "229": [
+   66,
+   75
+  ],
+  "230": [
+   66,
+   78
+  ],
+  "231": [
+   66,
+   54
+  ],
+  "232": [
+   93,
+   72
+  ],
+  "233": [
+   63,
+   57
+  ],
+  "234": [
+   69,
+   81
+  ],
+  "235": [
+   78,
+   69
+  ],
+  "236": [
+   45,
+   69
+  ],
+  "237": [
+   96,
+   72
+  ],
+  "238": [
+   48,
+   66
+  ],
+  "239": [
+   69,
+   66
+  ],
+  "240": [
+   54,
+   66
+  ],
+  "241": [
+   69,
+   72
+  ],
+  "242": [
+   72,
+   72
+  ],
+  "243": [
+   96,
+   81
+  ],
+  "244": [
+   81,
+   78
+  ],
+  "245": [
+   93,
+   81
+  ],
+  "246": [
+   51,
+   66
+  ],
+  "247": [
+   54,
+   63
+  ],
+  "248": [
+   81,
+   78
+  ],
+  "249": [
+   102,
+   90
+  ],
+  "250": [
+   93,
+   90
+  ],
+  "251": [
+   48,
+   60
+  ],
+  "252": [
+   69,
+   69
+  ],
+  "253": [
+   90,
+   72
+  ],
+  "254": [
+   90,
+   84
+  ],
+  "255": [
+   45,
+   63
+  ],
+  "256": [
+   75,
+   81
+  ],
+  "257": [
+   81,
+   84
+  ],
+  "258": [
+   63,
+   60
+  ],
+  "259": [
+   66,
+   69
+  ],
+  "260": [
+   84,
+   81
+  ],
+  "261": [
+   69,
+   60
+  ],
+  "262": [
+   81,
+   69
+  ],
+  "263": [
+   72,
+   54
+  ],
+  "264": [
+   72,
+   66
+  ],
+  "265": [
+   60,
+   57
+  ],
+  "266": [
+   69,
+   60
+  ],
+  "267": [
+   81,
+   78
+  ],
+  "268": [
+   69,
+   60
+  ],
+  "269": [
+   84,
+   63
+  ],
+  "270": [
+   57,
+   51
+  ],
+  "271": [
+   63,
+   72
+  ],
+  "272": [
+   72,
+   84
+  ],
+  "273": [
+   51,
+   57
+  ],
+  "274": [
+   54,
+   75
+  ],
+  "275": [
+   99,
+   78
+  ],
+  "276": [
+   60,
+   51
+  ],
+  "277": [
+   75,
+   63
+  ],
+  "278": [
+   84,
+   48
+  ],
+  "279": [
+   75,
+   69
+  ],
+  "280": [
+   48,
+   60
+  ],
+  "281": [
+   60,
+   75
+  ],
+  "282": [
+   84,
+   78
+  ],
+  "283": [
+   75,
+   63
+  ],
+  "284": [
+   84,
+   75
+  ],
+  "285": [
+   60,
+   51
+  ],
+  "286": [
+   75,
+   81
+  ],
+  "287": [
+   81,
+   51
+  ],
+  "288": [
+   87,
+   72
+  ],
+  "289": [
+   90,
+   81
+  ],
+  "290": [
+   75,
+   48
+  ],
+  "291": [
+   75,
+   66
+  ],
+  "292": [
+   66,
+   63
+  ],
+  "293": [
+   57,
+   54
+  ],
+  "294": [
+   69,
+   75
+  ],
+  "295": [
+   87,
+   84
+  ],
+  "296": [
+   60,
+   63
+  ],
+  "297": [
+   78,
+   75
+  ],
+  "298": [
+   51,
+   63
+  ],
+  "299": [
+   57,
+   60
+  ],
+  "300": [
+   66,
+   66
+  ],
+  "301": [
+   72,
+   69
+  ],
+  "302": [
+   75,
+   69
+  ],
+  "303": [
+   84,
+   69
+  ],
+  "304": [
+   54,
+   42
+  ],
+  "305": [
+   75,
+   57
+  ],
+  "306": [
+   93,
+   78
+  ],
+  "307": [
+   57,
+   66
+  ],
+  "308": [
+   57,
+   81
+  ],
+  "309": [
+   63,
+   51
+  ],
+  "310": [
+   66,
+   75
+  ],
+  "311": [
+   54,
+   63
+  ],
+  "312": [
+   54,
+   63
+  ],
+  "313": [
+   66,
+   66
+  ],
+  "314": [
+   63,
+   66
+  ],
+  "315": [
+   81,
+   72
+  ],
+  "316": [
+   57,
+   57
+  ],
+  "317": [
+   66,
+   60
+  ],
+  "318": [
+   63,
+   63
+  ],
+  "319": [
+   69,
+   78
+  ],
+  "320": [
+   78,
+   60
+  ],
+  "321": [
+   96,
+   75
+  ],
+  "322": [
+   63,
+   60
+  ],
+  "323": [
+   87,
+   72
+  ],
+  "324": [
+   75,
+   60
+  ],
+  "325": [
+   48,
+   66
+  ],
+  "326": [
+   75,
+   63
+  ],
+  "327": [
+   51,
+   69
+  ],
+  "328": [
+   63,
+   63
+  ],
+  "329": [
+   81,
+   66
+  ],
+  "330": [
+   87,
+   75
+  ],
+  "331": [
+   72,
+   57
+  ],
+  "332": [
+   63,
+   87
+  ],
+  "333": [
+   63,
+   54
+  ],
+  "334": [
+   66,
+   78
+  ],
+  "335": [
+   75,
+   72
+  ],
+  "336": [
+   75,
+   66
+  ],
+  "337": [
+   45,
+   63
+  ],
+  "338": [
+   69,
+   72
+  ],
+  "339": [
+   69,
+   45
+  ],
+  "340": [
+   78,
+   63
+  ],
+  "341": [
+   69,
+   63
+  ],
+  "342": [
+   78,
+   75
+  ],
+  "343": [
+   54,
+   69
+  ],
+  "344": [
+   66,
+   69
+  ],
+  "345": [
+   60,
+   66
+  ],
+  "346": [
+   81,
+   78
+  ],
+  "347": [
+   72,
+   66
+  ],
+  "348": [
+   84,
+   75
+  ],
+  "349": [
+   57,
+   69
+  ],
+  "350": [
+   87,
+   72
+  ],
+  "351": [
+   45,
+   66
+  ],
+  "352": [
+   66,
+   66
+  ],
+  "353": [
+   51,
+   63
+  ],
+  "354": [
+   72,
+   63
+  ],
+  "355": [
+   60,
+   69
+  ],
+  "356": [
+   84,
+   78
+  ],
+  "357": [
+   99,
+   84
+  ],
+  "358": [
+   51,
+   69
+  ],
+  "359": [
+   75,
+   81
+  ],
+  "360": [
+   81,
+   72
+  ],
+  "361": [
+   51,
+   63
+  ],
+  "362": [
+   63,
+   66
+  ],
+  "363": [
+   63,
+   54
+  ],
+  "364": [
+   84,
+   60
+  ],
+  "365": [
+   90,
+   72
+  ],
+  "366": [
+   63,
+   63
+  ],
+  "367": [
+   81,
+   78
+  ],
+  "368": [
+   84,
+   69
+  ],
+  "369": [
+   81,
+   69
+  ],
+  "370": [
+   42,
+   57
+  ],
+  "371": [
+   51,
+   66
+  ],
+  "372": [
+   66,
+   69
+  ],
+  "373": [
+   102,
+   75
+  ],
+  "374": [
+   63,
+   57
+  ],
+  "375": [
+   87,
+   69
+  ],
+  "376": [
+   102,
+   72
+  ],
+  "377": [
+   87,
+   75
+  ],
+  "378": [
+   81,
+   75
+  ],
+  "379": [
+   75,
+   72
+  ],
+  "380": [
+   87,
+   69
+  ],
+  "381": [
+   90,
+   72
+  ],
+  "382": [
+   105,
+   69
+  ],
+  "383": [
+   105,
+   78
+  ],
+  "384": [
+   99,
+   87
+  ],
+  "385": [
+   72,
+   66
+  ],
+  "386": [
+   84,
+   72
+  ],
+  "387": [
+   60,
+   72
+  ],
+  "388": [
+   72,
+   69
+  ],
+  "389": [
+   90,
+   75
+  ],
+  "390": [
+   63,
+   72
+  ],
+  "391": [
+   72,
+   75
+  ],
+  "392": [
+   84,
+   78
+  ],
+  "393": [
+   45,
+   63
+  ],
+  "394": [
+   57,
+   72
+  ],
+  "395": [
+   75,
+   81
+  ],
+  "396": [
+   63,
+   60
+  ],
+  "397": [
+   72,
+   75
+  ],
+  "398": [
+   75,
+   81
+  ],
+  "399": [
+   66,
+   54
+  ],
+  "400": [
+   72,
+   72
+  ],
+  "401": [
+   57,
+   72
+  ],
+  "402": [
+   66,
+   78
+  ],
+  "403": [
+   78,
+   69
+  ],
+  "404": [
+   96,
+   69
+  ],
+  "405": [
+   96,
+   81
+  ],
+  "406": [
+   42,
+   60
+  ],
+  "407": [
+   66,
+   72
+  ],
+  "408": [
+   69,
+   63
+  ],
+  "409": [
+   81,
+   75
+  ],
+  "410": [
+   66,
+   66
+  ],
+  "411": [
+   84,
+   75
+  ],
+  "412": [
+   57,
+   72
+  ],
+  "413": [
+   72,
+   75
+  ],
+  "414": [
+   81,
+   66
+  ],
+  "415": [
+   81,
+   60
+  ],
+  "416": [
+   84,
+   69
+  ],
+  "417": [
+   72,
+   75
+  ],
+  "418": [
+   69,
+   66
+  ],
+  "419": [
+   81,
+   69
+  ],
+  "420": [
+   60,
+   60
+  ],
+  "421": [
+   54,
+   66
+  ],
+  "422": [
+   57,
+   66
+  ],
+  "423": [
+   75,
+   72
+  ],
+  "424": [
+   93,
+   81
+  ],
+  "425": [
+   51,
+   72
+  ],
+  "426": [
+   78,
+   78
+  ],
+  "427": [
+   60,
+   72
+  ],
+  "428": [
+   84,
+   72
+  ],
+  "429": [
+   63,
+   87
+  ],
+  "430": [
+   84,
+   72
+  ],
+  "431": [
+   84,
+   72
+  ],
+  "432": [
+   75,
+   69
+  ],
+  "433": [
+   75,
+   63
+  ],
+  "434": [
+   84,
+   63
+  ],
+  "435": [
+   93,
+   75
+  ],
+  "436": [
+   45,
+   54
+  ],
+  "437": [
+   87,
+   69
+  ],
+  "438": [
+   42,
+   66
+  ],
+  "439": [
+   48,
+   69
+  ],
+  "440": [
+   48,
+   63
+  ],
+  "441": [
+   66,
+   72
+  ],
+  "442": [
+   69,
+   66
+  ],
+  "443": [
+   63,
+   63
+  ],
+  "444": [
+   75,
+   69
+  ],
+  "445": [
+   93,
+   72
+  ],
+  "446": [
+   48,
+   63
+  ],
+  "447": [
+   60,
+   60
+  ],
+  "448": [
+   54,
+   69
+  ],
+  "449": [
+   78,
+   60
+  ],
+  "450": [
+   90,
+   66
+  ],
+  "451": [
+   78,
+   72
+  ],
+  "452": [
+   96,
+   72
+  ],
+  "453": [
+   57,
+   57
+  ],
+  "454": [
+   69,
+   72
+  ],
+  "455": [
+   87,
+   75
+  ],
+  "456": [
+   66,
+   60
+  ],
+  "457": [
+   72,
+   75
+  ],
+  "458": [
+   66,
+   57
+  ],
+  "459": [
+   69,
+   66
+  ],
+  "460": [
+   69,
+   75
+  ],
+  "461": [
+   63,
+   72
+  ],
+  "462": [
+   84,
+   78
+  ],
+  "463": [
+   72,
+   75
+  ],
+  "464": [
+   87,
+   72
+  ],
+  "465": [
+   93,
+   72
+  ],
+  "466": [
+   84,
+   75
+  ],
+  "467": [
+   81,
+   72
+  ],
+  "468": [
+   90,
+   63
+  ],
+  "469": [
+   96,
+   69
+  ],
+  "470": [
+   81,
+   72
+  ],
+  "471": [
+   87,
+   75
+  ],
+  "472": [
+   99,
+   72
+  ],
+  "473": [
+   87,
+   72
+  ],
+  "474": [
+   69,
+   69
+  ],
+  "475": [
+   72,
+   81
+  ],
+  "476": [
+   78,
+   75
+  ],
+  "477": [
+   93,
+   75
+  ],
+  "478": [
+   54,
+   72
+  ],
+  "479": [
+   90,
+   84
+  ],
+  "480": [
+   84,
+   72
+  ],
+  "481": [
+   93,
+   72
+  ],
+  "482": [
+   84,
+   78
+  ],
+  "483": [
+   96,
+   87
+  ],
+  "484": [
+   96,
+   84
+  ],
+  "485": [
+   105,
+   66
+  ],
+  "486": [
+   102,
+   75
+  ],
+  "487": [
+   96,
+   78
+  ],
+  "488": [
+   81,
+   84
+  ],
+  "489": [
+   75,
+   57
+  ],
+  "490": [
+   72,
+   66
+  ],
+  "491": [
+   99,
+   90
+  ],
+  "492": [
+   60,
+   54
+  ],
+  "493": [
+   90,
+   87
+  ],
+  "494": [
+   60,
+   72
+  ],
+  "495": [
+   66,
+   57
+  ],
+  "496": [
+   72,
+   66
+  ],
+  "497": [
+   90,
+   72
+  ],
+  "498": [
+   60,
+   60
+  ],
+  "499": [
+   75,
+   69
+  ],
+  "500": [
+   90,
+   81
+  ],
+  "501": [
+   54,
+   60
+  ],
+  "502": [
+   63,
+   75
+  ],
+  "503": [
+   99,
+   75
+  ],
+  "504": [
+   66,
+   60
+  ],
+  "505": [
+   66,
+   72
+  ],
+  "506": [
+   60,
+   60
+  ],
+  "507": [
+   69,
+   72
+  ],
+  "508": [
+   87,
+   75
+  ],
+  "509": [
+   69,
+   72
+  ],
+  "510": [
+   84,
+   75
+  ],
+  "511": [
+   66,
+   69
+  ],
+  "512": [
+   81,
+   81
+  ],
+  "513": [
+   66,
+   66
+  ],
+  "514": [
+   84,
+   72
+  ],
+  "515": [
+   69,
+   69
+  ],
+  "516": [
+   78,
+   69
+  ],
+  "517": [
+   51,
+   48
+  ],
+  "518": [
+   75,
+   72
+  ],
+  "519": [
+   54,
+   54
+  ],
+  "520": [
+   63,
+   66
+  ],
+  "521": [
+   66,
+   75
+  ],
+  "522": [
+   57,
+   72
+  ],
+  "523": [
+   87,
+   75
+  ],
+  "524": [
+   39,
+   57
+  ],
+  "525": [
+   78,
+   69
+  ],
+  "526": [
+   93,
+   81
+  ],
+  "527": [
+   66,
+   51
+  ],
+  "528": [
+   75,
+   66
+  ],
+  "529": [
+   69,
+   57
+  ],
+  "530": [
+   93,
+   72
+  ],
+  "531": [
+   72,
+   72
+  ],
+  "532": [
+   78,
+   63
+  ],
+  "533": [
+   87,
+   78
+  ],
+  "534": [
+   99,
+   78
+  ],
+  "535": [
+   48,
+   45
+  ],
+  "536": [
+   60,
+   60
+  ],
+  "537": [
+   90,
+   69
+  ],
+  "538": [
+   90,
+   66
+  ],
+  "539": [
+   72,
+   72
+  ],
+  "540": [
+   51,
+   57
+  ],
+  "541": [
+   66,
+   54
+  ],
+  "542": [
+   48,
+   69
+  ],
+  "543": [
+   60,
+   48
+  ],
+  "544": [
+   72,
+   54
+  ],
+  "545": [
+   93,
+   72
+  ],
+  "546": [
+   69,
+   48
+  ],
+  "547": [
+   69,
+   72
+  ],
+  "548": [
+   42,
+   60
+  ],
+  "549": [
+   57,
+   69
+  ],
+  "550": [
+   60,
+   54
+  ],
+  "551": [
+   72,
+   54
+  ],
+  "552": [
+   81,
+   69
+  ],
+  "553": [
+   90,
+   75
+  ],
+  "554": [
+   57,
+   51
+  ],
+  "555": [
+   75,
+   72
+  ],
+  "556": [
+   75,
+   75
+  ],
+  "557": [
+   63,
+   57
+  ],
+  "558": [
+   90,
+   75
+  ],
+  "559": [
+   51,
+   54
+  ],
+  "560": [
+   66,
+   69
+  ],
+  "561": [
+   69,
+   75
+  ],
+  "562": [
+   72,
+   54
+  ],
+  "563": [
+   96,
+   81
+  ],
+  "564": [
+   75,
+   51
+  ],
+  "565": [
+   81,
+   72
+  ],
+  "566": [
+   69,
+   51
+  ],
+  "567": [
+   84,
+   69
+  ],
+  "568": [
+   69,
+   60
+  ],
+  "569": [
+   96,
+   72
+  ],
+  "570": [
+   54,
+   57
+  ],
+  "571": [
+   93,
+   72
+  ],
+  "572": [
+   72,
+   63
+  ],
+  "573": [
+   78,
+   69
+  ],
+  "574": [
+   48,
+   60
+  ],
+  "575": [
+   72,
+   66
+  ],
+  "576": [
+   66,
+   72
+  ],
+  "577": [
+   51,
+   48
+  ],
+  "578": [
+   54,
+   63
+  ],
+  "579": [
+   96,
+   69
+  ],
+  "580": [
+   54,
+   63
+  ],
+  "581": [
+   96,
+   72
+  ],
+  "582": [
+   42,
+   54
+  ],
+  "583": [
+   51,
+   69
+  ],
+  "584": [
+   84,
+   75
+  ],
+  "585": [
+   60,
+   72
+  ],
+  "586": [
+   75,
+   78
+  ],
+  "587": [
+   75,
+   66
+  ],
+  "588": [
+   42,
+   57
+  ],
+  "589": [
+   75,
+   78
+  ],
+  "590": [
+   48,
+   57
+  ],
+  "591": [
+   66,
+   72
+  ],
+  "592": [
+   63,
+   66
+  ],
+  "593": [
+   90,
+   72
+  ],
+  "594": [
+   45,
+   72
+  ],
+  "595": [
+   69,
+   54
+  ],
+  "596": [
+   90,
+   72
+  ],
+  "597": [
+   51,
+   54
+  ],
+  "598": [
+   96,
+   72
+  ],
+  "599": [
+   72,
+   54
+  ],
+  "600": [
+   87,
+   63
+  ],
+  "601": [
+   96,
+   78
+  ],
+  "602": [
+   48,
+   39
+  ],
+  "603": [
+   69,
+   63
+  ],
+  "604": [
+   96,
+   72
+  ],
+  "605": [
+   45,
+   63
+  ],
+  "606": [
+   51,
+   72
+  ],
+  "607": [
+   45,
+   60
+  ],
+  "608": [
+   63,
+   60
+  ],
+  "609": [
+   93,
+   75
+  ],
+  "610": [
+   60,
+   66
+  ],
+  "611": [
+   81,
+   69
+  ],
+  "612": [
+   84,
+   78
+  ],
+  "613": [
+   48,
+   60
+  ],
+  "614": [
+   75,
+   72
+  ],
+  "615": [
+   63,
+   66
+  ],
+  "616": [
+   60,
+   51
+  ],
+  "617": [
+   75,
+   66
+  ],
+  "618": [
+   66,
+   48
+  ],
+  "619": [
+   60,
+   63
+  ],
+  "620": [
+   81,
+   72
+  ],
+  "621": [
+   87,
+   75
+  ],
+  "622": [
+   60,
+   60
+  ],
+  "623": [
+   84,
+   81
+  ],
+  "624": [
+   48,
+   66
+  ],
+  "625": [
+   72,
+   78
+  ],
+  "626": [
+   84,
+   69
+  ],
+  "627": [
+   57,
+   69
+  ],
+  "628": [
+   81,
+   63
+  ],
+  "629": [
+   72,
+   63
+  ],
+  "630": [
+   54,
+   72
+  ],
+  "631": [
+   90,
+   66
+  ],
+  "632": [
+   78,
+   54
+  ],
+  "633": [
+   54,
+   66
+  ],
+  "634": [
+   84,
+   72
+  ],
+  "635": [
+   93,
+   81
+  ],
+  "636": [
+   66,
+   63
+  ],
+  "637": [
+   84,
+   72
+  ],
+  "638": [
+   66,
+   81
+  ],
+  "639": [
+   93,
+   66
+  ],
+  "640": [
+   69,
+   84
+  ],
+  "641": [
+   96,
+   84
+  ],
+  "642": [
+   99,
+   87
+  ],
+  "643": [
+   102,
+   87
+  ],
+  "644": [
+   96,
+   87
+  ],
+  "645": [
+   99,
+   84
+  ],
+  "646": [
+   99,
+   84
+  ],
+  "647": [
+   81,
+   72
+  ],
+  "648": [
+   48,
+   69
+  ],
+  "649": [
+   72,
+   78
+  ],
+  "650": [
+   57,
+   72
+  ],
+  "651": [
+   69,
+   72
+  ],
+  "652": [
+   84,
+   78
+  ],
+  "653": [
+   57,
+   63
+  ],
+  "654": [
+   66,
+   72
+  ],
+  "655": [
+   87,
+   75
+  ],
+  "656": [
+   60,
+   63
+  ],
+  "657": [
+   75,
+   69
+  ],
+  "658": [
+   96,
+   69
+  ],
+  "659": [
+   54,
+   81
+  ],
+  "660": [
+   84,
+   81
+  ],
+  "661": [
+   60,
+   51
+  ],
+  "662": [
+   72,
+   66
+  ],
+  "663": [
+   96,
+   78
+  ],
+  "664": [
+   48,
+   69
+  ],
+  "665": [
+   54,
+   57
+  ],
+  "666": [
+   84,
+   81
+  ],
+  "667": [
+   69,
+   66
+  ],
+  "668": [
+   102,
+   81
+  ],
+  "669": [
+   51,
+   60
+  ],
+  "670": [
+   63,
+   72
+  ],
+  "671": [
+   84,
+   84
+  ],
+  "672": [
+   57,
+   60
+  ],
+  "673": [
+   75,
+   72
+  ],
+  "674": [
+   51,
+   63
+  ],
+  "675": [
+   90,
+   78
+  ],
+  "676": [
+   78,
+   87
+  ],
+  "677": [
+   54,
+   60
+  ],
+  "678": [
+   69,
+   72
+  ],
+  "679": [
+   60,
+   78
+  ],
+  "680": [
+   99,
+   72
+  ],
+  "681": [
+   87,
+   90
+  ],
+  "682": [
+   51,
+   54
+  ],
+  "683": [
+   63,
+   75
+  ],
+  "684": [
+   57,
+   54
+  ],
+  "685": [
+   66,
+   75
+  ],
+  "686": [
+   60,
+   66
+  ],
+  "687": [
+   78,
+   81
+  ],
+  "688": [
+   54,
+   78
+  ],
+  "689": [
+   96,
+   87
+  ],
+  "690": [
+   60,
+   69
+  ],
+  "691": [
+   102,
+   75
+  ],
+  "692": [
+   78,
+   57
+  ],
+  "693": [
+   99,
+   72
+  ],
+  "694": [
+   60,
+   57
+  ],
+  "695": [
+   72,
+   78
+  ],
+  "696": [
+   66,
+   57
+  ],
+  "697": [
+   96,
+   72
+  ],
+  "698": [
+   57,
+   78
+  ],
+  "699": [
+   78,
+   87
+  ],
+  "700": [
+   72,
+   75
+  ],
+  "701": [
+   75,
+   63
+  ],
+  "702": [
+   72,
+   57
+  ],
+  "703": [
+   48,
+   45
+  ],
+  "704": [
+   42,
+   48
+  ],
+  "705": [
+   51,
+   72
+  ],
+  "706": [
+   78,
+   78
+  ],
+  "707": [
+   87,
+   78
+  ],
+  "708": [
+   81,
+   69
+  ],
+  "709": [
+   81,
+   81
+  ],
+  "710": [
+   57,
+   63
+  ],
+  "711": [
+   69,
+   75
+  ],
+  "712": [
+   57,
+   60
+  ],
+  "713": [
+   87,
+   78
+  ],
+  "714": [
+   69,
+   66
+  ],
+  "715": [
+   90,
+   78
+  ],
+  "716": [
+   93,
+   90
+  ],
+  "717": [
+   96,
+   84
+  ],
+  "718": [
+   90,
+   90
+  ],
+  "719": [
+   69,
+   72
+  ],
+  "720": [
+   69,
+   63
+  ],
+  "721": [
+   81,
+   87
+  ],
+  "722": [
+   57,
+   60
+  ],
+  "723": [
+   57,
+   72
+  ],
+  "724": [
+   63,
+   81
+  ],
+  "725": [
+   81,
+   69
+  ],
+  "726": [
+   75,
+   78
+  ],
+  "727": [
+   75,
+   78
+  ],
+  "728": [
+   57,
+   66
+  ],
+  "729": [
+   75,
+   78
+  ],
+  "730": [
+   90,
+   87
+  ],
+  "731": [
+   57,
+   72
+  ],
+  "732": [
+   63,
+   72
+  ],
+  "733": [
+   75,
+   69
+  ],
+  "734": [
+   81,
+   54
+  ],
+  "735": [
+   66,
+   78
+  ],
+  "736": [
+   57,
+   45
+  ],
+  "737": [
+   60,
+   63
+  ],
+  "738": [
+   72,
+   69
+  ],
+  "739": [
+   66,
+   69
+  ],
+  "740": [
+   102,
+   75
+  ],
+  "741": [
+   57,
+   63
+  ],
+  "742": [
+   63,
+   66
+  ],
+  "743": [
+   66,
+   72
+  ],
+  "744": [
+   63,
+   72
+  ],
+  "745": [
+   81,
+   75
+  ],
+  "746": [
+   60,
+   45
+  ],
+  "747": [
+   72,
+   66
+  ],
+  "748": [
+   84,
+   78
+  ],
+  "749": [
+   69,
+   75
+  ],
+  "750": [
+   81,
+   78
+  ],
+  "751": [
+   48,
+   66
+  ],
+  "752": [
+   75,
+   60
+  ],
+  "753": [
+   48,
+   63
+  ],
+  "754": [
+   66,
+   72
+  ],
+  "755": [
+   45,
+   78
+  ],
+  "756": [
+   72,
+   78
+  ],
+  "757": [
+   63,
+   60
+  ],
+  "758": [
+   78,
+   72
+  ],
+  "759": [
+   57,
+   63
+  ],
+  "760": [
+   57,
+   78
+  ],
+  "761": [
+   54,
+   63
+  ],
+  "762": [
+   60,
+   75
+  ],
+  "763": [
+   69,
+   78
+  ],
+  "764": [
+   81,
+   90
+  ],
+  "765": [
+   90,
+   69
+  ],
+  "766": [
+   78,
+   81
+  ],
+  "767": [
+   78,
+   48
+  ],
+  "768": [
+   78,
+   75
+  ],
+  "769": [
+   75,
+   72
+  ],
+  "770": [
+   75,
+   78
+  ],
+  "771": [
+   60,
+   45
+  ],
+  "772": [
+   81,
+   87
+  ],
+  "773": [
+   84,
+   90
+  ],
+  "774": [
+   57,
+   60
+  ],
+  "775": [
+   69,
+   66
+  ],
+  "776": [
+   75,
+   81
+  ],
+  "777": [
+   57,
+   63
+  ],
+  "778": [
+   57,
+   72
+  ],
+  "779": [
+   69,
+   66
+  ],
+  "780": [
+   87,
+   63
+  ],
+  "781": [
+   63,
+   81
+  ],
+  "782": [
+   72,
+   75
+  ],
+  "783": [
+   69,
+   84
+  ],
+  "784": [
+   93,
+   84
+  ],
+  "785": [
+   90,
+   84
+  ],
+  "786": [
+   66,
+   81
+  ],
+  "787": [
+   72,
+   84
+  ],
+  "788": [
+   72,
+   84
+  ],
+  "789": [
+   75,
+   66
+  ],
+  "790": [
+   69,
+   63
+  ],
+  "791": [
+   93,
+   87
+  ],
+  "792": [
+   90,
+   90
+  ],
+  "793": [
+   69,
+   78
+  ],
+  "794": [
+   81,
+   90
+  ],
+  "795": [
+   90,
+   90
+  ],
+  "796": [
+   60,
+   90
+  ],
+  "797": [
+   102,
+   90
+  ],
+  "798": [
+   99,
+   90
+  ],
+  "799": [
+   117,
+   90
+  ],
+  "800": [
+   90,
+   90
+  ],
+  "801": [
+   66,
+   87
+  ],
+  "802": [
+   72,
+   78
+  ],
+  "803": [
+   75,
+   81
+  ],
+  "804": [
+   105,
+   90
+  ],
+  "805": [
+   90,
+   90
+  ],
+  "806": [
+   72,
+   81
+  ],
+  "807": [
+   72,
+   78
+  ],
+  "808": [
+   57,
+   57
+  ],
+  "809": [
+   96,
+   69
+  ],
+  "810": [
+   63,
+   75
+  ],
+  "811": [
+   72,
+   78
+  ],
+  "812": [
+   84,
+   78
+  ],
+  "813": [
+   57,
+   84
+  ],
+  "814": [
+   69,
+   75
+  ],
+  "815": [
+   51,
+   90
+  ],
+  "816": [
+   72,
+   75
+  ],
+  "817": [
+   78,
+   78
+  ],
+  "818": [
+   72,
+   87
+  ],
+  "819": [
+   72,
+   69
+  ],
+  "820": [
+   75,
+   78
+  ],
+  "821": [
+   63,
+   54
+  ],
+  "822": [
+   72,
+   63
+  ],
+  "823": [
+   87,
+   78
+  ],
+  "824": [
+   51,
+   69
+  ],
+  "825": [
+   66,
+   60
+  ],
+  "826": [
+   81,
+   87
+  ],
+  "827": [
+   78,
+   69
+  ],
+  "828": [
+   87,
+   78
+  ],
+  "829": [
+   57,
+   60
+  ],
+  "830": [
+   63,
+   75
+  ],
+  "831": [
+   66,
+   63
+  ],
+  "832": [
+   72,
+   72
+  ],
+  "833": [
+   54,
+   75
+  ],
+  "834": [
+   108,
+   75
+  ],
+  "835": [
+   72,
+   66
+  ],
+  "836": [
+   72,
+   72
+  ],
+  "837": [
+   66,
+   57
+  ],
+  "838": [
+   72,
+   78
+  ],
+  "839": [
+   81,
+   81
+  ],
+  "840": [
+   51,
+   57
+  ],
+  "841": [
+   87,
+   78
+  ],
+  "842": [
+   84,
+   81
+  ],
+  "843": [
+   60,
+   63
+  ],
+  "844": [
+   81,
+   63
+  ],
+  "845": [
+   78,
+   84
+  ],
+  "846": [
+   81,
+   51
+  ],
+  "847": [
+   87,
+   54
+  ],
+  "848": [
+   60,
+   69
+  ],
+  "849": [
+   54,
+   81
+  ],
+  "850": [
+   69,
+   36
+  ],
+  "851": [
+   99,
+   81
+  ],
+  "852": [
+   63,
+   57
+  ],
+  "853": [
+   75,
+   75
+  ],
+  "854": [
+   57,
+   48
+  ],
+  "855": [
+   72,
+   75
+  ],
+  "856": [
+   63,
+   75
+  ],
+  "857": [
+   72,
+   72
+  ],
+  "858": [
+   72,
+   81
+  ],
+  "859": [
+   57,
+   66
+  ],
+  "860": [
+   72,
+   75
+  ],
+  "861": [
+   81,
+   84
+  ],
+  "862": [
+   81,
+   87
+  ],
+  "863": [
+   66,
+   78
+  ],
+  "864": [
+   96,
+   87
+  ],
+  "865": [
+   120,
+   84
+  ],
+  "866": [
+   75,
+   78
+  ],
+  "867": [
+   87,
+   72
+  ],
+  "868": [
+   54,
+   57
+  ],
+  "869": [
+   63,
+   75
+  ],
+  "870": [
+   99,
+   75
+  ],
+  "871": [
+   63,
+   57
+  ],
+  "872": [
+   57,
+   48
+  ],
+  "873": [
+   81,
+   72
+  ],
+  "874": [
+   87,
+   84
+  ],
+  "875": [
+   57,
+   87
+  ],
+  "876": [
+   63,
+   78
+  ],
+  "877": [
+   57,
+   69
+  ],
+  "878": [
+   81,
+   72
+  ],
+  "879": [
+   81,
+   75
+  ],
+  "880": [
+   84,
+   72
+  ],
+  "881": [
+   60,
+   75
+  ],
+  "882": [
+   72,
+   75
+  ],
+  "883": [
+   75,
+   69
+  ],
+  "884": [
+   72,
+   81
+  ],
+  "885": [
+   78,
+   57
+  ],
+  "886": [
+   84,
+   78
+  ],
+  "887": [
+   96,
+   84
+  ],
+  "888": [
+   90,
+   75
+  ],
+  "889": [
+   84,
+   87
+  ],
+  "890": [
+   105,
+   90
+  ],
+  "891": [
+   60,
+   72
+  ],
+  "892": [
+   84,
+   72
+  ],
+  "893": [
+   105,
+   78
+  ],
+  "894": [
+   96,
+   75
+  ],
+  "895": [
+   90,
+   84
+  ],
+  "896": [
+   78,
+   78
+  ],
+  "897": [
+   84,
+   78
+  ],
+  "898": [
+   63,
+   72
+  ],
+  "899": [
+   72,
+   87
+  ],
+  "900": [
+   81,
+   81
+  ],
+  "901": [
+   96,
+   81
+  ],
+  "902": [
+   102,
+   78
+  ],
+  "903": [
+   69,
+   87
+  ],
+  "904": [
+   90,
+   81
+  ],
+  "905": [
+   81,
+   90
+  ],
+  "906": [
+   72,
+   72
+  ],
+  "907": [
+   51,
+   72
+  ],
+  "908": [
+   66,
+   84
+  ],
+  "909": [
+   66,
+   78
+  ],
+  "910": [
+   69,
+   69
+  ],
+  "911": [
+   90,
+   75
+  ],
+  "912": [
+   54,
+   75
+  ],
+  "913": [
+   57,
+   75
+  ],
+  "914": [
+   78,
+   81
+  ],
+  "915": [
+   66,
+   51
+  ],
+  "916": [
+   81,
+   63
+  ],
+  "917": [
+   69,
+   75
+  ],
+  "918": [
+   72,
+   78
+  ],
+  "919": [
+   63,
+   60
+  ],
+  "920": [
+   75,
+   84
+  ],
+  "921": [
+   54,
+   60
+  ],
+  "922": [
+   57,
+   63
+  ],
+  "923": [
+   63,
+   78
+  ],
+  "924": [
+   93,
+   66
+  ],
+  "925": [
+   93,
+   75
+  ],
+  "926": [
+   72,
+   63
+  ],
+  "927": [
+   78,
+   69
+  ],
+  "928": [
+   45,
+   66
+  ],
+  "929": [
+   57,
+   72
+  ],
+  "930": [
+   90,
+   87
+  ],
+  "931": [
+   66,
+   66
+  ],
+  "932": [
+   60,
+   63
+  ],
+  "933": [
+   75,
+   60
+  ],
+  "934": [
+   99,
+   90
+  ],
+  "935": [
+   45,
+   69
+  ],
+  "936": [
+   66,
+   90
+  ],
+  "937": [
+   93,
+   90
+  ],
+  "938": [
+   39,
+   63
+  ],
+  "939": [
+   60,
+   66
+  ],
+  "940": [
+   54,
+   57
+  ],
+  "941": [
+   69,
+   69
+  ],
+  "942": [
+   78,
+   66
+  ],
+  "943": [
+   78,
+   66
+  ],
+  "944": [
+   54,
+   51
+  ],
+  "945": [
+   75,
+   69
+  ],
+  "946": [
+   63,
+   54
+  ],
+  "947": [
+   63,
+   60
+  ],
+  "948": [
+   57,
+   75
+  ],
+  "949": [
+   66,
+   81
+  ],
+  "950": [
+   90,
+   57
+  ],
+  "951": [
+   51,
+   66
+  ],
+  "952": [
+   81,
+   72
+  ],
+  "953": [
+   78,
+   63
+  ],
+  "954": [
+   66,
+   87
+  ],
+  "955": [
+   57,
+   54
+  ],
+  "956": [
+   84,
+   72
+  ],
+  "957": [
+   51,
+   63
+  ],
+  "958": [
+   57,
+   66
+  ],
+  "959": [
+   99,
+   90
+  ],
+  "960": [
+   54,
+   69
+  ],
+  "961": [
+   81,
+   75
+  ],
+  "962": [
+   63,
+   81
+  ],
+  "963": [
+   72,
+   51
+  ],
+  "964": [
+   72,
+   51
+  ],
+  "965": [
+   72,
+   63
+  ],
+  "966": [
+   81,
+   69
+  ],
+  "967": [
+   78,
+   78
+  ],
+  "968": [
+   75,
+   90
+  ],
+  "969": [
+   69,
+   66
+  ],
+  "970": [
+   66,
+   54
+  ],
+  "971": [
+   66,
+   69
+  ],
+  "972": [
+   87,
+   72
+  ],
+  "973": [
+   51,
+   84
+  ],
+  "974": [
+   75,
+   54
+  ],
+  "975": [
+   108,
+   72
+  ],
+  "976": [
+   87,
+   69
+  ],
+  "977": [
+   102,
+   90
+  ],
+  "978": [
+   63,
+   60
+  ],
+  "979": [
+   87,
+   84
+  ],
+  "980": [
+   72,
+   51
+  ],
+  "981": [
+   75,
+   90
+  ],
+  "982": [
+   72,
+   84
+  ],
+  "983": [
+   81,
+   90
+  ],
+  "984": [
+   102,
+   81
+  ],
+  "985": [
+   87,
+   69
+  ],
+  "986": [
+   75,
+   75
+  ],
+  "987": [
+   78,
+   78
+  ],
+  "988": [
+   84,
+   90
+  ],
+  "989": [
+   81,
+   87
+  ],
+  "990": [
+   90,
+   75
+  ],
+  "991": [
+   66,
+   78
+  ],
+  "992": [
+   96,
+   84
+  ],
+  "993": [
+   96,
+   81
+  ],
+  "994": [
+   87,
+   90
+  ],
+  "995": [
+   87,
+   90
+  ],
+  "996": [
+   45,
+   63
+  ],
+  "997": [
+   69,
+   63
+  ],
+  "998": [
+   81,
+   84
+  ],
+  "999": [
+   69,
+   84
+  ],
+  "1000": [
+   72,
+   87
+  ],
+  "1001": [
+   96,
+   90
+  ],
+  "1002": [
+   99,
+   72
+  ],
+  "1003": [
+   90,
+   90
+  ],
+  "1004": [
+   72,
+   69
+  ],
+  "1005": [
+   102,
+   87
+  ],
+  "1006": [
+   72,
+   87
+  ],
+  "1007": [
+   102,
+   90
+  ],
+  "1008": [
+   96,
+   90
+  ],
+  "1009": [
+   102,
+   84
+  ],
+  "1010": [
+   69,
+   84
+  ],
+  "1011": [
+   63,
+   72
+  ],
+  "1012": [
+   84,
+   72
+  ],
+  "1013": [
+   66,
+   78
+  ],
+  "1014": [
+   102,
+   81
+  ],
+  "1015": [
+   57,
+   69
+  ],
+  "1016": [
+   78,
+   87
+  ],
+  "1017": [
+   78,
+   78
+  ],
+  "1018": [
+   99,
+   90
+  ],
+  "1019": [
+   99,
+   90
+  ],
+  "1020": [
+   99,
+   90
+  ],
+  "1021": [
+   96,
+   90
+  ],
+  "1022": [
+   93,
+   81
+  ],
+  "1023": [
+   66,
+   90
+  ],
+  "1024": [
+   78,
+   66
+  ],
+  "1025": [
+   102,
+   78
+  ],
+  "1033": [
+   45,
+   48
+  ],
+  "1034": [
+   72,
+   81
+  ],
+  "1035": [
+   69,
+   66
+  ],
+  "1036": [
+   69,
+   66
+  ],
+  "1037": [
+   78,
+   66
+  ],
+  "1038": [
+   69,
+   66
+  ],
+  "1039": [
+   69,
+   66
+  ],
+  "1040": [
+   36,
+   66
+  ],
+  "1041": [
+   39,
+   69
+  ],
+  "1042": [
+   42,
+   69
+  ],
+  "1043": [
+   51,
+   66
+  ],
+  "1044": [
+   48,
+   63
+  ],
+  "1045": [
+   48,
+   66
+  ],
+  "1046": [
+   51,
+   63
+  ],
+  "1047": [
+   36,
+   69
+  ],
+  "1048": [
+   60,
+   63
+  ],
+  "1049": [
+   36,
+   66
+  ],
+  "1050": [
+   39,
+   63
+  ],
+  "1051": [
+   45,
+   66
+  ],
+  "1052": [
+   45,
+   66
+  ],
+  "1053": [
+   60,
+   66
+  ],
+  "1054": [
+   72,
+   48
+  ],
+  "1055": [
+   60,
+   63
+  ],
+  "1056": [
+   39,
+   66
+  ],
+  "1057": [
+   48,
+   54
+  ],
+  "1058": [
+   36,
+   60
+  ],
+  "1059": [
+   48,
+   75
+  ],
+  "1060": [
+   42,
+   63
+  ],
+  "1061": [
+   60,
+   54
+  ],
+  "1062": [
+   48,
+   60
+  ],
+  "1063": [
+   57,
+   57
+  ],
+  "1064": [
+   45,
+   48
+  ],
+  "1065": [
+   45,
+   63
+  ],
+  "1066": [
+   36,
+   63
+  ],
+  "1067": [
+   48,
+   69
+  ],
+  "1068": [
+   57,
+   75
+  ],
+  "1069": [
+   60,
+   66
+  ],
+  "1070": [
+   93,
+   81
+  ],
+  "1071": [
+   84,
+   75
+  ],
+  "1072": [
+   81,
+   81
+  ],
+  "1073": [
+   51,
+   75
+  ],
+  "1074": [
+   54,
+   75
+  ],
+  "1075": [
+   78,
+   75
+  ],
+  "1076": [
+   75,
+   75
+  ],
+  "1077": [
+   66,
+   69
+  ],
+  "1078": [
+   63,
+   66
+  ],
+  "1079": [
+   75,
+   72
+  ],
+  "1080": [
+   84,
+   69
+  ],
+  "1081": [
+   96,
+   75
+  ],
+  "1082": [
+   93,
+   72
+  ],
+  "1083": [
+   78,
+   78
+  ],
+  "1084": [
+   90,
+   72
+  ],
+  "1085": [
+   90,
+   81
+  ],
+  "1086": [
+   69,
+   72
+  ],
+  "1087": [
+   60,
+   69
+  ],
+  "1088": [
+   60,
+   54
+  ],
+  "1089": [
+   66,
+   57
+  ],
+  "1090": [
+   60,
+   72
+  ],
+  "1091": [
+   60,
+   72
+  ],
+  "1092": [
+   60,
+   72
+  ],
+  "1093": [
+   81,
+   81
+  ],
+  "1094": [
+   75,
+   78
+  ],
+  "1095": [
+   75,
+   78
+  ],
+  "1096": [
+   63,
+   66
+  ],
+  "1097": [
+   87,
+   72
+  ],
+  "1098": [
+   96,
+   87
+  ],
+  "1099": [
+   102,
+   84
+  ],
+  "1100": [
+   87,
+   87
+  ],
+  "1101": [
+   105,
+   90
+  ],
+  "1102": [
+   114,
+   90
+  ],
+  "1103": [
+   96,
+   72
+  ],
+  "1104": [
+   51,
+   75
+  ],
+  "1105": [
+   84,
+   81
+  ],
+  "1106": [
+   84,
+   81
+  ],
+  "1107": [
+   84,
+   81
+  ],
+  "1108": [
+   84,
+   81
+  ],
+  "1109": [
+   84,
+   81
+  ],
+  "1110": [
+   84,
+   81
+  ],
+  "1111": [
+   84,
+   81
+  ],
+  "1112": [
+   84,
+   81
+  ],
+  "1113": [
+   84,
+   81
+  ],
+  "1114": [
+   84,
+   81
+  ],
+  "1115": [
+   84,
+   81
+  ],
+  "1116": [
+   84,
+   81
+  ],
+  "1117": [
+   84,
+   81
+  ],
+  "1118": [
+   84,
+   81
+  ],
+  "1119": [
+   84,
+   81
+  ],
+  "1120": [
+   84,
+   81
+  ],
+  "1121": [
+   84,
+   81
+  ],
+  "1122": [
+   84,
+   81
+  ],
+  "1123": [
+   84,
+   81
+  ],
+  "1124": [
+   96,
+   78
+  ],
+  "1125": [
+   51,
+   60
+  ],
+  "1126": [
+   51,
+   60
+  ],
+  "1127": [
+   51,
+   60
+  ],
+  "1128": [
+   51,
+   60
+  ],
+  "1129": [
+   63,
+   72
+  ],
+  "1130": [
+   75,
+   69
+  ],
+  "1131": [
+   63,
+   72
+  ],
+  "1132": [
+   63,
+   72
+  ],
+  "1133": [
+   63,
+   72
+  ],
+  "1134": [
+   84,
+   84
+  ],
+  "1135": [
+   84,
+   84
+  ],
+  "1136": [
+   84,
+   84
+  ],
+  "1137": [
+   84,
+   84
+  ],
+  "1138": [
+   78,
+   84
+  ],
+  "1139": [
+   81,
+   81
+  ],
+  "1140": [
+   78,
+   87
+  ],
+  "1141": [
+   81,
+   84
+  ],
+  "1142": [
+   81,
+   81
+  ],
+  "1143": [
+   81,
+   81
+  ],
+  "1144": [
+   78,
+   81
+  ],
+  "1145": [
+   78,
+   84
+  ],
+  "1146": [
+   84,
+   87
+  ],
+  "1147": [
+   69,
+   72
+  ],
+  "1148": [
+   111,
+   90
+  ],
+  "1149": [
+   93,
+   90
+  ],
+  "1150": [
+   120,
+   87
+  ],
+  "1151": [
+   69,
+   69
+  ],
+  "1152": [
+   81,
+   72
+  ],
+  "1153": [
+   84,
+   90
+  ],
+  "1154": [
+   69,
+   60
+  ],
+  "1155": [
+   81,
+   78
+  ],
+  "1156": [
+   72,
+   69
+  ],
+  "1157": [
+   96,
+   81
+  ],
+  "1158": [
+   51,
+   60
+  ],
+  "1159": [
+   75,
+   78
+  ],
+  "1160": [
+   69,
+   69
+  ],
+  "1161": [
+   78,
+   72
+  ],
+  "1162": [
+   78,
+   51
+  ],
+  "1163": [
+   93,
+   78
+  ],
+  "1164": [
+   69,
+   75
+  ],
+  "1165": [
+   69,
+   60
+  ],
+  "1166": [
+   84,
+   81
+  ],
+  "1167": [
+   69,
+   90
+  ],
+  "1168": [
+   78,
+   75
+  ],
+  "1169": [
+   96,
+   72
+  ],
+  "1170": [
+   90,
+   90
+  ],
+  "1171": [
+   102,
+   90
+  ],
+  "1172": [
+   66,
+   66
+  ],
+  "1173": [
+   60,
+   72
+  ],
+  "1174": [
+   57,
+   75
+  ],
+  "1175": [
+   69,
+   78
+  ],
+  "1176": [
+   90,
+   72
+  ],
+  "1177": [
+   57,
+   60
+  ],
+  "1178": [
+   57,
+   60
+  ],
+  "1179": [
+   57,
+   60
+  ],
+  "1180": [
+   57,
+   60
+  ],
+  "1181": [
+   57,
+   60
+  ],
+  "1182": [
+   57,
+   60
+  ],
+  "1183": [
+   57,
+   60
+  ],
+  "1184": [
+   66,
+   87
+  ],
+  "1185": [
+   78,
+   69
+  ],
+  "1186": [
+   78,
+   69
+  ],
+  "1187": [
+   78,
+   69
+  ],
+  "1188": [
+   78,
+   69
+  ],
+  "1189": [
+   78,
+   69
+  ],
+  "1190": [
+   75,
+   69
+  ],
+  "1191": [
+   78,
+   69
+  ],
+  "1192": [
+   81,
+   81
+  ],
+  "1193": [
+   108,
+   90
+  ],
+  "1194": [
+   99,
+   90
+  ],
+  "1195": [
+   111,
+   90
+  ],
+  "1196": [
+   90,
+   75
+  ],
+  "1197": [
+   84,
+   72
+  ],
+  "1198": [
+   69,
+   69
+  ],
+  "1199": [
+   78,
+   69
+  ],
+  "1200": [
+   87,
+   75
+  ],
+  "1201": [
+   120,
+   78
+  ],
+  "1202": [
+   93,
+   90
+  ],
+  "1203": [
+   63,
+   63
+  ],
+  "1204": [
+   69,
+   66
+  ],
+  "1205": [
+   72,
+   54
+  ],
+  "1206": [
+   72,
+   66
+  ],
+  "1207": [
+   57,
+   51
+  ],
+  "1208": [
+   69,
+   84
+  ],
+  "1209": [
+   81,
+   90
+  ],
+  "1210": [
+   72,
+   54
+  ],
+  "1211": [
+   72,
+   60
+  ],
+  "1212": [
+   93,
+   87
+  ],
+  "1213": [
+   96,
+   90
+  ],
+  "1214": [
+   51,
+   75
+  ],
+  "1215": [
+   63,
+   75
+  ],
+  "1216": [
+   63,
+   75
+  ],
+  "1217": [
+   63,
+   75
+  ],
+  "1218": [
+   63,
+   75
+  ],
+  "1219": [
+   63,
+   75
+  ],
+  "1220": [
+   63,
+   75
+  ],
+  "1221": [
+   63,
+   75
+  ],
+  "1222": [
+   63,
+   75
+  ],
+  "1223": [
+   48,
+   75
+  ],
+  "1224": [
+   72,
+   75
+  ],
+  "1225": [
+   57,
+   69
+  ],
+  "1226": [
+   102,
+   90
+  ],
+  "1227": [
+   108,
+   90
+  ],
+  "1228": [
+   84,
+   48
+  ],
+  "1229": [
+   78,
+   75
+  ],
+  "1230": [
+   105,
+   78
+  ],
+  "1231": [
+   78,
+   69
+  ],
+  "1232": [
+   84,
+   78
+  ],
+  "1233": [
+   90,
+   75
+  ],
+  "1234": [
+   90,
+   60
+  ],
+  "1235": [
+   66,
+   87
+  ],
+  "1236": [
+   78,
+   90
+  ],
+  "1237": [
+   84,
+   90
+  ],
+  "1238": [
+   69,
+   66
+  ],
+  "1239": [
+   90,
+   87
+  ],
+  "1240": [
+   48,
+   48
+  ],
+  "1241": [
+   54,
+   54
+  ],
+  "1242": [
+   78,
+   87
+  ],
+  "1243": [
+   78,
+   63
+  ],
+  "1244": [
+   57,
+   69
+  ],
+  "1245": [
+   99,
+   75
+  ],
+  "1246": [
+   54,
+   75
+  ],
+  "1247": [
+   60,
+   72
+  ],
+  "1248": [
+   87,
+   90
+  ],
+  "1249": [
+   81,
+   63
+  ],
+  "1250": [
+   51,
+   72
+  ],
+  "1251": [
+   84,
+   81
+  ],
+  "1252": [
+   87,
+   75
+  ],
+  "1253": [
+   69,
+   81
+  ],
+  "1254": [
+   99,
+   72
+  ],
+  "1255": [
+   108,
+   81
+  ],
+  "1256": [
+   81,
+   69
+  ],
+  "1257": [
+   93,
+   87
+  ],
+  "1258": [
+   90,
+   78
+  ],
+  "1259": [
+   57,
+   54
+  ],
+  "1260": [
+   81,
+   69
+  ],
+  "1261": [
+   72,
+   90
+  ],
+  "1262": [
+   99,
+   75
+  ],
+  "1263": [
+   63,
+   60
+  ],
+  "1264": [
+   63,
+   60
+  ],
+  "1265": [
+   66,
+   66
+  ],
+  "1266": [
+   66,
+   66
+  ],
+  "1267": [
+   66,
+   66
+  ],
+  "1268": [
+   54,
+   66
+  ],
+  "1269": [
+   87,
+   90
+  ],
+  "1270": [
+   90,
+   87
+  ],
+  "1271": [
+   60,
+   54
+  ],
+  "1272": [
+   96,
+   90
+  ],
+  "1273": [
+   78,
+   78
+  ],
+  "1274": [
+   81,
+   78
+  ],
+  "1275": [
+   78,
+   78
+  ],
+  "1276": [
+   102,
+   72
+  ],
+  "1277": [
+   96,
+   90
+  ],
+  "1278": [
+   90,
+   87
+  ],
+  "1279": [
+   90,
+   87
+  ],
+  "1280": [
+   90,
+   87
+  ],
+  "1281": [
+   90,
+   87
+  ],
+  "1282": [
+   90,
+   87
+  ],
+  "1283": [
+   90,
+   87
+  ],
+  "1284": [
+   90,
+   87
+  ],
+  "1285": [
+   90,
+   87
+  ],
+  "1286": [
+   90,
+   87
+  ],
+  "1287": [
+   90,
+   87
+  ],
+  "1288": [
+   90,
+   87
+  ],
+  "1289": [
+   90,
+   87
+  ],
+  "1290": [
+   90,
+   87
+  ],
+  "1291": [
+   90,
+   87
+  ],
+  "1292": [
+   90,
+   87
+  ],
+  "1293": [
+   90,
+   87
+  ],
+  "1294": [
+   90,
+   87
+  ],
+  "1295": [
+   72,
+   78
+  ],
+  "1296": [
+   72,
+   78
+  ],
+  "1297": [
+   72,
+   78
+  ],
+  "1298": [
+   72,
+   78
+  ],
+  "1299": [
+   84,
+   90
+  ],
+  "1300": [
+   84,
+   90
+  ],
+  "1301": [
+   84,
+   90
+  ],
+  "1302": [
+   84,
+   90
+  ],
+  "1303": [
+   84,
+   90
+  ],
+  "1304": [
+   84,
+   90
+  ],
+  "1305": [
+   84,
+   90
+  ],
+  "1306": [
+   84,
+   90
+  ],
+  "1307": [
+   84,
+   90
+  ],
+  "1308": [
+   84,
+   90
+  ],
+  "1309": [
+   84,
+   90
+  ],
+  "1310": [
+   84,
+   90
+  ],
+  "1311": [
+   84,
+   90
+  ],
+  "1312": [
+   84,
+   90
+  ],
+  "1313": [
+   84,
+   90
+  ],
+  "1314": [
+   84,
+   90
+  ],
+  "1315": [
+   84,
+   90
+  ],
+  "1320": [
+   93,
+   84
+  ],
+  "1321": [
+   120,
+   81
+  ],
+  "1322": [
+   120,
+   81
+  ],
+  "1323": [
+   96,
+   90
+  ],
+  "1324": [
+   87,
+   84
+  ],
+  "1325": [
+   111,
+   87
+  ],
+  "1326": [
+   96,
+   90
+  ],
+  "1327": [
+   81,
+   84
+  ],
+  "1328": [
+   108,
+   90
+  ],
+  "1329": [
+   96,
+   72
+  ],
+  "1330": [
+   99,
+   81
+  ],
+  "1331": [
+   96,
+   90
+  ],
+  "1332": [
+   102,
+   78
+  ],
+  "1333": [
+   69,
+   84
+  ],
+  "1334": [
+   66,
+   90
+  ],
+  "1335": [
+   93,
+   84
+  ],
+  "1336": [
+   120,
+   90
+  ],
+  "1337": [
+   90,
+   90
+  ],
+  "1338": [
+   108,
+   90
+  ],
+  "1339": [
+   75,
+   87
+  ],
+  "1340": [
+   90,
+   90
+  ],
+  "1341": [
+   114,
+   87
+  ],
+  "1342": [
+   102,
+   87
+  ],
+  "1343": [
+   102,
+   75
+  ],
+  "1344": [
+   84,
+   78
+  ],
+  "1345": [
+   90,
+   87
+  ],
+  "1346": [
+   96,
+   84
+  ],
+  "1347": [
+   99,
+   84
+  ],
+  "1348": [
+   93,
+   87
+  ],
+  "1349": [
+   84,
+   78
+  ],
+  "1350": [
+   81,
+   87
+  ],
+  "1351": [
+   99,
+   87
+  ],
+  "1352": [
+   87,
+   75
+  ],
+  "1353": [
+   84,
+   90
+  ],
+  "1354": [
+   84,
+   84
+  ],
+  "1355": [
+   75,
+   78
+  ],
+  "1356": [
+   111,
+   81
+  ],
+  "1357": [
+   102,
+   78
+  ],
+  "1358": [
+   111,
+   78
+  ],
+  "1359": [
+   111,
+   78
+  ],
+  "1360": [
+   114,
+   69
+  ],
+  "1361": [
+   114,
+   78
+  ],
+  "1362": [
+   120,
+   81
+  ],
+  "1363": [
+   105,
+   78
+  ],
+  "1364": [
+   96,
+   78
+  ],
+  "1365": [
+   63,
+   78
+  ],
+  "1366": [
+   87,
+   84
+  ],
+  "1367": [
+   81,
+   84
+  ],
+  "1368": [
+   72,
+   84
+  ],
+  "1369": [
+   96,
+   81
+  ],
+  "1370": [
+   105,
+   90
+  ],
+  "1371": [
+   96,
+   90
+  ],
+  "1372": [
+   93,
+   90
+  ],
+  "1373": [
+   78,
+   90
+  ],
+  "1374": [
+   93,
+   90
+  ],
+  "1375": [
+   108,
+   90
+  ],
+  "1376": [
+   120,
+   90
+  ],
+  "1377": [
+   105,
+   90
+  ],
+  "1378": [
+   87,
+   90
+  ],
+  "1379": [
+   99,
+   90
+  ],
+  "1380": [
+   120,
+   90
+  ],
+  "1381": [
+   111,
+   90
+  ],
+  "1382": [
+   99,
+   90
+  ],
+  "1383": [
+   120,
+   90
+  ],
+  "1384": [
+   105,
+   90
+  ],
+  "1385": [
+   96,
+   90
+  ],
+  "1386": [
+   63,
+   90
+  ],
+  "1387": [
+   63,
+   90
+  ],
+  "1388": [
+   99,
+   90
+  ],
+  "1389": [
+   87,
+   90
+  ],
+  "1390": [
+   102,
+   90
+  ],
+  "1391": [
+   87,
+   90
+  ],
+  "1392": [
+   90,
+   90
+  ],
+  "1393": [
+   84,
+   90
+  ],
+  "1394": [
+   87,
+   90
+  ],
+  "1395": [
+   78,
+   90
+  ],
+  "1396": [
+   120,
+   90
+  ],
+  "1397": [
+   102,
+   90
+  ],
+  "1398": [
+   93,
+   90
+  ],
+  "1399": [
+   120,
+   90
+  ],
+  "1400": [
+   99,
+   90
+  ],
+  "1401": [
+   96,
+   90
+  ],
+  "1402": [
+   75,
+   90
+  ],
+  "1403": [
+   78,
+   84
+  ],
+  "1404": [
+   111,
+   84
+  ],
+  "1405": [
+   90,
+   90
+  ],
+  "1406": [
+   72,
+   78
+  ],
+  "1407": [
+   99,
+   87
+  ],
+  "1408": [
+   87,
+   90
+  ],
+  "1409": [
+   102,
+   78
+  ],
+  "1410": [
+   90,
+   78
+  ],
+  "1411": [
+   87,
+   90
+  ],
+  "1412": [
+   102,
+   90
+  ],
+  "1413": [
+   102,
+   81
+  ],
+  "1414": [
+   93,
+   90
+  ],
+  "1415": [
+   72,
+   81
+  ],
+  "1416": [
+   102,
+   90
+  ],
+  "1417": [
+   90,
+   90
+  ],
+  "1418": [
+   102,
+   84
+  ],
+  "1419": [
+   102,
+   90
+  ],
+  "1420": [
+   102,
+   90
+  ],
+  "1421": [
+   99,
+   87
+  ],
+  "1422": [
+   93,
+   90
+  ],
+  "1423": [
+   90,
+   90
+  ],
+  "1424": [
+   102,
+   90
+  ],
+  "1425": [
+   102,
+   90
+  ],
+  "1426": [
+   96,
+   84
+  ],
+  "1427": [
+   102,
+   90
+  ],
+  "1428": [
+   96,
+   90
+  ],
+  "1429": [
+   102,
+   90
+  ],
+  "1430": [
+   102,
+   84
+  ],
+  "1431": [
+   120,
+   84
+  ],
+  "1432": [
+   96,
+   90
+  ],
+  "1433": [
+   87,
+   90
+  ],
+  "1434": [
+   93,
+   87
+  ],
+  "1435": [
+   96,
+   75
+  ],
+  "1436": [
+   72,
+   78
+  ],
+  "1437": [
+   99,
+   81
+  ],
+  "1438": [
+   102,
+   90
+  ],
+  "1439": [
+   96,
+   90
+  ],
+  "1440": [
+   60,
+   90
+  ],
+  "1441": [
+   102,
+   90
+  ],
+  "1442": [
+   81,
+   84
+  ],
+  "1443": [
+   105,
+   90
+  ],
+  "1444": [
+   105,
+   90
+  ],
+  "1445": [
+   90,
+   84
+  ],
+  "1446": [
+   84,
+   81
+  ],
+  "1447": [
+   96,
+   90
+  ],
+  "1448": [
+   102,
+   81
+  ],
+  "1449": [
+   102,
+   90
+  ],
+  "1450": [
+   102,
+   81
+  ],
+  "1451": [
+   102,
+   90
+  ]
+ }
+}
