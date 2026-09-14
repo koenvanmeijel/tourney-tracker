@@ -30,7 +30,14 @@ const NAME_ALIASES: Record<string, string> = {
   'ice calyrex':'calyrexice',
   'ice rider calyrex':'calyrexice',
   'shadow calyrex':'calyrexshadow',
-  'shadow rider calyrex':'calyrexshadow'
+  'shadow rider calyrex':'calyrexshadow',
+  'bloodmoon ursaluna':'ursalunabloodmoon',
+  'blood moon ursaluna':'ursalunabloodmoon',
+  'paldean tauros':'taurospaldeablaze',
+  'primal kyogre':'kyogreprimal',
+  'primal groudon':'groudonprimal',
+  'ash greninja':'greninjaash',
+  'ultra necrozma':'necrozmaultra'
 };
 
 export function toShowdownId(rawName: string): string {

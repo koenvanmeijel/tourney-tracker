@@ -10,7 +10,12 @@ import {
   updateEvent as updateEventRow,
   type NewEventWithTimestamps,
 } from '@/db/events';
-import { addEventPhoto, removeEventPhoto, reorderEventPhotos } from '@/db/eventPhotos';
+import {
+  addEventPhoto,
+  removeEventPhoto,
+  reorderEventPhotos,
+  setEventPhotoThumbnail,
+} from '@/db/eventPhotos';
 import type { EventRecord, NewEvent } from '@/models/types';
 import { savePhotoFile } from '@/utils/eventPhotoStorage';
 
@@ -27,6 +32,7 @@ interface EventsContextValue {
   addPhoto: (eventId: number, sourceUri: string) => Promise<void>;
   removePhoto: (photoId: number) => Promise<void>;
   reorderPhotos: (eventId: number, photoIds: number[]) => Promise<void>;
+  setThumbnail: (eventId: number, photoId: number) => Promise<void>;
 }
 
 const EventsContext = createContext<EventsContextValue | null>(null);
@@ -117,6 +123,14 @@ export function EventsProvider({ children }: { children: ReactNode }) {
     [refresh]
   );
 
+  const setThumbnail = useCallback(
+    async (eventId: number, photoId: number) => {
+      await setEventPhotoThumbnail(eventId, photoId);
+      await refresh();
+    },
+    [refresh]
+  );
+
   const value = useMemo(
     () => ({
       events,
@@ -131,6 +145,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addPhoto,
       removePhoto,
       reorderPhotos,
+      setThumbnail,
     }),
     [
       events,
@@ -145,6 +160,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addPhoto,
       removePhoto,
       reorderPhotos,
+      setThumbnail,
     ]
   );
 

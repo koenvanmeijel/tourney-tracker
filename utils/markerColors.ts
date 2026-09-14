@@ -16,7 +16,7 @@ export const MARKER_COLORS: MarkerColor[] = [
   { value: '#D9534F', label: 'Red', onColor: '#FFFFFF' },
   { value: '#4F8A3D', label: 'Green', onColor: '#FFFFFF' },
   { value: '#C2569B', label: 'Pink', onColor: '#FFFFFF' },
-  { value: '#23262F', label: 'Black', onColor: '#F7F7F8' },
+  { value: '#55555F', label: 'Black', onColor: '#F7F7F8' },
 ];
 
 export const DEFAULT_MARKER_COLOR = MARKER_COLORS[0].value;

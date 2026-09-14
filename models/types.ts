@@ -31,7 +31,7 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   other: 'Other',
 };
 
-export type RoundResult = 'win' | 'loss' | 'tie' | 'id' | 'bye' | 'no_show';
+export type RoundResult = 'win' | 'loss' | 'tie' | 'id' | 'bye' | 'no_show' | 'drop';
 
 export type GameResult = 'win' | 'loss' | 'tie';
 
@@ -60,6 +60,7 @@ export interface EventPhotoRecord {
   eventId: number;
   filename: string;
   createdAt: string;
+  isThumbnail: boolean;
 }
 
 export interface EventRecord {
@@ -81,6 +82,9 @@ export interface EventRecord {
   createdAt: string;
   updatedAt: string;
   rounds: RoundRecord[];
+  /** Round numbers after which a visual divider sits (e.g. Swiss vs Top
+   * Cut) — a divider with value N sits between round N and round N+1. */
+  roundDividers: number[];
   photos: EventPhotoRecord[];
 }
 
@@ -95,6 +99,7 @@ export interface NewEvent {
   prizeTier?: PrizeTier;
   notes?: string | null;
   rounds: NewRound[];
+  roundDividers?: number[];
 }
 
 export interface EventTally {

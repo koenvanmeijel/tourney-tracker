@@ -1,26 +1,23 @@
-import { StyleSheet, View } from 'react-native';
-import { SymbolView } from 'expo-symbols';
+import { Image, StyleSheet, View } from 'react-native';
 
 import { PokemonIcon } from '@/components/PokemonIcon';
 import { Text } from '@/components/Themed';
 import { useTheme } from '@/context/ThemeContext';
 import type { EventType, PrizeTier } from '@/models/types';
-import { getEventTypeTheme, PRIZE_ICON_COLOR } from '@/utils/eventTheme';
+import { getEventTypeTheme } from '@/utils/eventTheme';
 import { formatDeckLabel } from '@/utils/format';
+
+const PRIZE_ICON_SOURCE: Record<Exclude<PrizeTier, 'none'>, number> = {
+  first: require('@/assets/sprites/icons/trophy.png'),
+  prize: require('@/assets/sprites/icons/medal.png'),
+};
 
 function PrizeBadge({ prizeTier }: { prizeTier: PrizeTier }) {
   if (prizeTier === 'none') {
     return null;
   }
   return (
-    <View style={styles.prizeBadge}>
-      <SymbolView
-        name={{ android: prizeTier === 'first' ? 'trophy' : 'military_tech' }}
-        tintColor={PRIZE_ICON_COLOR[prizeTier]}
-        size={22}
-        style={styles.prizeIcon}
-      />
-    </View>
+    <Image source={PRIZE_ICON_SOURCE[prizeTier]} style={styles.prizeIcon} resizeMode="contain" />
   );
 }
 
@@ -30,16 +27,17 @@ interface EventBandProps {
   deckPokemon: string[];
   prizeTier: PrizeTier;
   large?: boolean;
+  isUpcoming?: boolean;
 }
 
-export function EventBand({ eventType, deckName, deckPokemon, prizeTier, large }: EventBandProps) {
+export function EventBand({ eventType, deckName, deckPokemon, prizeTier, large, isUpcoming }: EventBandProps) {
   const { themeId } = useTheme();
   const theme = getEventTypeTheme(themeId)[eventType];
 
   return (
     <View style={[styles.band, large && styles.bandLarge, { backgroundColor: theme.band }]}>
       <Text style={[styles.title, large && styles.titleLarge, { color: theme.onBand }]}>
-        {formatDeckLabel(deckName, deckPokemon)}
+        {isUpcoming ? '🕐 Upcoming event' : formatDeckLabel(deckName, deckPokemon)}
       </Text>
       <View style={styles.right}>
         {deckPokemon.slice(0, 2).map((pokemon, index) => (
@@ -79,20 +77,13 @@ const styles = StyleSheet.create({
     gap: 6,
     flexShrink: 0,
   },
-  prizeBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.92)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  prizeIcon: {
+    width: 28,
+    height: 28,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
     shadowRadius: 2,
     elevation: 2,
-  },
-  prizeIcon: {
-    transform: [{ translateX: 1.5 }, { translateY: 1.5 }],
   },
 });

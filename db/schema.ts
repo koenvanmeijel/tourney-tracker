@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 /** Bump this and add another `if (currentVersion === N)` block below when the
  * schema needs to change — never edit a past migration. */
-export const DATABASE_VERSION = 7;
+export const DATABASE_VERSION = 9;
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -163,6 +163,38 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
       await db.runAsync('UPDATE event_photos SET position = ? WHERE id = ?', position, row.id);
     }
     currentVersion = 7;
+  }
+
+  if (currentVersion === 7) {
+    // Decouple the thumbnail from photo order: an explicit is_thumbnail
+    // flag instead of implying "the thumbnail" from position 0, so setting
+    // a new thumbnail no longer has to reshuffle every other photo's
+    // position. Backfilled so upgrading doesn't change which photo shows
+    // as the thumbnail: whichever photo already sits at position 0 (per
+    // event) keeps that role, explicitly now instead of implicitly.
+    await db.execAsync(
+      `ALTER TABLE event_photos ADD COLUMN is_thumbnail INTEGER NOT NULL DEFAULT 0;`
+    );
+    await db.execAsync(`
+      UPDATE event_photos SET is_thumbnail = 1
+      WHERE id IN (
+        SELECT id FROM event_photos AS p
+        WHERE p.position = (
+          SELECT MIN(position) FROM event_photos WHERE event_id = p.event_id
+        )
+      );
+    `);
+    currentVersion = 8;
+  }
+
+  if (currentVersion === 8) {
+    // Round dividers — a lightweight visual split of one event's round
+    // list into groups (e.g. Swiss vs Top Cut). Stored on `events` as a
+    // JSON array of round numbers, the same pattern as deck_pokemon/
+    // opponent_deck_pokemon: a divider with value N sits between round N
+    // and round N+1. Purely additive.
+    await db.execAsync(`ALTER TABLE events ADD COLUMN round_dividers TEXT NOT NULL DEFAULT '[]';`);
+    currentVersion = 9;
   }
 
   await db.execAsync(`PRAGMA user_version = ${currentVersion}`);

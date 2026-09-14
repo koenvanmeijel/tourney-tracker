@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
+import { Fragment, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FormTextInput } from '@/components/form/FormTextInput';
@@ -6,9 +6,10 @@ import { SelectChips } from '@/components/form/SelectChips';
 import { TagInput, type TagInputHandle } from '@/components/form/TagInput';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useTheme } from '@/context/ThemeContext';
+import type { Palette } from '@/constants/themes';
 import type { GameResult, NewRound, RoundResult } from '@/models/types';
 import { getRoundResultTheme } from '@/utils/eventTheme';
-import { deriveRoundResult, GAME_RESULTS, roundHasGames } from '@/utils/rounds';
+import { deriveRoundResult, GAME_RESULTS, roundHasGames, roundHasOpponent } from '@/utils/rounds';
 
 const RESULT_LABELS: Record<RoundResult, string> = {
   win: 'Win',
@@ -17,11 +18,24 @@ const RESULT_LABELS: Record<RoundResult, string> = {
   id: 'ID',
   bye: 'Bye',
   no_show: 'No Show',
+  drop: 'Drop',
 };
 
-const RESULT_OPTION_ORDER: RoundResult[] = ['win', 'loss', 'tie', 'id', 'bye', 'no_show'];
+const RESULT_OPTION_ORDER: RoundResult[] = ['win', 'loss', 'tie', 'id', 'bye', 'no_show', 'drop'];
 
 const GAME_RESULT_LABELS: Record<GameResult, string> = { win: 'W', loss: 'L', tie: 'T' };
+
+function DividerRow({ palette, onRemove }: { palette: Palette; onRemove: () => void }) {
+  return (
+    <View style={styles.dividerRow}>
+      <View style={[styles.dividerLine, { backgroundColor: palette.border }]} />
+      <Pressable onPress={onRemove} hitSlop={8}>
+        <Text style={[styles.dividerRemoveText, { color: palette.danger }]}>✕</Text>
+      </Pressable>
+      <View style={[styles.dividerLine, { backgroundColor: palette.border }]} />
+    </View>
+  );
+}
 
 export interface RoundsEditorHandle {
   flush: () => NewRound[];
@@ -30,10 +44,12 @@ export interface RoundsEditorHandle {
 interface RoundsEditorProps {
   rounds: NewRound[];
   onChange: (rounds: NewRound[]) => void;
+  dividers: number[];
+  onDividersChange: (dividers: number[]) => void;
 }
 
 export const RoundsEditor = forwardRef<RoundsEditorHandle, RoundsEditorProps>(function RoundsEditor(
-  { rounds, onChange },
+  { rounds, onChange, dividers, onDividersChange },
   ref
 ) {
   const { palette, themeId } = useTheme();
@@ -108,8 +124,14 @@ export const RoundsEditor = forwardRef<RoundsEditorHandle, RoundsEditorProps>(fu
   }
 
   function removeRound(index: number) {
+    const removedRoundNumber = rounds[index].roundNumber;
     onChange(
       rounds.filter((_, i) => i !== index).map((round, i) => ({ ...round, roundNumber: i + 1 }))
+    );
+    onDividersChange(
+      dividers
+        .map((afterRound) => (afterRound >= removedRoundNumber ? afterRound - 1 : afterRound))
+        .filter((afterRound) => afterRound >= 1)
     );
   }
 
@@ -129,83 +151,100 @@ export const RoundsEditor = forwardRef<RoundsEditorHandle, RoundsEditorProps>(fu
         const tracking = games.length > 0;
 
         return (
-          <View key={index} style={[styles.roundCard, { borderColor: palette.borderSubtle }]}>
-            <View style={styles.roundHeader}>
-              <Text style={[styles.roundTitle, { color: palette.onSurfaceText }]}>Round {round.roundNumber}</Text>
-              <Pressable onPress={() => removeRound(index)}>
-                <Text style={[styles.removeText, { color: palette.danger }]}>Remove</Text>
-              </Pressable>
-            </View>
+          <Fragment key={index}>
+            <View style={[styles.roundCard, { borderColor: palette.borderSubtle }]}>
+              <View style={styles.roundHeader}>
+                <Text style={[styles.roundTitle, { color: palette.onSurfaceText }]}>Round {round.roundNumber}</Text>
+                <Pressable onPress={() => removeRound(index)}>
+                  <Text style={[styles.removeText, { color: palette.danger }]}>Remove</Text>
+                </Pressable>
+              </View>
 
-            {tracking ? (
-              <Text style={[styles.derivedResultText, { color: palette.onSurfaceText }]}>
-                Result:{' '}
-                <Text style={[styles.derivedResultValue, { color: palette.onSurfaceText }]}>
-                  {RESULT_LABELS[round.result]}
-                </Text>{' '}
-                (from game scores below)
-              </Text>
-            ) : (
-              <SelectChips
-                options={resultOptions}
-                value={round.result}
-                onChange={(result) => updateRound(index, { result })}
-                initialVisibleCount={3}
-              />
-            )}
+              {tracking ? (
+                <Text style={[styles.derivedResultText, { color: palette.onSurfaceText }]}>
+                  Result:{' '}
+                  <Text style={[styles.derivedResultValue, { color: palette.onSurfaceText }]}>
+                    {RESULT_LABELS[round.result]}
+                  </Text>{' '}
+                  (from game scores below)
+                </Text>
+              ) : (
+                <SelectChips
+                  options={resultOptions}
+                  value={round.result}
+                  onChange={(result) =>
+                    updateRound(index, {
+                      result,
+                      ...(roundHasOpponent(result) ? null : { opponentDeckName: null, opponentDeckPokemon: [] }),
+                    })
+                  }
+                  initialVisibleCount={3}
+                />
+              )}
 
-            {roundHasGames(round.result) ? (
-              tracking ? (
-                <View style={styles.gamesBlock}>
-                  {games.map((game, gameIndex) => (
-                    <View key={gameIndex} style={styles.gameRow}>
-                      <Text style={[styles.gameLabel, { color: palette.onSurfaceText }]}>Game {gameIndex + 1}</Text>
-                      <SelectChips
-                        options={gameResultOptions}
-                        value={game}
-                        onChange={(result) => updateGame(index, gameIndex, result)}
-                      />
-                      <Pressable onPress={() => removeGame(index, gameIndex)} hitSlop={8}>
-                        <Text style={[styles.removeText, { color: palette.danger }]}>✕</Text>
+              {roundHasGames(round.result) ? (
+                tracking ? (
+                  <View style={styles.gamesBlock}>
+                    {games.map((game, gameIndex) => (
+                      <View key={gameIndex} style={styles.gameRow}>
+                        <Text style={[styles.gameLabel, { color: palette.onSurfaceText }]}>Game {gameIndex + 1}</Text>
+                        <SelectChips
+                          options={gameResultOptions}
+                          value={game}
+                          onChange={(result) => updateGame(index, gameIndex, result)}
+                        />
+                        <Pressable onPress={() => removeGame(index, gameIndex)} hitSlop={8}>
+                          <Text style={[styles.removeText, { color: palette.danger }]}>✕</Text>
+                        </Pressable>
+                      </View>
+                    ))}
+                    <View style={styles.gamesActionsRow}>
+                      <Pressable style={styles.addGameButton} onPress={() => addGame(index)}>
+                        <Text style={[styles.addGameText, { color: palette.accent }]}>+ Add game</Text>
+                      </Pressable>
+                      <Pressable onPress={() => updateGames(index, [])}>
+                        <Text style={[styles.clearGamesText, { color: palette.danger }]}>Clear</Text>
                       </Pressable>
                     </View>
-                  ))}
-                  <View style={styles.gamesActionsRow}>
-                    <Pressable style={styles.addGameButton} onPress={() => addGame(index)}>
-                      <Text style={[styles.addGameText, { color: palette.accent }]}>+ Add game</Text>
-                    </Pressable>
-                    <Pressable onPress={() => updateGames(index, [])}>
-                      <Text style={[styles.clearGamesText, { color: palette.danger }]}>Clear</Text>
-                    </Pressable>
                   </View>
-                </View>
-              ) : (
-                <Pressable style={styles.trackGamesButton} onPress={() => addGame(index)}>
-                  <Text style={[styles.trackGamesText, { color: palette.accent }]}>+ Track game scores</Text>
-                </Pressable>
-              )
-            ) : null}
+                ) : (
+                  <Pressable style={styles.trackGamesButton} onPress={() => addGame(index)}>
+                    <Text style={[styles.trackGamesText, { color: palette.accent }]}>+ Track game scores</Text>
+                  </Pressable>
+                )
+              ) : null}
 
-            <TagInput
-              ref={(handle) => {
-                tagInputRefs.current[index] = handle;
-              }}
-              tags={round.opponentDeckPokemon ?? []}
-              onChange={(tags) => updateRound(index, { opponentDeckPokemon: tags })}
-              placeholder="Opponent Pokémon (optional)"
-              trailingAction={{
-                label: nameVisible ? 'Remove name' : '+ Name',
-                onPress: () => updateRound(index, { opponentDeckName: nameVisible ? null : '' }),
-              }}
-            />
-            {nameVisible ? (
-              <FormTextInput
-                value={round.opponentDeckName ?? ''}
-                onChangeText={(text) => updateRound(index, { opponentDeckName: text })}
-                placeholder="Opponent's deck name (optional)"
+              {roundHasOpponent(round.result) ? (
+                <>
+                  <TagInput
+                    ref={(handle) => {
+                      tagInputRefs.current[index] = handle;
+                    }}
+                    tags={round.opponentDeckPokemon ?? []}
+                    onChange={(tags) => updateRound(index, { opponentDeckPokemon: tags })}
+                    placeholder="Opponent Pokémon (optional)"
+                    trailingAction={{
+                      label: nameVisible ? 'Remove name' : '+ Name',
+                      onPress: () => updateRound(index, { opponentDeckName: nameVisible ? null : '' }),
+                    }}
+                  />
+                  {nameVisible ? (
+                    <FormTextInput
+                      value={round.opponentDeckName ?? ''}
+                      onChangeText={(text) => updateRound(index, { opponentDeckName: text })}
+                      placeholder="Opponent's deck name (optional)"
+                    />
+                  ) : null}
+                </>
+              ) : null}
+            </View>
+            {dividers.includes(round.roundNumber) ? (
+              <DividerRow
+                palette={palette}
+                onRemove={() => onDividersChange(dividers.filter((afterRound) => afterRound !== round.roundNumber))}
               />
             ) : null}
-          </View>
+          </Fragment>
         );
       })}
       <Pressable style={[styles.addRoundButton, { backgroundColor: palette.accentTint }]} onPress={addRound}>
@@ -289,5 +328,18 @@ const styles = StyleSheet.create({
   addRoundText: {
     fontWeight: '600',
     fontSize: 14,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth * 2,
+  },
+  dividerRemoveText: {
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

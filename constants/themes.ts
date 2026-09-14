@@ -1,4 +1,4 @@
-export type ThemeId = 'default' | 'umbreon' | 'sylveon' | 'budew';
+export type ThemeId = 'default' | 'umbreon' | 'sylveon' | 'budew' | 'joltik';
 
 export interface Palette {
   /** Screen background. */
@@ -138,17 +138,43 @@ const BUDEW_PALETTE: Palette = {
   statusBarStyle: 'dark',
 };
 
+const JOLTIK_PALETTE: Palette = {
+  background: '#fef1b3',
+  text: '#2B2408',
+
+  surface: '#FFFFFF',
+  onSurfaceText: '#2B2408',
+
+  accent: '#2F6FED',
+  onAccentText: '#FFFFFF',
+  accentTint: 'rgba(47,111,237,0.14)',
+
+  danger: '#D9534F',
+  dangerTint: 'rgba(217,83,79,0.15)',
+
+  border: 'rgba(128,128,128,0.4)',
+  borderSubtle: 'rgba(128,128,128,0.35)',
+  secondaryFill: 'rgba(255,193,7,0.35)',
+  neutralFillSubtle: 'rgba(128,128,128,0.08)',
+
+  tabIconInactive: '#CCCCCC',
+  backdrop: 'rgba(43,36,8,0.5)',
+  statusBarStyle: 'dark',
+};
+
 export const THEMES: Record<ThemeId, Palette> = {
   default: DEFAULT_PALETTE,
   umbreon: UMBREON_PALETTE,
   sylveon: SYLVEON_PALETTE,
   budew: BUDEW_PALETTE,
+  joltik: JOLTIK_PALETTE,
 };
 
 export const THEME_OPTIONS: { value: ThemeId; label: string }[] = [
   { value: 'default', label: 'Light Default' },
   { value: 'sylveon', label: 'Pink Sylveon' },
   { value: 'budew', label: 'Grün Knospi' },
+  { value: 'joltik', label: 'Yellow Joltik' },
   { value: 'umbreon', label: 'Dark Umbreon' },
 ];
 

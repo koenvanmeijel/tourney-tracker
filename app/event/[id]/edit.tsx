@@ -39,6 +39,7 @@ export default function EditEventScreen() {
       opponentDeckName: round.opponentDeckName,
       opponentDeckPokemon: round.opponentDeckPokemon,
     })),
+    roundDividers: event.roundDividers,
   };
 
   async function handleSubmit(updated: NewEvent) {

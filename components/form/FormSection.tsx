@@ -9,11 +9,22 @@ export function Section({ children }: { children: ReactNode }) {
   return <View style={[styles.section, { backgroundColor: palette.surface }]}>{children}</View>;
 }
 
-export function Field({ label, children }: { label: string; children: ReactNode }) {
+export function Field({
+  label,
+  right,
+  children,
+}: {
+  label: string;
+  right?: ReactNode;
+  children: ReactNode;
+}) {
   const { palette } = useTheme();
   return (
     <View style={styles.field}>
-      <Text style={[styles.label, { color: palette.onSurfaceText }]}>{label}</Text>
+      <View style={styles.labelRow}>
+        <Text style={[styles.label, { color: palette.onSurfaceText }]}>{label}</Text>
+        {right}
+      </View>
       {children}
     </View>
   );
@@ -32,6 +43,11 @@ const styles = StyleSheet.create({
   },
   field: {
     gap: 8,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: 14,

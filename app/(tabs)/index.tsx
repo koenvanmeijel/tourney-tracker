@@ -14,10 +14,10 @@ import { useMarkers } from '@/context/MarkersContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
 import { EVENT_TYPE_LABELS, type EventRecord, type EventType, type MarkerRecord } from '@/models/types';
-import { formatIsoDateForDisplay, toIsoDateString } from '@/utils/date';
+import { daysUntilIsoDate, formatIsoDateForDisplay, isFutureIsoDate, toIsoDateString } from '@/utils/date';
 import { getEventTypeOptions, getEventTypeTheme } from '@/utils/eventTheme';
 import { photoFileUri } from '@/utils/eventPhotoStorage';
-import { formatPlacementHeadline } from '@/utils/format';
+import { formatDaysUntil, formatPlacementHeadline, formatRecordOrNull } from '@/utils/format';
 import { getMarkerOnColor } from '@/utils/markerColors';
 
 // Pokémon's first release date (27 February 1996, Japan)
@@ -33,8 +33,9 @@ function EventRow({ event }: { event: EventRecord }) {
   const { palette, themeId } = useTheme();
   const tally = tallyRounds(event.rounds);
   const theme = getEventTypeTheme(themeId)[event.eventType];
+  const isUpcoming = isFutureIsoDate(event.date);
   const placementHeadline = formatPlacementHeadline(event.placement, event.placementTotal);
-  const record = `${tally.wins}-${tally.losses}-${tally.ties}`;
+  const record = formatRecordOrNull(tally);
 
   return (
     <Pressable
@@ -49,6 +50,7 @@ function EventRow({ event }: { event: EventRecord }) {
         deckName={event.deckName}
         deckPokemon={event.deckPokemon}
         prizeTier={event.prizeTier}
+        isUpcoming={isUpcoming}
       />
       <View style={[styles.cardBody, { backgroundColor: palette.surface }]}>
         <View style={styles.cardBodyLeft}>
@@ -61,7 +63,12 @@ function EventRow({ event }: { event: EventRecord }) {
         </View>
         {event.photos.length > 0 ? (
           <View style={styles.thumbnailWrap}>
-            <Image source={{ uri: photoFileUri(event.photos[0].filename) }} style={styles.thumbnail} />
+            <Image
+              source={{
+                uri: photoFileUri((event.photos.find((photo) => photo.isThumbnail) ?? event.photos[0]).filename),
+              }}
+              style={styles.thumbnail}
+            />
             {event.photos.length > 1 ? (
               <View style={[styles.thumbnailBadge, { backgroundColor: palette.surface }]}>
                 <Text style={[styles.thumbnailBadgeText, { color: palette.onSurfaceText }]}>
@@ -71,14 +78,22 @@ function EventRow({ event }: { event: EventRecord }) {
             ) : null}
           </View>
         ) : null}
-        <View style={styles.statBlock}>
-          <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
-            {placementHeadline ?? record}
-          </Text>
-          {placementHeadline ? (
-            <Text style={[styles.statRecord, { color: theme.accentText }]}>{record}</Text>
-          ) : null}
-        </View>
+        {isUpcoming ? (
+          <View style={styles.statBlock}>
+            <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
+              {formatDaysUntil(daysUntilIsoDate(event.date))}
+            </Text>
+          </View>
+        ) : placementHeadline || record ? (
+          <View style={styles.statBlock}>
+            <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
+              {placementHeadline ?? record}
+            </Text>
+            {placementHeadline && record ? (
+              <Text style={[styles.statRecord, { color: theme.accentText }]}>{record}</Text>
+            ) : null}
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );

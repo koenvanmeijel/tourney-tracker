@@ -16,7 +16,7 @@ export const EXPORT_FORMAT = 'tourney-tracker-backup';
 /** Bump this whenever the *shape* of the export JSON changes in a way an
  * older parser couldn't read (a field renamed/restructured, a value's
  * meaning changed) — and add a migration below. */
-export const EXPORT_VERSION = 3;
+export const EXPORT_VERSION = 5;
 
 export interface ExportPayload {
   format: typeof EXPORT_FORMAT;
@@ -65,6 +65,7 @@ export function buildExportPayload(events: EventRecord[], markers: MarkerRecord[
         opponentDeckName: round.opponentDeckName,
         opponentDeckPokemon: round.opponentDeckPokemon,
       })),
+      roundDividers: event.roundDividers,
     })),
     markers: markers.map((marker) => ({
       date: marker.date,
@@ -77,7 +78,7 @@ export function buildExportPayload(events: EventRecord[], markers: MarkerRecord[
   };
 }
 
-const ROUND_RESULTS: RoundResult[] = ['win', 'loss', 'tie', 'id', 'bye', 'no_show'];
+const ROUND_RESULTS: RoundResult[] = ['win', 'loss', 'tie', 'id', 'bye', 'no_show', 'drop'];
 const PRIZE_TIERS: PrizeTier[] = ['none', 'prize', 'first'];
 
 function isEventType(value: unknown): value is EventType {
@@ -94,6 +95,10 @@ function isPrizeTier(value: unknown): value is PrizeTier {
 
 function stringArray(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+}
+
+function numberArray(value: unknown): number[] {
+  return Array.isArray(value) ? value.filter((item): item is number => typeof item === 'number') : [];
 }
 
 function parseRound(raw: unknown, eventIndex: number, roundIndex: number): NewRound {
@@ -140,6 +145,7 @@ function parseEvent(raw: unknown, index: number): NewEventWithTimestamps {
     createdAt: typeof event.createdAt === 'string' ? event.createdAt : undefined,
     updatedAt: typeof event.updatedAt === 'string' ? event.updatedAt : undefined,
     rounds,
+    roundDividers: numberArray(event.roundDividers),
   };
 }
 

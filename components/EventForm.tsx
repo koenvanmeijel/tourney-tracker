@@ -6,6 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Field, Section } from '@/components/form/FormSection';
 import { FormTextInput } from '@/components/form/FormTextInput';
 import { MaskedDateInput } from '@/components/form/MaskedDateInput';
+import { RoundDividerButton } from '@/components/form/RoundDividerButton';
 import { RoundsEditor, type RoundsEditorHandle } from '@/components/form/RoundsEditor';
 import { SelectChips } from '@/components/form/SelectChips';
 import { TagInput, type TagInputHandle } from '@/components/form/TagInput';
@@ -16,6 +17,7 @@ import type { EventType, NewEvent, NewRound } from '@/models/types';
 import {
   dateToDigits,
   formatDateInput,
+  isFutureDate,
   parseDateDigits,
   parseIsoDateString,
   toIsoDateString,
@@ -52,12 +54,15 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
   const [prized, setPrized] = useState(initialValue?.prizeTier === 'prize' || initialValue?.prizeTier === 'first');
   const [notes, setNotes] = useState(initialValue?.notes ?? '');
   const [rounds, setRounds] = useState<NewRound[]>(initialValue?.rounds ?? []);
+  const [dividers, setDividers] = useState<number[]>(initialValue?.roundDividers ?? []);
   const [saving, setSaving] = useState(false);
   const deckPokemonRef = useRef<TagInputHandle>(null);
   const roundsEditorRef = useRef<RoundsEditorHandle>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
   const isFirstPlace = Number(placement.trim()) === 1;
+  const parsedDate = parseDateDigits(dateDigits);
+  const isUpcoming = parsedDate != null && isFutureDate(parsedDate);
 
   function applyDate(selectedDate: Date) {
     setDate(formatDateInput(selectedDate));
@@ -79,27 +84,32 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
   }
 
   async function handleSubmit() {
-    const parsedDate = parseDateDigits(dateDigits);
     if (!parsedDate) {
       setFormError('Enter a complete, valid date.');
       return;
     }
-    const placementValue = placement.trim() ? Number(placement) : null;
-    if (placement.trim() && (!Number.isInteger(placementValue) || (placementValue ?? 0) < 1)) {
-      setFormError('Placement must be a positive whole number.');
-      return;
-    }
-    const placementTotalValue = placementTotal.trim() ? Number(placementTotal) : null;
-    if (
-      placementTotal.trim() &&
-      (!Number.isInteger(placementTotalValue) || (placementTotalValue ?? 0) < 1)
-    ) {
-      setFormError('Total players must be a positive whole number.');
-      return;
+
+    let placementValue: number | null = null;
+    let placementTotalValue: number | null = null;
+    if (!isUpcoming) {
+      placementValue = placement.trim() ? Number(placement) : null;
+      if (placement.trim() && (!Number.isInteger(placementValue) || (placementValue ?? 0) < 1)) {
+        setFormError('Placement must be a positive whole number.');
+        return;
+      }
+      placementTotalValue = placementTotal.trim() ? Number(placementTotal) : null;
+      if (
+        placementTotal.trim() &&
+        (!Number.isInteger(placementTotalValue) || (placementTotalValue ?? 0) < 1)
+      ) {
+        setFormError('Total players must be a positive whole number.');
+        return;
+      }
     }
 
     const finalDeckPokemon = deckPokemonRef.current?.flush() ?? deckPokemon;
-    const finalRounds = roundsEditorRef.current?.flush() ?? rounds;
+    const finalRounds = isUpcoming ? [] : roundsEditorRef.current?.flush() ?? rounds;
+    const finalDividers = isUpcoming ? [] : dividers;
 
     setFormError(null);
     setSaving(true);
@@ -112,9 +122,10 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
         deckPokemon: finalDeckPokemon,
         placement: placementValue,
         placementTotal: placementTotalValue,
-        prizeTier: placementValue === 1 ? 'first' : prized ? 'prize' : 'none',
+        prizeTier: isUpcoming ? 'none' : placementValue === 1 ? 'first' : prized ? 'prize' : 'none',
         notes: notes.trim() || null,
         rounds: finalRounds.map((round, index) => ({ ...round, roundNumber: index + 1 })),
+        roundDividers: finalDividers,
       });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Failed to save event');
@@ -178,52 +189,70 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
         </Field>
       </Section>
 
-      <Section>
-        <Field label="Placement">
-          <View style={styles.placementRow}>
-            <FormTextInput
-              style={styles.placementInput}
-              value={placement}
-              onChangeText={setPlacement}
-              placeholder="Final standing"
-              keyboardType="number-pad"
-            />
-            <Text style={styles.placementOutOf}>/</Text>
-            <FormTextInput
-              style={styles.placementInput}
-              value={placementTotal}
-              onChangeText={setPlacementTotal}
-              placeholder="Players"
-              keyboardType="number-pad"
-            />
-            {isFirstPlace ? (
-              <Text style={styles.firstPlaceBadge}>🏆 1st</Text>
-            ) : (
-              <Pressable
-                onPress={() => setPrized((value) => !value)}
-                style={[
-                  styles.prizeToggle,
-                  { borderColor: palette.border },
-                  prized && { backgroundColor: palette.accent, borderColor: palette.accent },
-                ]}>
-                <Text
+      {!isUpcoming ? (
+        <Section>
+          <Field label="Placement">
+            <View style={styles.placementRow}>
+              <FormTextInput
+                style={styles.placementInput}
+                value={placement}
+                onChangeText={setPlacement}
+                placeholder="Final standing"
+                keyboardType="number-pad"
+              />
+              <Text style={styles.placementOutOf}>/</Text>
+              <FormTextInput
+                style={styles.placementInput}
+                value={placementTotal}
+                onChangeText={setPlacementTotal}
+                placeholder="Players"
+                keyboardType="number-pad"
+              />
+              {isFirstPlace ? (
+                <Text style={styles.firstPlaceBadge}>🏆 1st</Text>
+              ) : (
+                <Pressable
+                  onPress={() => setPrized((value) => !value)}
                   style={[
-                    styles.prizeToggleText,
-                    prized && [styles.prizeToggleTextOn, { color: palette.onAccentText }],
+                    styles.prizeToggle,
+                    { borderColor: palette.border },
+                    prized && { backgroundColor: palette.accent, borderColor: palette.accent },
                   ]}>
-                  🎖️ Prize
-                </Text>
-              </Pressable>
-            )}
-          </View>
-        </Field>
-      </Section>
+                  <Text
+                    style={[
+                      styles.prizeToggleText,
+                      prized && [styles.prizeToggleTextOn, { color: palette.onAccentText }],
+                    ]}>
+                    🎖️ Prize
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+          </Field>
+        </Section>
+      ) : null}
 
-      <Section>
-        <Field label="Rounds">
-          <RoundsEditor ref={roundsEditorRef} rounds={rounds} onChange={setRounds} />
-        </Field>
-      </Section>
+      {!isUpcoming ? (
+        <Section>
+          <Field
+            label="Rounds"
+            right={
+              <RoundDividerButton
+                roundCount={rounds.length}
+                dividers={dividers}
+                onAdd={(afterRound) => setDividers([...dividers, afterRound].sort((a, b) => a - b))}
+              />
+            }>
+            <RoundsEditor
+              ref={roundsEditorRef}
+              rounds={rounds}
+              onChange={setRounds}
+              dividers={dividers}
+              onDividersChange={setDividers}
+            />
+          </Field>
+        </Section>
+      ) : null}
 
       <Section>
         <Field label="Notes">

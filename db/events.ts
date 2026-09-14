@@ -27,6 +27,7 @@ interface EventRow {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  round_dividers: string;
 }
 
 interface RoundRow {
@@ -43,6 +44,15 @@ function parsePokemonList(json: string): string[] {
   try {
     const parsed = JSON.parse(json);
     return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseNumberList(json: string): number[] {
+  try {
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) ? parsed.filter((item): item is number => typeof item === 'number') : [];
   } catch {
     return [];
   }
@@ -83,6 +93,7 @@ function rowToEvent(row: EventRow, rounds: RoundRecord[], photos: EventPhotoReco
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     rounds,
+    roundDividers: parseNumberList(row.round_dividers),
     photos,
   };
 }
@@ -151,8 +162,8 @@ async function insertEvent(
 
   const result = await db.runAsync(
     `INSERT INTO events
-       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, round_dividers, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.date,
     input.eventType,
     input.location ?? null,
@@ -162,6 +173,7 @@ async function insertEvent(
     input.placementTotal ?? null,
     input.prizeTier ?? 'none',
     input.notes ?? null,
+    JSON.stringify(input.roundDividers ?? []),
     createdAt,
     updatedAt
   );
@@ -227,7 +239,7 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
     await db.runAsync(
       `UPDATE events
        SET date = ?, event_type = ?, location = ?, deck_name = ?, deck_pokemon = ?,
-           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, updated_at = ?
+           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, round_dividers = ?, updated_at = ?
        WHERE id = ?`,
       input.date,
       input.eventType,
@@ -238,6 +250,7 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
       input.placementTotal ?? null,
       input.prizeTier ?? 'none',
       input.notes ?? null,
+      JSON.stringify(input.roundDividers ?? []),
       now,
       id
     );
@@ -272,7 +285,7 @@ export function tallyRounds(rounds: RoundRecord[]): EventTally {
       const result = tallyableResult(round.result);
       if (result === 'win') tally.wins += 1;
       else if (result === 'loss') tally.losses += 1;
-      else tally.ties += 1;
+      else if (result === 'tie') tally.ties += 1;
       return tally;
     },
     { wins: 0, losses: 0, ties: 0 }
