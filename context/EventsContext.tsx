@@ -27,8 +27,8 @@ interface EventsContextValue {
   addEvent: (input: NewEvent) => Promise<number>;
   editEvent: (id: number, input: NewEvent) => Promise<void>;
   removeEvent: (id: number) => Promise<void>;
-  restoreAll: (events: NewEventWithTimestamps[]) => Promise<void>;
-  addAll: (events: NewEventWithTimestamps[]) => Promise<void>;
+  restoreAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
+  addAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
   addPhoto: (eventId: number, sourceUri: string) => Promise<void>;
   removePhoto: (photoId: number) => Promise<void>;
   reorderPhotos: (eventId: number, photoIds: number[]) => Promise<void>;
@@ -84,16 +84,18 @@ export function EventsProvider({ children }: { children: ReactNode }) {
 
   const restoreAll = useCallback(
     async (events: NewEventWithTimestamps[]) => {
-      await replaceAllEvents(events);
+      const ids = await replaceAllEvents(events);
       await refresh();
+      return ids;
     },
     [refresh]
   );
 
   const addAll = useCallback(
     async (events: NewEventWithTimestamps[]) => {
-      await addEventsRows(events);
+      const ids = await addEventsRows(events);
       await refresh();
+      return ids;
     },
     [refresh]
   );

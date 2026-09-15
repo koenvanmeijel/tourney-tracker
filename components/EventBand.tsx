@@ -8,7 +8,7 @@ import { getEventTypeTheme } from '@/utils/eventTheme';
 import { formatDeckLabel } from '@/utils/format';
 
 const PRIZE_ICON_SOURCE: Record<Exclude<PrizeTier, 'none'>, number> = {
-  first: require('@/assets/sprites/icons/trophy.png'),
+  first: require('@/assets/sprites/icons/crown.png'),
   prize: require('@/assets/sprites/icons/medal.png'),
 };
 

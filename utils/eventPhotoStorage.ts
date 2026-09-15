@@ -22,6 +22,23 @@ export async function savePhotoFile(sourceUri: string): Promise<string> {
   return filename;
 }
 
+export function savePhotoBytes(bytes: Uint8Array, extension: string): string {
+  const directory = getPhotosDirectory();
+  directory.create({ intermediates: true, idempotent: true });
+
+  const filename = generatePhotoFilename(`file${extension}`);
+  const destination = new File(directory, filename);
+  destination.create();
+  destination.write(bytes);
+  return filename;
+}
+
+export async function readPhotoBytes(filename: string): Promise<Uint8Array> {
+  const file = new File(getPhotosDirectory(), filename);
+  const buffer = await file.arrayBuffer();
+  return new Uint8Array(buffer);
+}
+
 export function photoFileUri(filename: string): string {
   return new File(getPhotosDirectory(), filename).uri;
 }

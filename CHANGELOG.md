@@ -27,6 +27,16 @@ and version numbers follow [Semantic Versioning](https://semver.org/).
   entered, instead of a generic "No opponent recorded".
 - A separate Android app id for development-client builds, so one can be
   installed alongside a production build.
+- A "Logs + photos" backup option (alongside "Logs only") that produces a
+  `.zip` with photos included, restorable back to their original events.
+- De-duplication on import: "Import & Add" now flags events that already
+  look like ones you have (same date, event type and location) and lets you
+  Add anyway or Skip each one before importing.
+- An "About" section on Settings, with "Check for updates" (GitHub
+  releases) and "Buy me a pack" (paypal.me) links.
+- Added dashboards section with data for total tournaments, total rounds, prizing rate, w/l/t pie chart, most played matchups, best/worst matchups, with filtering and threshold settings.
+- Added marker based date range filtering.
+
 
 ### Changed
 

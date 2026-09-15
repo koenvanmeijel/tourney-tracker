@@ -1,12 +1,16 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { Linking, Pressable, StyleSheet, View as RNView } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 
 import { Select } from '@/components/form/Select';
 import { Text, View } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { THEME_OPTIONS } from '@/constants/themes';
 import { useTheme } from '@/context/ThemeContext';
+
+const GITHUB_RELEASES_URL = 'https://github.com/koenvanmeijel/tourney-tracker/releases';
+const BUY_ME_A_PACK_URL = 'https://paypal.me/kvanmeijel/6.99';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -28,6 +32,26 @@ export default function SettingsScreen() {
           style={[styles.button, { backgroundColor: palette.secondaryFill }]}
           onPress={() => router.push('/data-management')}>
           <Text style={styles.secondaryButtonText}>Data Management</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>About</Text>
+        <Pressable
+          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+          onPress={() => Linking.openURL(GITHUB_RELEASES_URL)}>
+          <RNView style={styles.buttonRow}>
+            <Text style={styles.secondaryButtonText}>Check for updates</Text>
+            <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
+          </RNView>
+        </Pressable>
+        <Pressable
+          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+          onPress={() => Linking.openURL(BUY_ME_A_PACK_URL)}>
+          <RNView style={styles.buttonRow}>
+            <Text style={styles.secondaryButtonText}>Buy me a pack</Text>
+            <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
+          </RNView>
         </Pressable>
       </View>
 
@@ -60,6 +84,12 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontWeight: '700',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   credits: {
     marginTop: 'auto',

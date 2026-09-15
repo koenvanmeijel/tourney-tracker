@@ -1,3 +1,5 @@
+import JSZip from 'jszip';
+
 import type { NewEventWithTimestamps } from '@/db/events';
 import type { NewMarkerWithTimestamps } from '@/db/markers';
 import {
@@ -10,6 +12,16 @@ import {
   type RoundResult,
 } from '@/models/types';
 import { DEFAULT_MARKER_COLOR, MARKER_COLORS } from '@/utils/markerColors';
+import { readPhotoBytes } from '@/utils/eventPhotoStorage';
+import {
+  buildPhotoZipEntryName,
+  eventPhotoZipKey,
+  groupByPhotoZipKey,
+  IMAGE_EXTENSIONS,
+  parsePhotoZipEntryName,
+  photoZipKeyId,
+  type ParsedPhotoZipEntryName,
+} from '@/utils/photoZip';
 import { parseGameResults } from '@/utils/rounds';
 
 export const EXPORT_FORMAT = 'tourney-tracker-backup';
@@ -210,4 +222,157 @@ export function parseImportPayload(json: string): ImportPayload {
       ? payload.markers.map((marker, index) => parseMarker(marker, index))
       : [],
   };
+}
+
+const BACKUP_JSON_ENTRY_NAME = 'backup.json';
+
+function photoFileExtension(filename: string): string {
+  const match = /\.[a-zA-Z0-9]+$/.exec(filename);
+  return match ? match[0] : '.jpg';
+}
+
+/** An event whose photos couldn't be included because another event shares
+ * its exact date/type/location, making the filename convention ambiguous. */
+export interface PhotoExportCollision {
+  events: EventRecord[];
+}
+
+export interface BackupZipResult {
+  zip: Uint8Array;
+  /** Event groups whose photos were left out of the zip - see PhotoExportCollision. */
+  collisions: PhotoExportCollision[];
+}
+
+/** Builds the "export logs + photos" zip: backup.json plus every photo,
+ * renamed per the photo-zip convention. When two or more events share the
+ * exact same date/type/location, their photos can't be told apart by
+ * filename alone, so all of them are left out and reported instead of
+ * guessed. */
+export async function buildBackupZip(events: EventRecord[], markers: MarkerRecord[]): Promise<BackupZipResult> {
+  const payload = buildExportPayload(events, markers);
+  const zip = new JSZip();
+  zip.file(BACKUP_JSON_ENTRY_NAME, JSON.stringify(payload, null, 2));
+
+  const eventsWithPhotos = events.filter((event) => event.photos.length > 0);
+  const groups = groupByPhotoZipKey(eventsWithPhotos, (event) =>
+    eventPhotoZipKey(event.date, event.eventType, event.location)
+  );
+
+  const collisions: PhotoExportCollision[] = [];
+  for (const group of groups.values()) {
+    if (group.length > 1) {
+      collisions.push({ events: group });
+      continue;
+    }
+
+    const event = group[0];
+    const thumbnail = event.photos.find((photo) => photo.isThumbnail) ?? event.photos[0];
+    let nextIndex = 2;
+    for (const photo of event.photos) {
+      const index = photo.id === thumbnail.id ? 1 : nextIndex++;
+      const name = buildPhotoZipEntryName(
+        { ...eventPhotoZipKey(event.date, event.eventType, event.location), index },
+        photoFileExtension(photo.filename)
+      );
+      zip.file(name, await readPhotoBytes(photo.filename));
+    }
+  }
+
+  const zipBytes = await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
+  return { zip: zipBytes, collisions };
+}
+
+export interface ZipPhotoEntry extends ParsedPhotoZipEntryName {
+  /** The filename as it appeared in the zip (for diagnostics/skip reports). */
+  filename: string;
+  data: Uint8Array;
+}
+
+export interface ParsedBackupZip {
+  /** null when the zip has no backup.json - a hand-built, photos-only zip. */
+  payload: ImportPayload | null;
+  photoEntries: ZipPhotoEntry[];
+  /** Files in the zip that aren't backup.json and don't parse as a photo
+   * filename at all (ignored on import, surfaced for transparency). */
+  unrecognizedFiles: string[];
+}
+
+/** Parses an imported "export logs + photos" zip (or a hand-built,
+ * photos-only zip using the same filename convention). */
+export async function parseBackupZip(bytes: Uint8Array): Promise<ParsedBackupZip> {
+  let zip: JSZip;
+  try {
+    zip = await JSZip.loadAsync(bytes);
+  } catch {
+    throw new Error('That file is not a valid .zip archive.');
+  }
+
+  let payload: ImportPayload | null = null;
+  const jsonEntry = zip.file(BACKUP_JSON_ENTRY_NAME);
+  if (jsonEntry) {
+    payload = parseImportPayload(await jsonEntry.async('string'));
+  }
+
+  const photoEntries: ZipPhotoEntry[] = [];
+  const unrecognizedFiles: string[] = [];
+  for (const entry of Object.values(zip.files)) {
+    if (entry.dir || entry.name === BACKUP_JSON_ENTRY_NAME) {
+      continue;
+    }
+    const parsed = parsePhotoZipEntryName(entry.name);
+    if (!parsed || !IMAGE_EXTENSIONS.has(parsed.extension.toLowerCase())) {
+      unrecognizedFiles.push(entry.name);
+      continue;
+    }
+    photoEntries.push({ ...parsed, filename: entry.name, data: await entry.async('uint8array') });
+  }
+
+  return { payload, photoEntries, unrecognizedFiles };
+}
+
+export type PhotoMatchTarget =
+  | { kind: 'imported'; importedIndex: number }
+  | { kind: 'existing'; eventId: number };
+
+export interface PhotoMatch {
+  entry: ZipPhotoEntry;
+  target: PhotoMatchTarget;
+}
+
+export interface UnmatchedPhoto {
+  entry: ZipPhotoEntry;
+  reason: 'no-matching-event' | 'ambiguous-multiple-events';
+}
+
+export interface PhotoMatchResult {
+  matched: PhotoMatch[];
+  unmatched: UnmatchedPhoto[];
+}
+
+export function matchPhotoEntries(
+  entries: ZipPhotoEntry[],
+  candidates: { key: string; target: PhotoMatchTarget }[]
+): PhotoMatchResult {
+  const byKey = new Map<string, PhotoMatchTarget[]>();
+  for (const candidate of candidates) {
+    const existing = byKey.get(candidate.key);
+    if (existing) {
+      existing.push(candidate.target);
+    } else {
+      byKey.set(candidate.key, [candidate.target]);
+    }
+  }
+
+  const matched: PhotoMatch[] = [];
+  const unmatched: UnmatchedPhoto[] = [];
+  for (const entry of entries) {
+    const key = photoZipKeyId(entry);
+    const targets = byKey.get(key) ?? [];
+    if (targets.length === 1) {
+      matched.push({ entry, target: targets[0] });
+    } else {
+      unmatched.push({ entry, reason: targets.length === 0 ? 'no-matching-event' : 'ambiguous-multiple-events' });
+    }
+  }
+  return { matched, unmatched };
 }

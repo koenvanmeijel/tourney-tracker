@@ -207,28 +207,32 @@ export async function createEvent(input: NewEvent): Promise<number> {
   return eventId;
 }
 
-export async function replaceAllEvents(events: NewEventWithTimestamps[]): Promise<void> {
+export async function replaceAllEvents(events: NewEventWithTimestamps[]): Promise<number[]> {
   const db = await getDb();
   const now = new Date().toISOString();
+  const ids: number[] = [];
 
   await deleteAllPhotoFiles(db);
   await db.withTransactionAsync(async () => {
     await db.runAsync('DELETE FROM events'); // cascades to rounds/event_photos
     for (const event of events) {
-      await insertEvent(db, event, now);
+      ids.push(await insertEvent(db, event, now));
     }
   });
+  return ids;
 }
 
-export async function addEvents(events: NewEventWithTimestamps[]): Promise<void> {
+export async function addEvents(events: NewEventWithTimestamps[]): Promise<number[]> {
   const db = await getDb();
   const now = new Date().toISOString();
+  const ids: number[] = [];
 
   await db.withTransactionAsync(async () => {
     for (const event of events) {
-      await insertEvent(db, event, now);
+      ids.push(await insertEvent(db, event, now));
     }
   });
+  return ids;
 }
 
 export async function updateEvent(id: number, input: NewEvent): Promise<void> {
