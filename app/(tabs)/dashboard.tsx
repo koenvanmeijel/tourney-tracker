@@ -14,6 +14,7 @@ import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useEvents } from '@/context/EventsContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
+import { getSetting, setSetting } from '@/db/settings';
 import { EVENT_TYPES, type EventRecord, type EventType } from '@/models/types';
 import { formatIsoDateForDisplay, isFutureIsoDate, toIsoDateString } from '@/utils/date';
 import { getEventTypeOptions, getRoundResultTheme } from '@/utils/eventTheme';
@@ -38,6 +39,13 @@ const DEFAULT_MATCH_MODE: MatchMode = 'strict';
 const DEFAULT_THRESHOLD = 3;
 // Pokémon's first release date (27 February 1996, Japan)
 const DEFAULT_DATE_FROM = '1996-02-27';
+
+const MATCH_MODE_SETTING_KEY = 'dashboardMatchMode';
+const THRESHOLD_SETTING_KEY = 'dashboardThreshold';
+
+function isMatchMode(value: string): value is MatchMode {
+  return value === 'strict' || value === 'relaxed';
+}
 
 function matchesDeckQuery(event: EventRecord, query: string): boolean {
   const haystack = `${event.deckName ?? ''} ${event.deckPokemon.join(' ')}`.toLowerCase();
@@ -264,6 +272,35 @@ export default function DashboardScreen() {
   const [threshold, setThreshold] = useState(DEFAULT_THRESHOLD);
   const [thresholdModalOpen, setThresholdModalOpen] = useState(false);
 
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([getSetting(MATCH_MODE_SETTING_KEY), getSetting(THRESHOLD_SETTING_KEY)])
+      .then(([storedMode, storedThreshold]) => {
+        if (cancelled) return;
+        if (storedMode && isMatchMode(storedMode)) {
+          setMatchMode(storedMode);
+        }
+        if (storedThreshold) {
+          const parsed = Number.parseInt(storedThreshold, 10);
+          if (Number.isFinite(parsed) && parsed >= 1) {
+            setThreshold(parsed);
+          }
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function applyThresholdSettings(mode: MatchMode, value: number) {
+    setMatchMode(mode);
+    setThreshold(value);
+    setThresholdModalOpen(false);
+    setSetting(MATCH_MODE_SETTING_KEY, mode).catch(() => {});
+    setSetting(THRESHOLD_SETTING_KEY, String(value)).catch(() => {});
+  }
+
   const filterParams = useLocalSearchParams<{ types?: string; deck?: string; from?: string; to?: string }>();
   useEffect(() => {
     if (
@@ -469,11 +506,7 @@ export default function DashboardScreen() {
         visible={thresholdModalOpen}
         matchMode={matchMode}
         threshold={threshold}
-        onApply={(mode, value) => {
-          setMatchMode(mode);
-          setThreshold(value);
-          setThresholdModalOpen(false);
-        }}
+        onApply={applyThresholdSettings}
         onClose={() => setThresholdModalOpen(false)}
       />
     </>
