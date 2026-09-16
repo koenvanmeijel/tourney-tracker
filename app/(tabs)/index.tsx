@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 
 import { DateRangeDialog, type DateRange } from '@/components/DateRangeDialog';
@@ -14,7 +14,7 @@ import { useMarkers } from '@/context/MarkersContext';
 import { useOverviewFilters } from '@/context/OverviewFiltersContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
-import { EVENT_TYPE_LABELS, EVENT_TYPES, type EventRecord, type EventType, type MarkerRecord } from '@/models/types';
+import { EVENT_TYPE_LABELS, type EventRecord, type EventType, type MarkerRecord } from '@/models/types';
 import { daysUntilIsoDate, formatIsoDateForDisplay, isFutureIsoDate, toIsoDateString } from '@/utils/date';
 import { getEventTypeOptions, getEventTypeTheme } from '@/utils/eventTheme';
 import { photoFileUri } from '@/utils/eventPhotoStorage';
@@ -251,26 +251,6 @@ export default function EventsScreen() {
   const { events, loading: eventsLoading, error: eventsError } = useEvents();
   const { markers, loading: markersLoading, error: markersError } = useMarkers();
   const { typeFilters, setTypeFilters, deckQuery, setDeckQuery, dateRange, setDateRange } = useOverviewFilters();
-
-  const filterParams = useLocalSearchParams<{ types?: string; deck?: string; from?: string; to?: string }>();
-  useEffect(() => {
-    if (
-      filterParams.types === undefined &&
-      filterParams.deck === undefined &&
-      filterParams.from === undefined &&
-      filterParams.to === undefined
-    ) {
-      return;
-    }
-    const types = filterParams.types
-      ? filterParams.types
-          .split(',')
-          .filter((value): value is EventType => (EVENT_TYPES as string[]).includes(value))
-      : [];
-    setTypeFilters(types);
-    setDeckQuery(filterParams.deck ?? '');
-    setDateRange(filterParams.from && filterParams.to ? { from: filterParams.from, to: filterParams.to } : null);
-  }, [filterParams.types, filterParams.deck, filterParams.from, filterParams.to]);
 
   const loading = eventsLoading || markersLoading;
   const error = eventsError ?? markersError;

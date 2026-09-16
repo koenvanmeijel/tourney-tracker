@@ -1,4 +1,5 @@
 import { Directory, File, Paths } from 'expo-file-system';
+import * as Crypto from 'expo-crypto';
 
 const PHOTOS_DIR_NAME = 'event-photos';
 
@@ -31,6 +32,15 @@ export function savePhotoBytes(bytes: Uint8Array, extension: string): string {
   destination.create();
   destination.write(bytes);
   return filename;
+}
+
+/** SHA-256 hex digest of a photo's bytes, used to detect byte-identical
+ * duplicate photos (e.g. the same file attached twice, or re-imported). */
+export async function computePhotoHash(bytes: Uint8Array): Promise<string> {
+  const digestBuffer = await Crypto.digest(Crypto.CryptoDigestAlgorithm.SHA256, bytes as BufferSource);
+  return Array.from(new Uint8Array(digestBuffer))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export async function readPhotoBytes(filename: string): Promise<Uint8Array> {

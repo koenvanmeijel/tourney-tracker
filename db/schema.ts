@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 /** Bump this and add another `if (currentVersion === N)` block below when the
  * schema needs to change — never edit a past migration. */
-export const DATABASE_VERSION = 9;
+export const DATABASE_VERSION = 10;
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -195,6 +195,15 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     // and round N+1. Purely additive.
     await db.execAsync(`ALTER TABLE events ADD COLUMN round_dividers TEXT NOT NULL DEFAULT '[]';`);
     currentVersion = 9;
+  }
+
+  if (currentVersion === 9) {
+    // SHA-256 hash of each photo's bytes, so imports can silently skip
+    // re-attaching a photo that's already on an event instead of duplicating
+    // the file. Nullable: existing photos aren't backfilled, so dedup only
+    // kicks in against photos saved from this version onward.
+    await db.execAsync(`ALTER TABLE event_photos ADD COLUMN hash TEXT;`);
+    currentVersion = 10;
   }
 
   await db.execAsync(`PRAGMA user_version = ${currentVersion}`);

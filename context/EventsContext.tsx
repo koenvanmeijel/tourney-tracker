@@ -17,7 +17,7 @@ import {
   setEventPhotoThumbnail,
 } from '@/db/eventPhotos';
 import type { EventRecord, NewEvent } from '@/models/types';
-import { savePhotoFile } from '@/utils/eventPhotoStorage';
+import { computePhotoHash, readPhotoBytes, savePhotoFile } from '@/utils/eventPhotoStorage';
 
 interface EventsContextValue {
   events: EventRecord[];
@@ -103,7 +103,8 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   const addPhoto = useCallback(
     async (eventId: number, sourceUri: string) => {
       const filename = await savePhotoFile(sourceUri);
-      await addEventPhoto(eventId, filename);
+      const hash = await computePhotoHash(await readPhotoBytes(filename));
+      await addEventPhoto(eventId, filename, hash);
       await refresh();
     },
     [refresh]

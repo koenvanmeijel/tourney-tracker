@@ -5,7 +5,6 @@ import { Tabs, useRouter } from 'expo-router';
 import { HEADER_TITLE_STYLE } from '@/constants/headerStyle';
 import { PokemonIcon } from '@/components/PokemonIcon';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-import { OverviewFiltersProvider, useOverviewFilters } from '@/context/OverviewFiltersContext';
 import { useTheme } from '@/context/ThemeContext';
 import { getRandomBaseFormId } from '@/utils/pokemonIcon';
 
@@ -26,20 +25,9 @@ function HeaderTitle() {
 function DashboardButton() {
   const { palette } = useTheme();
   const router = useRouter();
-  const { typeFilters, deckQuery, dateRange } = useOverviewFilters();
   return (
     <Pressable
-      onPress={() =>
-        router.push({
-          pathname: '/dashboard',
-          params: {
-            types: typeFilters.join(','),
-            deck: deckQuery,
-            from: dateRange?.from ?? '',
-            to: dateRange?.to ?? '',
-          },
-        })
-      }
+      onPress={() => router.push('/dashboard')}
       style={styles.headerButton}
       hitSlop={8}>
       <SymbolView
@@ -55,70 +43,60 @@ export default function TabLayout() {
   const { palette } = useTheme();
 
   return (
-    <OverviewFiltersProvider>
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: palette.accent,
-          tabBarInactiveTintColor: palette.tabIconInactive,
-          tabBarStyle: { backgroundColor: palette.surface, borderTopColor: palette.borderSubtle },
-          headerTitleStyle: HEADER_TITLE_STYLE,
-          headerStyle: { backgroundColor: palette.surface },
-          headerTintColor: palette.text,
-          // Disable the static render of the header on web
-          // to prevent a hydration error in React Navigation v6.
-          headerShown: useClientOnlyValue(false, true),
-        }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Tourney Tracker',
-            tabBarLabel: 'Events',
-            headerTitle: () => <HeaderTitle />,
-            headerRight: () => <DashboardButton />,
-            tabBarIcon: ({ color }) => (
-              <SymbolView
-                name={{ ios: 'list.bullet', android: 'list', web: 'list' }}
-                tintColor={color}
-                size={28}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="add"
-          options={{
-            title: 'Add Event',
-            tabBarIcon: ({ color }) => (
-              <SymbolView
-                name={{ ios: 'plus.circle', android: 'add_circle', web: 'add' }}
-                tintColor={color}
-                size={28}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: 'Settings',
-            tabBarIcon: ({ color }) => (
-              <SymbolView
-                name={{ ios: 'gearshape', android: 'settings', web: 'settings' }}
-                tintColor={color}
-                size={28}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="dashboard"
-          options={{
-            title: 'Dashboard',
-            href: null,
-          }}
-        />
-      </Tabs>
-    </OverviewFiltersProvider>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: palette.accent,
+        tabBarInactiveTintColor: palette.tabIconInactive,
+        tabBarStyle: { backgroundColor: palette.surface, borderTopColor: palette.borderSubtle },
+        headerTitleStyle: HEADER_TITLE_STYLE,
+        headerStyle: { backgroundColor: palette.surface },
+        headerTintColor: palette.text,
+        // Disable the static render of the header on web
+        // to prevent a hydration error in React Navigation v6.
+        headerShown: useClientOnlyValue(false, true),
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Tourney Tracker',
+          tabBarLabel: 'Events',
+          headerTitle: () => <HeaderTitle />,
+          headerRight: () => <DashboardButton />,
+          tabBarIcon: ({ color }) => (
+            <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={28} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="add"
+        options={{
+          title: 'Add Event',
+          tabBarIcon: ({ color }) => (
+            <SymbolView
+              name={{ ios: 'plus.circle', android: 'add_circle', web: 'add' }}
+              tintColor={color}
+              size={28}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => (
+            <SymbolView name={{ ios: 'gearshape', android: 'settings', web: 'settings' }} tintColor={color} size={28} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="dashboard"
+        options={{
+          title: 'Dashboard',
+          href: null,
+        }}
+      />
+    </Tabs>
   );
 }
 

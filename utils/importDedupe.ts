@@ -1,8 +1,21 @@
 import type { NewEventWithTimestamps } from '@/db/events';
-import type { EventRecord } from '@/models/types';
+import type { NewMarkerWithTimestamps } from '@/db/markers';
+import type { EventRecord, MarkerRecord } from '@/models/types';
 
 function dedupeKey(date: string, eventType: string, location: string | null | undefined): string {
   return `${date}|${eventType}|${(location ?? '').trim().toLowerCase()}`;
+}
+
+function markerDedupeKey(date: string, title: string): string {
+  return `${date}|${title.trim().toLowerCase()}`;
+}
+
+export function filterNewMarkers(
+  imported: NewMarkerWithTimestamps[],
+  existing: MarkerRecord[]
+): NewMarkerWithTimestamps[] {
+  const existingKeys = new Set(existing.map((marker) => markerDedupeKey(marker.date, marker.title)));
+  return imported.filter((marker) => !existingKeys.has(markerDedupeKey(marker.date, marker.title)));
 }
 
 export interface DuplicateEventMatch {

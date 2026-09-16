@@ -5,9 +5,7 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and version numbers follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
-
-## [1.0.1] - 2026-09-14
+## [1.1.0] - 2026-09-16
 
 ### Added
 
@@ -32,10 +30,12 @@ and version numbers follow [Semantic Versioning](https://semver.org/).
 - De-duplication on import: "Import & Add" now flags events that already
   look like ones you have (same date, event type and location) and lets you
   Add anyway or Skip each one before importing.
+- De-duplication for photos and markers as well.
 - An "About" section on Settings, with "Check for updates" (GitHub
   releases) and "Buy me a pack" (paypal.me) links.
-- Added dashboards section with data for total tournaments, total rounds, prizing rate, w/l/t pie chart, most played matchups, best/worst matchups, with filtering and threshold settings.
-- Added marker based date range filtering.
+- Dashboards section with data for total tournaments, total rounds, prizing rate, w/l/t pie chart, most played matchups, best/worst matchups, with filtering and threshold settings.
+- Most Played screen for full list.
+- Marker based date range filtering.
 
 
 ### Changed

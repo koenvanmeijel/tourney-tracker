@@ -1,6 +1,7 @@
 import { Fragment, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EventBand } from '@/components/EventBand';
 import { EventPhotos } from '@/components/EventPhotos';
@@ -45,6 +46,7 @@ export default function EventDetailScreen() {
   const { confirm } = useAppAlert();
   const router = useRouter();
   const { palette, themeId } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const event = useMemo(() => events.find((candidate) => String(candidate.id) === id), [events, id]);
 
@@ -76,7 +78,7 @@ export default function EventDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 48 + insets.bottom }]}>
       <Stack.Screen options={{ title: deckTitle }} />
 
       <View style={[styles.hero, { backgroundColor: palette.surface }]}>

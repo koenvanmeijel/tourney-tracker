@@ -11,7 +11,7 @@ import { useAppAlert } from '@/context/AppAlertContext';
 import { useEvents } from '@/context/EventsContext';
 import { useMarkers } from '@/context/MarkersContext';
 import { useTheme } from '@/context/ThemeContext';
-import { addEventPhoto } from '@/db/eventPhotos';
+import { addEventPhoto, listPhotosForEvent } from '@/db/eventPhotos';
 import type { NewEventWithTimestamps } from '@/db/events';
 import type { NewMarkerWithTimestamps } from '@/db/markers';
 import type { EventRecord } from '@/models/types';
@@ -28,8 +28,8 @@ import {
   type ZipPhotoEntry,
 } from '@/utils/backup';
 import { toIsoDateString } from '@/utils/date';
-import { savePhotoBytes } from '@/utils/eventPhotoStorage';
-import { findDuplicateEvents, type DuplicateEventMatch } from '@/utils/importDedupe';
+import { computePhotoHash, savePhotoBytes } from '@/utils/eventPhotoStorage';
+import { filterNewMarkers, findDuplicateEvents, type DuplicateEventMatch } from '@/utils/importDedupe';
 import { eventPhotoZipKey, photoZipKeyId } from '@/utils/photoZip';
 
 function backupFilename(extension: 'json' | 'zip'): string {
@@ -68,7 +68,18 @@ async function parseImportFile(file: File): Promise<ParsedImportFile> {
   return { events: payload.events, markers: payload.markers, photoEntries: [], hasPayload: true };
 }
 
-async function attachMatchedPhotos(matched: PhotoMatch[], idByImportedIndex: Map<number, number>): Promise<number> {
+interface AttachPhotosResult {
+  /** Number of distinct events that had at least one photo attached. */
+  eventCount: number;
+  /** Number of photos actually written — excludes byte-identical duplicates
+   * silently skipped because the event already has that exact photo. */
+  attachedCount: number;
+}
+
+async function attachMatchedPhotos(
+  matched: PhotoMatch[],
+  idByImportedIndex: Map<number, number>
+): Promise<AttachPhotosResult> {
   const byEventId = new Map<number, PhotoMatch[]>();
   for (const match of matched) {
     const eventId = match.target.kind === 'imported' ? idByImportedIndex.get(match.target.importedIndex) : match.target.eventId;
@@ -81,14 +92,23 @@ async function attachMatchedPhotos(matched: PhotoMatch[], idByImportedIndex: Map
     }
   }
 
+  let attachedCount = 0;
   for (const [eventId, group] of byEventId) {
     group.sort((a, b) => a.entry.index - b.entry.index);
+    const existingPhotos = await listPhotosForEvent(eventId);
+    const seenHashes = new Set(existingPhotos.map((photo) => photo.hash).filter((hash): hash is string => hash != null));
     for (const match of group) {
+      const hash = await computePhotoHash(match.entry.data);
+      if (seenHashes.has(hash)) {
+        continue;
+      }
       const filename = savePhotoBytes(match.entry.data, match.entry.extension);
-      await addEventPhoto(eventId, filename);
+      await addEventPhoto(eventId, filename, hash);
+      seenHashes.add(hash);
+      attachedCount += 1;
     }
   }
-  return byEventId.size;
+  return { eventCount: byEventId.size, attachedCount };
 }
 
 interface ReviewState {
@@ -255,21 +275,22 @@ export default function DataManagementScreen() {
       });
 
       const insertedIds = await addAllEvents(eventsToInsert);
-      await addAllMarkers(review.importedMarkers);
+      const markersToInsert = filterNewMarkers(review.importedMarkers, markers);
+      await addAllMarkers(markersToInsert);
 
       const idByImportedIndex = new Map(
         originalIndexes.map((originalIndex, position): [number, number] => [originalIndex, insertedIds[position]])
       );
       const { matched, unmatched } = photoMatch;
-      const attachedEventCount = await attachMatchedPhotos(matched, idByImportedIndex);
+      const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
       if (attachedEventCount > 0) {
         await refreshEvents();
       }
 
       const skippedDuplicates = review.duplicates.length - review.duplicates.filter((d) => willInsert(d.importedIndex)).length;
-      const parts = [`${eventsToInsert.length} event(s)`, `${review.importedMarkers.length} marker(s)`];
+      const parts = [`${eventsToInsert.length} event(s)`, `${markersToInsert.length} marker(s)`];
       if (review.photoEntries.length > 0) {
-        parts.push(`${matched.length} photo(s)`);
+        parts.push(`${attachedCount} photo(s)`);
       }
       let message = `Imported ${parts.join(', ')}.`;
       if (skippedDuplicates > 0) {
@@ -314,11 +335,11 @@ export default function DataManagementScreen() {
         }));
         const { matched, unmatched } = matchPhotoEntries(review.photoEntries, candidates);
         const idByImportedIndex = new Map(insertedIds.map((id, index): [number, number] => [index, id]));
-        const attachedEventCount = await attachMatchedPhotos(matched, idByImportedIndex);
+        const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
         if (attachedEventCount > 0) {
           await refreshEvents();
         }
-        message += ` ${matched.length} photo(s) attached.`;
+        message += ` ${attachedCount} photo(s) attached.`;
         if (unmatched.length > 0) {
           message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
         }

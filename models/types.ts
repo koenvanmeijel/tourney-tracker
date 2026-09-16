@@ -61,6 +61,9 @@ export interface EventPhotoRecord {
   filename: string;
   createdAt: string;
   isThumbnail: boolean;
+  /** SHA-256 hex digest of the photo's bytes, used to detect exact-duplicate
+   * photos on import. Null for photos saved before this field existed. */
+  hash: string | null;
 }
 
 export interface EventRecord {

@@ -1,29 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View as RNView, useWindowDimensions } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { SymbolView } from 'expo-symbols';
+import { useRouter } from 'expo-router';
 import { PieChart } from 'react-native-chart-kit';
 
-import { DateRangeDialog, type DateRange } from '@/components/DateRangeDialog';
-import { FormTextInput } from '@/components/form/FormTextInput';
-import { MultiSelectChips } from '@/components/form/MultiSelectChips';
+import { Badge } from '@/components/Badge';
+import { DashboardFilterBar } from '@/components/DashboardFilterBar';
+import { MostPlayedRow } from '@/components/MostPlayedRow';
 import { PokemonIcon } from '@/components/PokemonIcon';
 import { Text, View } from '@/components/Themed';
 import { ThresholdModal } from '@/components/ThresholdModal';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useEvents } from '@/context/EventsContext';
+import { useMatchModeSettings } from '@/context/MatchModeSettingsContext';
+import { useOverviewFilters } from '@/context/OverviewFiltersContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
-import { getSetting, setSetting } from '@/db/settings';
-import { EVENT_TYPES, type EventRecord, type EventType } from '@/models/types';
-import { formatIsoDateForDisplay, isFutureIsoDate, toIsoDateString } from '@/utils/date';
-import { getEventTypeOptions, getRoundResultTheme } from '@/utils/eventTheme';
+import { filterPlayedEvents } from '@/utils/eventFilters';
+import { getRoundResultTheme } from '@/utils/eventTheme';
 import { formatRecordOrNull } from '@/utils/format';
 import {
   bestAndWorstMatchup,
   groupOpponentRounds,
   groupPointsRate,
-  groupRoundCount,
   topPlayedGroups,
   type MatchMode,
   type OpponentDeckGroup,
@@ -35,22 +33,6 @@ const SCREEN_PADDING = 20;
 const TILE_PADDING = 16;
 const ROW_GAP = 12;
 const MOST_PLAYED_LIMIT = 3;
-const DEFAULT_MATCH_MODE: MatchMode = 'strict';
-const DEFAULT_THRESHOLD = 3;
-// Pokémon's first release date (27 February 1996, Japan)
-const DEFAULT_DATE_FROM = '1996-02-27';
-
-const MATCH_MODE_SETTING_KEY = 'dashboardMatchMode';
-const THRESHOLD_SETTING_KEY = 'dashboardThreshold';
-
-function isMatchMode(value: string): value is MatchMode {
-  return value === 'strict' || value === 'relaxed';
-}
-
-function matchesDeckQuery(event: EventRecord, query: string): boolean {
-  const haystack = `${event.deckName ?? ''} ${event.deckPokemon.join(' ')}`.toLowerCase();
-  return haystack.includes(query);
-}
 
 function StatTile({
   value,
@@ -87,56 +69,12 @@ function StatTile({
   );
 }
 
-function Badge({ text }: { text: string }) {
-  const { palette } = useTheme();
-  return (
-    <RNView style={[styles.badge, { backgroundColor: palette.secondaryFill }]}>
-      <Text style={[styles.badgeText, { color: palette.onSurfaceText }]}>{text}</Text>
-    </RNView>
-  );
-}
-
 function LegendRow({ color, text }: { color: string; text: string }) {
   const { palette } = useTheme();
   return (
     <RNView style={styles.legendRow}>
       <RNView style={[styles.legendDot, { backgroundColor: color }]} />
       <Text style={[styles.legendText, { color: palette.text }]}>{text}</Text>
-    </RNView>
-  );
-}
-
-function MostPlayedRow({
-  group,
-  resultTheme,
-}: {
-  group: OpponentDeckGroup;
-  resultTheme: ReturnType<typeof getRoundResultTheme>;
-}) {
-  const { palette } = useTheme();
-  const record = formatRecordOrNull(group);
-  const total = groupRoundCount(group);
-
-  return (
-    <RNView style={styles.playedRow}>
-      <RNView style={styles.playedRowHeader}>
-        <RNView style={styles.spriteRow}>
-          {group.spritePokemon.map((mon, index) => (
-            <PokemonIcon key={index} name={mon} size={26} />
-          ))}
-        </RNView>
-        <Text style={[styles.playedRowLabel, { color: palette.text }]} numberOfLines={1}>
-          {group.label} - {total} round{total === 1 ? '' : 's'}
-          {record ? <Text style={{ color: palette.accent }}> ({record})</Text> : null}
-        </Text>
-      </RNView>
-      <RNView style={[styles.barTrack, { backgroundColor: palette.borderSubtle }]}>
-        {group.wins > 0 ? <RNView style={{ flex: group.wins, backgroundColor: resultTheme.win.background }} /> : null}
-        {group.losses > 0 ? (
-          <RNView style={{ flex: group.losses, backgroundColor: resultTheme.loss.background }} />
-        ) : null}
-        {group.ties > 0 ? <RNView style={{ flex: group.ties, backgroundColor: resultTheme.tie.background }} /> : null}
-      </RNView>
     </RNView>
   );
 }
@@ -150,6 +88,7 @@ function MatchupCard({ title, group }: { title: string; group: OpponentDeckGroup
         <Text style={[styles.matchupEmpty, { color: palette.text, opacity: MUTED_TEXT_OPACITY }]}>
           Not enough data yet
         </Text>
+        <Text style={[styles.matchupCaption, { color: palette.accent }]}>{title}</Text>
       </RNView>
     );
   }
@@ -175,164 +114,26 @@ function MatchupCard({ title, group }: { title: string; group: OpponentDeckGroup
   );
 }
 
-function DashboardFilterBar({
-  typeFilters,
-  onTypeFiltersChange,
-  deckQuery,
-  onDeckQueryChange,
-  dateRange,
-  onDateRangeChange,
-  onClear,
-  active,
-}: {
-  typeFilters: EventType[];
-  onTypeFiltersChange: (value: EventType[]) => void;
-  deckQuery: string;
-  onDeckQueryChange: (value: string) => void;
-  dateRange: DateRange | null;
-  onDateRangeChange: (value: DateRange | null) => void;
-  onClear: () => void;
-  active: boolean;
-}) {
-  const { palette, themeId } = useTheme();
-  const typeFilterOptions = useMemo(() => getEventTypeOptions(themeId), [themeId]);
-  const [dateDialogOpen, setDateDialogOpen] = useState(false);
-
-  const dateLabel = dateRange
-    ? `${formatIsoDateForDisplay(dateRange.from)} – ${formatIsoDateForDisplay(dateRange.to)}`
-    : 'Date';
-
-  return (
-    <View style={[styles.filterBar, { borderBottomColor: palette.borderSubtle }]}>
-      <RNView style={styles.searchRow}>
-        <FormTextInput
-          style={styles.searchInput}
-          value={deckQuery}
-          onChangeText={onDeckQueryChange}
-          placeholder="Search by deck or Pokémon"
-        />
-        <Pressable
-          style={[
-            styles.dateButton,
-            { backgroundColor: palette.surface, borderColor: palette.border },
-            dateRange && { backgroundColor: palette.accent, borderColor: palette.accent },
-          ]}
-          onPress={() => setDateDialogOpen(true)}>
-          <SymbolView
-            name={{ android: 'calendar_today' }}
-            tintColor={dateRange ? palette.onAccentText : palette.accent}
-            size={16}
-          />
-          <Text
-            style={[
-              styles.dateButtonText,
-              { color: palette.accent },
-              dateRange && { color: palette.onAccentText },
-            ]}>
-            {dateLabel}
-          </Text>
-        </Pressable>
-        <Pressable onPress={onClear} disabled={!active} hitSlop={8}>
-          <Text style={[styles.filterClear, { color: palette.accent }, !active && styles.filterClearDisabled]}>
-            Clear
-          </Text>
-        </Pressable>
-      </RNView>
-
-      <MultiSelectChips options={typeFilterOptions} values={typeFilters} onChange={onTypeFiltersChange} />
-
-      <DateRangeDialog
-        visible={dateDialogOpen}
-        from={dateRange?.from ?? DEFAULT_DATE_FROM}
-        to={dateRange?.to ?? toIsoDateString(new Date())}
-        hasActiveRange={dateRange != null}
-        onApply={(from, to) => {
-          onDateRangeChange({ from, to });
-          setDateDialogOpen(false);
-        }}
-        onClear={() => {
-          onDateRangeChange(null);
-          setDateDialogOpen(false);
-        }}
-        onClose={() => setDateDialogOpen(false)}
-      />
-    </View>
-  );
-}
-
 export default function DashboardScreen() {
   const { palette, themeId } = useTheme();
-  const { events } = useEvents();
+  const { events, loading } = useEvents();
   const { width } = useWindowDimensions();
   const router = useRouter();
-  const [typeFilters, setTypeFilters] = useState<EventType[]>([]);
-  const [deckQuery, setDeckQuery] = useState('');
-  const [dateRange, setDateRange] = useState<DateRange | null>(null);
-  const [matchMode, setMatchMode] = useState<MatchMode>(DEFAULT_MATCH_MODE);
-  const [threshold, setThreshold] = useState(DEFAULT_THRESHOLD);
+  const { typeFilters, setTypeFilters, deckQuery, setDeckQuery, dateRange, setDateRange } = useOverviewFilters();
+  const { matchMode, threshold, applyMatchModeSettings } = useMatchModeSettings();
   const [thresholdModalOpen, setThresholdModalOpen] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all([getSetting(MATCH_MODE_SETTING_KEY), getSetting(THRESHOLD_SETTING_KEY)])
-      .then(([storedMode, storedThreshold]) => {
-        if (cancelled) return;
-        if (storedMode && isMatchMode(storedMode)) {
-          setMatchMode(storedMode);
-        }
-        if (storedThreshold) {
-          const parsed = Number.parseInt(storedThreshold, 10);
-          if (Number.isFinite(parsed) && parsed >= 1) {
-            setThreshold(parsed);
-          }
-        }
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   function applyThresholdSettings(mode: MatchMode, value: number) {
-    setMatchMode(mode);
-    setThreshold(value);
+    applyMatchModeSettings(mode, value);
     setThresholdModalOpen(false);
-    setSetting(MATCH_MODE_SETTING_KEY, mode).catch(() => {});
-    setSetting(THRESHOLD_SETTING_KEY, String(value)).catch(() => {});
   }
-
-  const filterParams = useLocalSearchParams<{ types?: string; deck?: string; from?: string; to?: string }>();
-  useEffect(() => {
-    if (
-      filterParams.types === undefined &&
-      filterParams.deck === undefined &&
-      filterParams.from === undefined &&
-      filterParams.to === undefined
-    ) {
-      return;
-    }
-    const types = filterParams.types
-      ? filterParams.types
-          .split(',')
-          .filter((value): value is EventType => (EVENT_TYPES as string[]).includes(value))
-      : [];
-    setTypeFilters(types);
-    setDeckQuery(filterParams.deck ?? '');
-    setDateRange(filterParams.from && filterParams.to ? { from: filterParams.from, to: filterParams.to } : null);
-  }, [filterParams.types, filterParams.deck, filterParams.from, filterParams.to]);
 
   const filtersActive = typeFilters.length > 0 || deckQuery.trim().length > 0 || dateRange != null;
 
-  const playedEvents = useMemo(() => {
-    const query = deckQuery.trim().toLowerCase();
-    return events.filter((event) => {
-      if (isFutureIsoDate(event.date)) return false;
-      if (typeFilters.length > 0 && !typeFilters.includes(event.eventType)) return false;
-      if (query && !matchesDeckQuery(event, query)) return false;
-      if (dateRange && (event.date < dateRange.from || event.date > dateRange.to)) return false;
-      return true;
-    });
-  }, [events, typeFilters, deckQuery, dateRange]);
+  const playedEvents = useMemo(
+    () => filterPlayedEvents(events, { typeFilters, deckQuery, dateRange }),
+    [events, typeFilters, deckQuery, dateRange]
+  );
 
   const totalTournaments = playedEvents.length;
 
@@ -389,15 +190,19 @@ export default function DashboardScreen() {
   }
 
   function goToFilteredOverview() {
-    router.push({
-      pathname: '/',
-      params: {
-        types: typeFilters.join(','),
-        deck: deckQuery,
-        from: dateRange?.from ?? '',
-        to: dateRange?.to ?? '',
-      },
-    });
+    router.push('/');
+  }
+
+  function goToMostPlayed() {
+    router.push('/most-played');
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={{ color: palette.text }}>Loading…</Text>
+      </View>
+    );
   }
 
   return (
@@ -474,7 +279,7 @@ export default function DashboardScreen() {
               <Pressable
                 style={[styles.thresholdButton, { backgroundColor: palette.accentTint }]}
                 onPress={() => setThresholdModalOpen(true)}>
-                <Text style={[styles.thresholdButtonText, { color: palette.accent }]}>Set threshold</Text>
+                <Text style={[styles.thresholdButtonText, { color: palette.accent }]}>Matchup settings</Text>
               </Pressable>
             </RNView>
 
@@ -498,6 +303,12 @@ export default function DashboardScreen() {
               <MatchupCard title="BEST" group={matchups.best} />
               <MatchupCard title="WORST" group={matchups.worst} />
             </RNView>
+
+            <Pressable
+              style={[styles.viewAllButton, { backgroundColor: palette.accentTint }]}
+              onPress={goToMostPlayed}>
+              <Text style={[styles.viewAllButtonText, { color: palette.accent }]}>View all</Text>
+            </Pressable>
           </View>
         </ScrollView>
       </View>
@@ -517,40 +328,11 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  filterBar: {
-    padding: 16,
-    paddingBottom: 12,
-    gap: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  searchInput: {
+  loadingContainer: {
     flex: 1,
-    fontSize: 14,
-  },
-  dateButton: {
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  dateButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  filterClear: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  filterClearDisabled: {
-    opacity: MUTED_TEXT_OPACITY,
+    justifyContent: 'center',
+    padding: 24,
   },
   container: {
     padding: SCREEN_PADDING,
@@ -615,15 +397,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  badge: {
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-  },
   emptyText: {
     fontSize: 14,
     lineHeight: 20,
@@ -656,6 +429,17 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   thresholdButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  viewAllButton: {
+    alignSelf: 'center',
+    marginTop: 16,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+  },
+  viewAllButtonText: {
     fontSize: 13,
     fontWeight: '700',
   },

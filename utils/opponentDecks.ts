@@ -3,6 +3,10 @@ import { roundHasOpponent, tallyableResult } from '@/utils/rounds';
 
 export type MatchMode = 'strict' | 'relaxed';
 
+export function isMatchMode(value: string): value is MatchMode {
+  return value === 'strict' || value === 'relaxed';
+}
+
 export interface OpponentDeckGroup {
   key: string;
   label: string;
@@ -11,6 +15,9 @@ export interface OpponentDeckGroup {
   wins: number;
   losses: number;
   ties: number;
+  /** ISO date (yyyy-mm-dd) of the most recent event this opponent was faced
+   * in — used to break best/worst matchup ties. */
+  lastPlayedDate: string;
 }
 
 interface GroupIdentity {
@@ -29,7 +36,7 @@ function groupIdentity(round: RoundRecord, mode: MatchMode): GroupIdentity | nul
     const sorted = [...pokemon].sort((a, b) => a.localeCompare(b));
     return {
       key: `pokemon:${sorted.map((mon) => mon.toLowerCase()).join('/')}`,
-      label: sorted.join(' / '),
+      label: pokemon.join(' / '),
       sprites: pokemon.slice(0, 2),
     };
   }
@@ -53,8 +60,18 @@ export function groupOpponentRounds(events: EventRecord[], mode: MatchMode): Opp
 
       let group = groups.get(identity.key);
       if (!group) {
-        group = { key: identity.key, label: identity.label, spritePokemon: identity.sprites, wins: 0, losses: 0, ties: 0 };
+        group = {
+          key: identity.key,
+          label: identity.label,
+          spritePokemon: identity.sprites,
+          wins: 0,
+          losses: 0,
+          ties: 0,
+          lastPlayedDate: event.date,
+        };
         groups.set(identity.key, group);
+      } else if (event.date > group.lastPlayedDate) {
+        group.lastPlayedDate = event.date;
       }
       if (tallyResult === 'win') group.wins += 1;
       else if (tallyResult === 'loss') group.losses += 1;
@@ -78,7 +95,12 @@ export function groupPointsRate(group: OpponentDeckGroup): number {
 
 export function topPlayedGroups(groups: OpponentDeckGroup[], limit: number): OpponentDeckGroup[] {
   return [...groups]
-    .sort((a, b) => groupRoundCount(b) - groupRoundCount(a) || a.label.localeCompare(b.label))
+    .sort(
+      (a, b) =>
+        groupRoundCount(b) - groupRoundCount(a) ||
+        groupPointsRate(b) - groupPointsRate(a) ||
+        a.label.localeCompare(b.label)
+    )
     .slice(0, limit);
 }
 
@@ -87,11 +109,24 @@ export interface MatchupSummary {
   worst: OpponentDeckGroup | null;
 }
 
+/** Among groups tied on points rate, prefers more rounds played, then the
+ * one faced most recently. */
+function pickTiebreakWinner(candidates: OpponentDeckGroup[]): OpponentDeckGroup {
+  return candidates.reduce((champion, candidate) => {
+    const roundDiff = groupRoundCount(candidate) - groupRoundCount(champion);
+    if (roundDiff !== 0) return roundDiff > 0 ? candidate : champion;
+    return candidate.lastPlayedDate > champion.lastPlayedDate ? candidate : champion;
+  });
+}
+
 export function bestAndWorstMatchup(groups: OpponentDeckGroup[], threshold: number): MatchupSummary {
   const eligible = groups.filter((group) => groupRoundCount(group) >= threshold);
   if (eligible.length === 0) {
     return { best: null, worst: null };
   }
-  const sorted = [...eligible].sort((a, b) => groupPointsRate(b) - groupPointsRate(a));
-  return { best: sorted[0], worst: sorted[sorted.length - 1] };
+  const maxRate = Math.max(...eligible.map(groupPointsRate));
+  const minRate = Math.min(...eligible.map(groupPointsRate));
+  const best = pickTiebreakWinner(eligible.filter((group) => groupPointsRate(group) === maxRate));
+  const worst = pickTiebreakWinner(eligible.filter((group) => groupPointsRate(group) === minRate));
+  return { best, worst };
 }

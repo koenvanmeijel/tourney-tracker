@@ -11,6 +11,7 @@ interface EventPhotoRow {
   created_at: string;
   position: number;
   is_thumbnail: number;
+  hash: string | null;
 }
 
 function rowToPhoto(row: EventPhotoRow): EventPhotoRecord {
@@ -20,6 +21,7 @@ function rowToPhoto(row: EventPhotoRow): EventPhotoRecord {
     filename: row.filename,
     createdAt: row.created_at,
     isThumbnail: row.is_thumbnail === 1,
+    hash: row.hash,
   };
 }
 
@@ -57,7 +59,7 @@ export async function listPhotosForEvents(eventIds: number[]): Promise<Map<numbe
   return photosByEvent;
 }
 
-export async function addEventPhoto(eventId: number, filename: string): Promise<EventPhotoRecord> {
+export async function addEventPhoto(eventId: number, filename: string, hash: string): Promise<EventPhotoRecord> {
   const db = await getDb();
   const now = new Date().toISOString();
   const maxPosition = await db.getFirstAsync<{ maxPosition: number | null }>(
@@ -67,14 +69,15 @@ export async function addEventPhoto(eventId: number, filename: string): Promise<
   const position = (maxPosition?.maxPosition ?? -1) + 1;
   const isThumbnail = maxPosition?.maxPosition == null;
   const result = await db.runAsync(
-    'INSERT INTO event_photos (event_id, filename, created_at, position, is_thumbnail) VALUES (?, ?, ?, ?, ?)',
+    'INSERT INTO event_photos (event_id, filename, created_at, position, is_thumbnail, hash) VALUES (?, ?, ?, ?, ?, ?)',
     eventId,
     filename,
     now,
     position,
-    isThumbnail ? 1 : 0
+    isThumbnail ? 1 : 0,
+    hash
   );
-  return { id: result.lastInsertRowId, eventId, filename, createdAt: now, isThumbnail };
+  return { id: result.lastInsertRowId, eventId, filename, createdAt: now, isThumbnail, hash };
 }
 
 export async function setEventPhotoThumbnail(eventId: number, photoId: number): Promise<void> {
