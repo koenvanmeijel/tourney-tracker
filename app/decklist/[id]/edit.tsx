@@ -6,11 +6,13 @@ import { DecklistForm } from '@/components/DecklistForm';
 import { Text, View } from '@/components/Themed';
 import { useAppAlert } from '@/context/AppAlertContext';
 import { useDecklists } from '@/context/DecklistsContext';
+import { useEvents } from '@/context/EventsContext';
 import type { NewDecklist } from '@/models/types';
 
 export default function EditDecklistScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { decklists, editDecklist, removeDecklist } = useDecklists();
+  const { events, setEventDecklist } = useEvents();
   const { confirm } = useAppAlert();
   const router = useRouter();
 
@@ -29,9 +31,24 @@ export default function EditDecklistScreen() {
     pokemonNames: decklist.pokemonNames,
     decklistText: decklist.decklistText,
   };
+  const initialLinkedEventIds = events.filter((event) => event.decklistId === decklist.id).map((event) => event.id);
 
-  async function handleSubmit(updated: NewDecklist) {
+  async function handleSubmit(updated: NewDecklist, linkedEventIds: number[]) {
     await editDecklist(decklist!.id, updated);
+
+    const previousIds = new Set(initialLinkedEventIds);
+    const nextIds = new Set(linkedEventIds);
+    for (const eventId of previousIds) {
+      if (!nextIds.has(eventId)) {
+        await setEventDecklist(eventId, null);
+      }
+    }
+    for (const eventId of nextIds) {
+      if (!previousIds.has(eventId)) {
+        await setEventDecklist(eventId, decklist!.id);
+      }
+    }
+
     router.back();
   }
 
@@ -51,6 +68,7 @@ export default function EditDecklistScreen() {
       <Stack.Screen options={{ title: 'Edit Decklist' }} />
       <DecklistForm
         initialValue={initialValue}
+        linkedEventIds={initialLinkedEventIds}
         submitLabel="Save changes"
         onSubmit={handleSubmit}
         onDelete={handleDelete}

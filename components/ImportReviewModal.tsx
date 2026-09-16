@@ -14,8 +14,10 @@ interface ImportReviewModalProps {
   visible: boolean;
   existingEventsCount: number;
   existingMarkersCount: number;
+  existingDecklistsCount: number;
   importedEventsCount: number;
   importedMarkersCount: number;
+  importedDecklistsCount: number;
   duplicates: DuplicateEventMatch[];
   /** importedIndex -> true (add anyway) / false or absent (skip, the default). */
   decisions: Record<number, boolean>;
@@ -38,8 +40,10 @@ export function ImportReviewModal({
   visible,
   existingEventsCount,
   existingMarkersCount,
+  existingDecklistsCount,
   importedEventsCount,
   importedMarkersCount,
+  importedDecklistsCount,
   duplicates,
   decisions,
   onToggle,
@@ -78,6 +82,11 @@ export function ImportReviewModal({
               <Text style={[styles.summarySubLabel, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
                 {existingMarkersCount} marker{existingMarkersCount === 1 ? '' : 's'}
               </Text>
+              {importedDecklistsCount > 0 ? (
+                <Text style={[styles.summarySubLabel, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
+                  {existingDecklistsCount} decklist{existingDecklistsCount === 1 ? '' : 's'}
+                </Text>
+              ) : null}
             </View>
             <View style={[styles.summaryDivider, { backgroundColor: palette.borderSubtle }]} />
             <View style={styles.summaryCol}>
@@ -88,6 +97,11 @@ export function ImportReviewModal({
               <Text style={[styles.summarySubLabel, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
                 {importedMarkersCount} marker{importedMarkersCount === 1 ? '' : 's'}
               </Text>
+              {importedDecklistsCount > 0 ? (
+                <Text style={[styles.summarySubLabel, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
+                  {importedDecklistsCount} decklist{importedDecklistsCount === 1 ? '' : 's'}
+                </Text>
+              ) : null}
             </View>
           </View>
 

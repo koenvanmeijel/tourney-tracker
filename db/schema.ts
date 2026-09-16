@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 /** Bump this and add another `if (currentVersion === N)` block below when the
  * schema needs to change — never edit a past migration. */
-export const DATABASE_VERSION = 11;
+export const DATABASE_VERSION = 12;
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -208,8 +208,7 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
   if (currentVersion === 10) {
     // Decklists: a user-maintained library of deck text (e.g. pasted from
-    // a deck builder), unrelated to event/round tracking — its own table,
-    // deliberately left out of export/import for now.
+    // a deck builder), unrelated to event/round tracking — its own table.
     await db.execAsync(`
       CREATE TABLE decklists (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -221,6 +220,16 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
       );
     `);
     currentVersion = 11;
+  }
+
+  if (currentVersion === 11) {
+    // Links an event to the decklist it was played with. Nullable, and
+    // ON DELETE SET NULL rather than CASCADE — deleting a decklist should
+    // unlink it from any events, not delete the events themselves.
+    await db.execAsync(
+      `ALTER TABLE events ADD COLUMN decklist_id INTEGER REFERENCES decklists(id) ON DELETE SET NULL;`
+    );
+    currentVersion = 12;
   }
 
   await db.execAsync(`PRAGMA user_version = ${currentVersion}`);

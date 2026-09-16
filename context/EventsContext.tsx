@@ -7,6 +7,7 @@ import {
   deleteEvent as deleteEventRow,
   listEvents,
   replaceAllEvents,
+  setEventDecklistId,
   updateEvent as updateEventRow,
   type NewEventWithTimestamps,
 } from '@/db/events';
@@ -27,6 +28,7 @@ interface EventsContextValue {
   addEvent: (input: NewEvent) => Promise<number>;
   editEvent: (id: number, input: NewEvent) => Promise<void>;
   removeEvent: (id: number) => Promise<void>;
+  setEventDecklist: (eventId: number, decklistId: number | null) => Promise<void>;
   restoreAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
   addAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
   addPhoto: (eventId: number, sourceUri: string) => Promise<void>;
@@ -77,6 +79,14 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   const removeEvent = useCallback(
     async (id: number) => {
       await deleteEventRow(id);
+      await refresh();
+    },
+    [refresh]
+  );
+
+  const setEventDecklist = useCallback(
+    async (eventId: number, decklistId: number | null) => {
+      await setEventDecklistId(eventId, decklistId);
       await refresh();
     },
     [refresh]
@@ -143,6 +153,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addEvent,
       editEvent,
       removeEvent,
+      setEventDecklist,
       restoreAll,
       addAll,
       addPhoto,
@@ -158,6 +169,7 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addEvent,
       editEvent,
       removeEvent,
+      setEventDecklist,
       restoreAll,
       addAll,
       addPhoto,

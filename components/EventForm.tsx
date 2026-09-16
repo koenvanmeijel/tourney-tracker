@@ -2,7 +2,9 @@ import { useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { SymbolView } from 'expo-symbols';
 
+import { DecklistLinkPicker } from '@/components/DecklistLinkPicker';
 import { Field, Section } from '@/components/form/FormSection';
 import { FormTextInput } from '@/components/form/FormTextInput';
 import { MaskedDateInput } from '@/components/form/MaskedDateInput';
@@ -12,8 +14,9 @@ import { SelectChips } from '@/components/form/SelectChips';
 import { TagInput, type TagInputHandle } from '@/components/form/TagInput';
 import { Text } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
+import { useDecklists } from '@/context/DecklistsContext';
 import { useTheme } from '@/context/ThemeContext';
-import type { EventType, NewEvent, NewRound } from '@/models/types';
+import type { DecklistRecord, EventType, NewEvent, NewRound } from '@/models/types';
 import {
   dateToDigits,
   formatDateInput,
@@ -35,6 +38,7 @@ interface EventFormProps {
 
 export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: EventFormProps) {
   const { palette, themeId } = useTheme();
+  const { decklists } = useDecklists();
   const eventTypeOptions = useMemo(() => getEventTypeOptions(themeId), [themeId]);
   const initialDate = initialValue?.date ? parseIsoDateString(initialValue.date) ?? new Date() : new Date();
   const [date, setDate] = useState(formatDateInput(initialDate));
@@ -55,10 +59,27 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
   const [notes, setNotes] = useState(initialValue?.notes ?? '');
   const [rounds, setRounds] = useState<NewRound[]>(initialValue?.rounds ?? []);
   const [dividers, setDividers] = useState<number[]>(initialValue?.roundDividers ?? []);
+  const [decklistId, setDecklistId] = useState<number | null>(initialValue?.decklistId ?? null);
+  const [linkPickerOpen, setLinkPickerOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const deckPokemonRef = useRef<TagInputHandle>(null);
   const roundsEditorRef = useRef<RoundsEditorHandle>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const linkedDecklist = decklists.find((decklist) => decklist.id === decklistId) ?? null;
+
+  function handleSelectDecklist(decklist: DecklistRecord) {
+    setDecklistId(decklist.id);
+    if (deckPokemon.length === 0) {
+      setDeckPokemon(decklist.pokemonNames);
+    }
+    setLinkPickerOpen(false);
+  }
+
+  function handleUnlinkDecklist() {
+    setDecklistId(null);
+    setLinkPickerOpen(false);
+  }
 
   const isFirstPlace = Number(placement.trim()) === 1;
   const parsedDate = parseDateDigits(dateDigits);
@@ -126,6 +147,7 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
         notes: notes.trim() || null,
         rounds: finalRounds.map((round, index) => ({ ...round, roundNumber: index + 1 })),
         roundDividers: finalDividers,
+        decklistId,
       });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Failed to save event');
@@ -135,155 +157,180 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
   }
 
   return (
-    <KeyboardAwareScrollView
-      style={[styles.screen, { backgroundColor: palette.background }]}
-      contentContainerStyle={styles.container}
-      keyboardShouldPersistTaps="handled"
-      bottomOffset={24}>
-      <Section>
-        <Field label="Date">
-          <View style={styles.dateRow}>
-            <MaskedDateInput
-              key={dateResetToken}
-              style={styles.dateInput}
-              defaultValue={date}
-              onChangeText={handleDateChange}
-            />
-            <Pressable style={[styles.dateButton, { backgroundColor: palette.accentTint }]} onPress={openDatePicker}>
-              <Text style={[styles.dateButtonText, { color: palette.accent }]}>📅 Pick</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.dateButton, { backgroundColor: palette.accentTint }]}
-              onPress={() => applyDate(new Date())}>
-              <Text style={[styles.dateButtonText, { color: palette.accent }]}>Today</Text>
-            </Pressable>
-          </View>
-        </Field>
-
-        <Field label="Event type">
-          <SelectChips options={eventTypeOptions} value={eventType} onChange={setEventType} initialVisibleCount={3} />
-        </Field>
-
-        <Field label="Location">
-          <FormTextInput value={location} onChangeText={setLocation} placeholder="Location" />
-        </Field>
-      </Section>
-
-      <Section>
-        <Field label="Deck Pokémon">
-          <TagInput
-            ref={deckPokemonRef}
-            tags={deckPokemon}
-            onChange={setDeckPokemon}
-            trailingAction={{
-              label: deckNameVisible ? 'Remove name' : '+ Name',
-              onPress: () => {
-                if (deckNameVisible) setDeckName('');
-                setDeckNameVisible((visible) => !visible);
-              },
-            }}
-          />
-          {deckNameVisible ? (
-            <FormTextInput value={deckName} onChangeText={setDeckName} placeholder="Custom deck name" />
-          ) : null}
-        </Field>
-      </Section>
-
-      {!isUpcoming ? (
+    <>
+      <KeyboardAwareScrollView
+        style={[styles.screen, { backgroundColor: palette.background }]}
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        bottomOffset={24}>
         <Section>
-          <Field label="Placement">
-            <View style={styles.placementRow}>
-              <FormTextInput
-                style={styles.placementInput}
-                value={placement}
-                onChangeText={setPlacement}
-                placeholder="Final standing"
-                keyboardType="number-pad"
+          <Field label="Date">
+            <View style={styles.dateRow}>
+              <MaskedDateInput
+                key={dateResetToken}
+                style={styles.dateInput}
+                defaultValue={date}
+                onChangeText={handleDateChange}
               />
-              <Text style={styles.placementOutOf}>/</Text>
-              <FormTextInput
-                style={styles.placementInput}
-                value={placementTotal}
-                onChangeText={setPlacementTotal}
-                placeholder="Players"
-                keyboardType="number-pad"
-              />
-              {isFirstPlace ? (
-                <Text style={styles.firstPlaceBadge}>👑 1st</Text>
-              ) : (
-                <Pressable
-                  onPress={() => setPrized((value) => !value)}
-                  style={[
-                    styles.prizeToggle,
-                    { borderColor: palette.border },
-                    prized && { backgroundColor: palette.accent, borderColor: palette.accent },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.prizeToggleText,
-                      prized && [styles.prizeToggleTextOn, { color: palette.onAccentText }],
-                    ]}>
-                    🎖️ Prize
-                  </Text>
-                </Pressable>
-              )}
+              <Pressable style={[styles.dateButton, { backgroundColor: palette.accentTint }]} onPress={openDatePicker}>
+                <Text style={[styles.dateButtonText, { color: palette.accent }]}>📅 Pick</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.dateButton, { backgroundColor: palette.accentTint }]}
+                onPress={() => applyDate(new Date())}>
+                <Text style={[styles.dateButtonText, { color: palette.accent }]}>Today</Text>
+              </Pressable>
             </View>
           </Field>
-        </Section>
-      ) : null}
 
-      {!isUpcoming ? (
+          <Field label="Event type">
+            <SelectChips options={eventTypeOptions} value={eventType} onChange={setEventType} initialVisibleCount={3} />
+          </Field>
+
+          <Field label="Location">
+            <FormTextInput value={location} onChangeText={setLocation} placeholder="Location" />
+          </Field>
+        </Section>
+
         <Section>
           <Field
-            label="Rounds"
+            label="Deck Pokémon"
             right={
-              <RoundDividerButton
-                roundCount={rounds.length}
-                dividers={dividers}
-                onAdd={(afterRound) => setDividers([...dividers, afterRound].sort((a, b) => a - b))}
-              />
+              <Pressable onPress={() => setLinkPickerOpen(true)} style={styles.linkButton} hitSlop={8}>
+                {linkedDecklist ? (
+                  <Text style={[styles.linkedLabel, { color: palette.accent }]}>Linked</Text>
+                ) : null}
+                <SymbolView
+                  name={{ ios: 'link', android: 'link', web: 'link' }}
+                  tintColor={linkedDecklist ? palette.accent : palette.text}
+                  size={20}
+                />
+              </Pressable>
             }>
-            <RoundsEditor
-              ref={roundsEditorRef}
-              rounds={rounds}
-              onChange={setRounds}
-              dividers={dividers}
-              onDividersChange={setDividers}
+            <TagInput
+              ref={deckPokemonRef}
+              tags={deckPokemon}
+              onChange={setDeckPokemon}
+              trailingAction={{
+                label: deckNameVisible ? 'Remove name' : '+ Name',
+                onPress: () => {
+                  if (deckNameVisible) setDeckName('');
+                  setDeckNameVisible((visible) => !visible);
+                },
+              }}
+            />
+            {deckNameVisible ? (
+              <FormTextInput value={deckName} onChangeText={setDeckName} placeholder="Custom deck name" />
+            ) : null}
+          </Field>
+        </Section>
+
+        {!isUpcoming ? (
+          <Section>
+            <Field label="Placement">
+              <View style={styles.placementRow}>
+                <FormTextInput
+                  style={styles.placementInput}
+                  value={placement}
+                  onChangeText={setPlacement}
+                  placeholder="Final standing"
+                  keyboardType="number-pad"
+                />
+                <Text style={styles.placementOutOf}>/</Text>
+                <FormTextInput
+                  style={styles.placementInput}
+                  value={placementTotal}
+                  onChangeText={setPlacementTotal}
+                  placeholder="Players"
+                  keyboardType="number-pad"
+                />
+                {isFirstPlace ? (
+                  <Text style={styles.firstPlaceBadge}>👑 1st</Text>
+                ) : (
+                  <Pressable
+                    onPress={() => setPrized((value) => !value)}
+                    style={[
+                      styles.prizeToggle,
+                      { borderColor: palette.border },
+                      prized && { backgroundColor: palette.accent, borderColor: palette.accent },
+                    ]}>
+                    <Text
+                      style={[
+                        styles.prizeToggleText,
+                        prized && [styles.prizeToggleTextOn, { color: palette.onAccentText }],
+                      ]}>
+                      🎖️ Prize
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            </Field>
+          </Section>
+        ) : null}
+
+        {!isUpcoming ? (
+          <Section>
+            <Field
+              label="Rounds"
+              right={
+                <RoundDividerButton
+                  roundCount={rounds.length}
+                  dividers={dividers}
+                  onAdd={(afterRound) => setDividers([...dividers, afterRound].sort((a, b) => a - b))}
+                />
+              }>
+              <RoundsEditor
+                ref={roundsEditorRef}
+                rounds={rounds}
+                onChange={setRounds}
+                dividers={dividers}
+                onDividersChange={setDividers}
+              />
+            </Field>
+          </Section>
+        ) : null}
+
+        <Section>
+          <Field label="Notes">
+            <FormTextInput
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Anything else worth remembering (optional)"
+              multiline
+              numberOfLines={4}
+              style={styles.notesInput}
             />
           </Field>
         </Section>
-      ) : null}
 
-      <Section>
-        <Field label="Notes">
-          <FormTextInput
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Anything else worth remembering (optional)"
-            multiline
-            numberOfLines={4}
-            style={styles.notesInput}
-          />
-        </Field>
-      </Section>
+        {formError ? <Text style={[styles.errorText, { color: palette.danger }]}>{formError}</Text> : null}
 
-      {formError ? <Text style={[styles.errorText, { color: palette.danger }]}>{formError}</Text> : null}
-
-      <Pressable
-        style={[styles.submitButton, { backgroundColor: palette.accent, shadowColor: palette.accent }]}
-        onPress={handleSubmit}
-        disabled={saving}>
-        <Text style={[styles.submitButtonText, { color: palette.onAccentText }]}>
-          {saving ? 'Saving…' : submitLabel}
-        </Text>
-      </Pressable>
-
-      {onAddMarker ? (
-        <Pressable style={styles.addMarkerLink} onPress={onAddMarker}>
-          <Text style={styles.addMarkerLinkText}>+ Add a marker instead</Text>
+        <Pressable
+          style={[styles.submitButton, { backgroundColor: palette.accent, shadowColor: palette.accent }]}
+          onPress={handleSubmit}
+          disabled={saving}>
+          <Text style={[styles.submitButtonText, { color: palette.onAccentText }]}>
+            {saving ? 'Saving…' : submitLabel}
+          </Text>
         </Pressable>
-      ) : null}
-    </KeyboardAwareScrollView>
+
+        {onAddMarker ? (
+          <Pressable style={styles.addMarkerLink} onPress={onAddMarker}>
+            <Text style={styles.addMarkerLinkText}>+ Add a marker instead</Text>
+          </Pressable>
+        ) : null}
+      </KeyboardAwareScrollView>
+
+      <DecklistLinkPicker
+        visible={linkPickerOpen}
+        decklists={decklists}
+        deckPokemon={deckPokemon}
+        selectedId={decklistId}
+        onSelect={handleSelectDecklist}
+        onUnlink={handleUnlinkDecklist}
+        onCancel={() => setLinkPickerOpen(false)}
+      />
+    </>
   );
 }
 
@@ -295,6 +342,16 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 48,
     gap: 14,
+  },
+  linkedLabel: {
+    fontSize: 12.5,
+    fontWeight: '600',
+  },
+  linkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    padding: 2,
   },
   placementRow: {
     flexDirection: 'row',

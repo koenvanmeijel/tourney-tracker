@@ -1,9 +1,11 @@
 import JSZip from 'jszip';
 
+import type { NewDecklistWithTimestamps } from '@/db/decklists';
 import type { NewEventWithTimestamps } from '@/db/events';
 import type { NewMarkerWithTimestamps } from '@/db/markers';
 import {
   EVENT_TYPES,
+  type DecklistRecord,
   type EventRecord,
   type EventType,
   type MarkerRecord,
@@ -225,10 +227,107 @@ export function parseImportPayload(json: string): ImportPayload {
 }
 
 const BACKUP_JSON_ENTRY_NAME = 'backup.json';
+const DECKLISTS_JSON_ENTRY_NAME = 'decklists.json';
 
 function photoFileExtension(filename: string): string {
   const match = /\.[a-zA-Z0-9]+$/.exec(filename);
   return match ? match[0] : '.jpg';
+}
+
+export const DECKLISTS_EXPORT_FORMAT = 'tourney-tracker-decklists';
+/** Bumped on any breaking change to ExportedDecklist's shape — same idea as
+ * EXPORT_VERSION above, just for the decklists.json side-file. */
+export const DECKLISTS_EXPORT_VERSION = 1;
+
+export interface ExportedDecklist {
+  deckName: string;
+  pokemonNames: string[];
+  decklistText: string;
+  createdAt: string;
+  updatedAt: string;
+  /** date|eventType|locationSlug keys (see utils/photoZip.ts) of the events
+   * this decklist is used in — ids don't survive import, so the link is
+   * re-resolved by matching these against events on the way back in,
+   * exactly like photo re-attachment. */
+  usedInEventKeys: string[];
+}
+
+interface DecklistsExportPayload {
+  format: typeof DECKLISTS_EXPORT_FORMAT;
+  version: typeof DECKLISTS_EXPORT_VERSION;
+  decklists: ExportedDecklist[];
+}
+
+function buildDecklistsExportPayload(decklists: DecklistRecord[], events: EventRecord[]): DecklistsExportPayload {
+  return {
+    format: DECKLISTS_EXPORT_FORMAT,
+    version: DECKLISTS_EXPORT_VERSION,
+    decklists: decklists.map((decklist) => ({
+      deckName: decklist.deckName,
+      pokemonNames: decklist.pokemonNames,
+      decklistText: decklist.decklistText,
+      createdAt: decklist.createdAt,
+      updatedAt: decklist.updatedAt,
+      usedInEventKeys: events
+        .filter((event) => event.decklistId === decklist.id)
+        .map((event) => photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location))),
+    })),
+  };
+}
+
+function parseExportedDecklist(raw: unknown, index: number): ExportedDecklist {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new Error(`Decklist ${index + 1} isn't a valid decklist.`);
+  }
+  const decklist = raw as Record<string, unknown>;
+  if (typeof decklist.deckName !== 'string' || typeof decklist.decklistText !== 'string') {
+    throw new Error(`Decklist ${index + 1} is missing its name or text.`);
+  }
+
+  return {
+    deckName: decklist.deckName,
+    pokemonNames: stringArray(decklist.pokemonNames),
+    decklistText: decklist.decklistText,
+    createdAt: typeof decklist.createdAt === 'string' ? decklist.createdAt : new Date().toISOString(),
+    updatedAt: typeof decklist.updatedAt === 'string' ? decklist.updatedAt : new Date().toISOString(),
+    usedInEventKeys: stringArray(decklist.usedInEventKeys),
+  };
+}
+
+/** Parses and validates a decklists.json side-file's contents. */
+function parseDecklistsExportPayload(json: string): ExportedDecklist[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    throw new Error('decklists.json is not valid JSON.');
+  }
+
+  if (typeof parsed !== 'object' || parsed === null) {
+    throw new Error("decklists.json doesn't look like a Tourney Tracker decklists file.");
+  }
+  const payload = parsed as Record<string, unknown>;
+  if (payload.format !== DECKLISTS_EXPORT_FORMAT || !Array.isArray(payload.decklists)) {
+    throw new Error("decklists.json doesn't look like a Tourney Tracker decklists file.");
+  }
+  const version = typeof payload.version === 'number' ? payload.version : 1;
+  if (version > DECKLISTS_EXPORT_VERSION) {
+    throw new Error(
+      'This backup was made with a newer version of Tourney Tracker. Update the app before importing it.'
+    );
+  }
+
+  return payload.decklists.map((decklist, index) => parseExportedDecklist(decklist, index));
+}
+
+export function toNewDecklistWithTimestamps(decklist: ExportedDecklist): NewDecklistWithTimestamps {
+  return {
+    deckName: decklist.deckName,
+    pokemonNames: decklist.pokemonNames,
+    decklistText: decklist.decklistText,
+    createdAt: decklist.createdAt,
+    updatedAt: decklist.updatedAt,
+  };
 }
 
 /** An event whose photos couldn't be included because another event shares
@@ -244,14 +343,25 @@ export interface BackupZipResult {
 }
 
 /** Builds the "export logs + photos" zip: backup.json plus every photo,
- * renamed per the photo-zip convention. When two or more events share the
+ * renamed per the photo-zip convention, plus decklists.json when there are
+ * any decklists — decklists (and the event/decklist link) only ever travel
+ * inside a .zip, never the plain .JSON export, so backup.json's own shape
+ * never changes between the two formats. When two or more events share the
  * exact same date/type/location, their photos can't be told apart by
  * filename alone, so all of them are left out and reported instead of
  * guessed. */
-export async function buildBackupZip(events: EventRecord[], markers: MarkerRecord[]): Promise<BackupZipResult> {
+export async function buildBackupZip(
+  events: EventRecord[],
+  markers: MarkerRecord[],
+  decklists: DecklistRecord[]
+): Promise<BackupZipResult> {
   const payload = buildExportPayload(events, markers);
   const zip = new JSZip();
   zip.file(BACKUP_JSON_ENTRY_NAME, JSON.stringify(payload, null, 2));
+
+  if (decklists.length > 0) {
+    zip.file(DECKLISTS_JSON_ENTRY_NAME, JSON.stringify(buildDecklistsExportPayload(decklists, events), null, 2));
+  }
 
   const eventsWithPhotos = events.filter((event) => event.photos.length > 0);
   const groups = groupByPhotoZipKey(eventsWithPhotos, (event) =>
@@ -291,9 +401,14 @@ export interface ZipPhotoEntry extends ParsedPhotoZipEntryName {
 export interface ParsedBackupZip {
   /** null when the zip has no backup.json - a hand-built, photos-only zip. */
   payload: ImportPayload | null;
+  /** Empty when the zip has no decklists.json - an older zip, a plain
+   * events-only backup rezipped by hand, or simply a device with no
+   * decklists at export time. */
+  decklists: ExportedDecklist[];
   photoEntries: ZipPhotoEntry[];
-  /** Files in the zip that aren't backup.json and don't parse as a photo
-   * filename at all (ignored on import, surfaced for transparency). */
+  /** Files in the zip that aren't backup.json/decklists.json and don't parse
+   * as a photo filename at all (ignored on import, surfaced for
+   * transparency). */
   unrecognizedFiles: string[];
 }
 
@@ -313,10 +428,16 @@ export async function parseBackupZip(bytes: Uint8Array): Promise<ParsedBackupZip
     payload = parseImportPayload(await jsonEntry.async('string'));
   }
 
+  let decklists: ExportedDecklist[] = [];
+  const decklistsEntry = zip.file(DECKLISTS_JSON_ENTRY_NAME);
+  if (decklistsEntry) {
+    decklists = parseDecklistsExportPayload(await decklistsEntry.async('string'));
+  }
+
   const photoEntries: ZipPhotoEntry[] = [];
   const unrecognizedFiles: string[] = [];
   for (const entry of Object.values(zip.files)) {
-    if (entry.dir || entry.name === BACKUP_JSON_ENTRY_NAME) {
+    if (entry.dir || entry.name === BACKUP_JSON_ENTRY_NAME || entry.name === DECKLISTS_JSON_ENTRY_NAME) {
       continue;
     }
     const parsed = parsePhotoZipEntryName(entry.name);
@@ -327,7 +448,7 @@ export async function parseBackupZip(bytes: Uint8Array): Promise<ParsedBackupZip
     photoEntries.push({ ...parsed, filename: entry.name, data: await entry.async('uint8array') });
   }
 
-  return { payload, photoEntries, unrecognizedFiles };
+  return { payload, decklists, photoEntries, unrecognizedFiles };
 }
 
 export type PhotoMatchTarget =
@@ -372,6 +493,51 @@ export function matchPhotoEntries(
       matched.push({ entry, target: targets[0] });
     } else {
       unmatched.push({ entry, reason: targets.length === 0 ? 'no-matching-event' : 'ambiguous-multiple-events' });
+    }
+  }
+  return { matched, unmatched };
+}
+
+export interface DecklistLinkMatch {
+  key: string;
+  target: PhotoMatchTarget;
+}
+
+export interface UnmatchedDecklistLink {
+  key: string;
+  reason: 'no-matching-event' | 'ambiguous-multiple-events';
+}
+
+export interface DecklistLinkMatchResult {
+  matched: DecklistLinkMatch[];
+  unmatched: UnmatchedDecklistLink[];
+}
+
+/** Resolves a decklist's exported usedInEventKeys back to real event ids —
+ * the same key-matching approach as matchPhotoEntries above, since raw ids
+ * never survive an export/import round trip. */
+export function matchDecklistEventKeys(
+  keys: string[],
+  candidates: { key: string; target: PhotoMatchTarget }[]
+): DecklistLinkMatchResult {
+  const byKey = new Map<string, PhotoMatchTarget[]>();
+  for (const candidate of candidates) {
+    const existing = byKey.get(candidate.key);
+    if (existing) {
+      existing.push(candidate.target);
+    } else {
+      byKey.set(candidate.key, [candidate.target]);
+    }
+  }
+
+  const matched: DecklistLinkMatch[] = [];
+  const unmatched: UnmatchedDecklistLink[] = [];
+  for (const key of keys) {
+    const targets = byKey.get(key) ?? [];
+    if (targets.length === 1) {
+      matched.push({ key, target: targets[0] });
+    } else {
+      unmatched.push({ key, reason: targets.length === 0 ? 'no-matching-event' : 'ambiguous-multiple-events' });
     }
   }
   return { matched, unmatched };

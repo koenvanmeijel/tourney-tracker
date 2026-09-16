@@ -2,6 +2,7 @@ import { Fragment, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SymbolView } from 'expo-symbols';
 
 import { EventBand } from '@/components/EventBand';
 import { EventPhotos } from '@/components/EventPhotos';
@@ -9,6 +10,7 @@ import { PokemonIcon } from '@/components/PokemonIcon';
 import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
+import { useDecklists } from '@/context/DecklistsContext';
 import { useEvents } from '@/context/EventsContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
@@ -27,6 +29,7 @@ import { opponentPlaceholder, roundResultLabel } from '@/utils/rounds';
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { events, removeEvent } = useEvents();
+  const { decklists } = useDecklists();
   const { confirm } = useAppAlert();
   const router = useRouter();
   const { palette, themeId } = useTheme();
@@ -42,6 +45,7 @@ export default function EventDetailScreen() {
     );
   }
 
+  const linkedDecklist = event.decklistId != null ? decklists.find((d) => d.id === event.decklistId) ?? null : null;
   const tally = tallyRounds(event.rounds);
   const theme = getEventTypeTheme(themeId)[event.eventType];
   const roundResultTheme = getRoundResultTheme(themeId);
@@ -150,6 +154,24 @@ export default function EventDetailScreen() {
               );
             })}
           </View>
+        </View>
+      ) : null}
+
+      {linkedDecklist ? (
+        <View style={styles.section}>
+          <Text style={[styles.sectionLabel, { color: palette.text }]}>Decklist</Text>
+          <Pressable
+            style={[styles.decklistLinkButton, { backgroundColor: palette.secondaryFill }]}
+            onPress={() => router.push({ pathname: '/decklist/[id]', params: { id: String(linkedDecklist.id) } })}>
+            <SymbolView
+              name={{ ios: 'link', android: 'link', web: 'link' }}
+              tintColor={palette.onSurfaceText}
+              size={16}
+            />
+            <Text style={[styles.decklistLinkText, { color: palette.onSurfaceText }]}>
+              {linkedDecklist.deckName}
+            </Text>
+          </Pressable>
         </View>
       ) : null}
 
@@ -288,6 +310,18 @@ const styles = StyleSheet.create({
   roundResultText: {
     fontSize: 15,
     fontWeight: '700',
+  },
+  decklistLinkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  decklistLinkText: {
+    fontSize: 14.5,
+    fontWeight: '600',
   },
   notesBox: {
     borderRadius: 12,

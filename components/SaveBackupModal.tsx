@@ -34,7 +34,7 @@ export function SaveBackupModal({ visible, onSelect, onCancel }: SaveBackupModal
             onPress={() => onSelect('zip')}>
             <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events and photos (.ZIP)</Text>
             <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
-              Includes every photo, renamed for re-import.
+              Includes every photo and decklist, renamed/linked for re-import.
             </Text>
           </Pressable>
 

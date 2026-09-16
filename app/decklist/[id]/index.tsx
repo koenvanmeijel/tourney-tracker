@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View as RNView } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View as RNView } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -10,8 +10,14 @@ import { Text, View } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
 import { useDecklists } from '@/context/DecklistsContext';
+import { useEvents } from '@/context/EventsContext';
 import { useTheme } from '@/context/ThemeContext';
-import { formatIsoTimestampForDisplay } from '@/utils/date';
+import { tallyRounds } from '@/db/events';
+import { EVENT_TYPE_LABELS, type EventRecord } from '@/models/types';
+import { daysUntilIsoDate, formatIsoDateForDisplay, formatIsoTimestampForDisplay, isFutureIsoDate } from '@/utils/date';
+import { getEventTypeTheme } from '@/utils/eventTheme';
+import { photoFileUri } from '@/utils/eventPhotoStorage';
+import { formatDaysUntil, formatPlacementHeadline, formatRecordOrNull } from '@/utils/format';
 
 function DuplicateButton({ onPress }: { onPress: () => void }) {
   const { palette } = useTheme();
@@ -26,9 +32,64 @@ function DuplicateButton({ onPress }: { onPress: () => void }) {
   );
 }
 
+function LinkedEventRow({ event }: { event: EventRecord }) {
+  const router = useRouter();
+  const { themeId } = useTheme();
+  const theme = getEventTypeTheme(themeId)[event.eventType];
+  const tally = tallyRounds(event.rounds);
+  const isUpcoming = isFutureIsoDate(event.date);
+  const placementHeadline = formatPlacementHeadline(event.placement, event.placementTotal);
+  const record = formatRecordOrNull(tally);
+
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.eventCard, { backgroundColor: theme.band }, pressed && styles.cardPressed]}
+      onPress={() => router.push({ pathname: '/event/[id]', params: { id: String(event.id) } })}>
+      <RNView style={styles.eventCardLeft}>
+        <Text style={[styles.eventCardLine, { color: theme.onBand }]}>
+          {formatIsoDateForDisplay(event.date)} · {EVENT_TYPE_LABELS[event.eventType]}
+        </Text>
+        {event.location ? <Text style={[styles.eventCardLine, { color: theme.onBand }]}>{event.location}</Text> : null}
+      </RNView>
+      {event.photos.length > 0 ? (
+        <RNView style={styles.eventCardThumbnailWrap}>
+          <Image
+            source={{
+              uri: photoFileUri((event.photos.find((photo) => photo.isThumbnail) ?? event.photos[0]).filename),
+            }}
+            style={styles.eventCardThumbnail}
+          />
+          {event.photos.length > 1 ? (
+            <RNView style={[styles.eventCardThumbnailBadge, { backgroundColor: theme.band }]}>
+              <Text style={[styles.eventCardThumbnailBadgeText, { color: theme.onBand }]}>
+                +{event.photos.length - 1}
+              </Text>
+            </RNView>
+          ) : null}
+        </RNView>
+      ) : null}
+      {isUpcoming ? (
+        <RNView style={styles.eventCardStat}>
+          <Text style={[styles.eventCardStatHeadline, { color: theme.onBand }]}>
+            {formatDaysUntil(daysUntilIsoDate(event.date))}
+          </Text>
+        </RNView>
+      ) : placementHeadline || record ? (
+        <RNView style={styles.eventCardStat}>
+          <Text style={[styles.eventCardStatHeadline, { color: theme.onBand }]}>{placementHeadline ?? record}</Text>
+          {placementHeadline && record ? (
+            <Text style={[styles.eventCardStatRecord, { color: theme.onBand }]}>{record}</Text>
+          ) : null}
+        </RNView>
+      ) : null}
+    </Pressable>
+  );
+}
+
 export default function DecklistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { decklists, addDecklist, removeDecklist } = useDecklists();
+  const { events } = useEvents();
   const { palette } = useTheme();
   const { confirm } = useAppAlert();
   const router = useRouter();
@@ -44,6 +105,8 @@ export default function DecklistDetailScreen() {
       </View>
     );
   }
+
+  const linkedEvents = events.filter((event) => event.decklistId === decklist.id);
 
   async function handleCopy() {
     await Clipboard.setStringAsync(decklist!.decklistText);
@@ -112,6 +175,17 @@ export default function DecklistDetailScreen() {
             </Text>
           </View>
         </View>
+
+        {linkedEvents.length > 0 ? (
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: palette.text }]}>Used in events</Text>
+            <View style={styles.eventCardsList}>
+              {linkedEvents.map((event) => (
+                <LinkedEventRow key={event.id} event={event} />
+              ))}
+            </View>
+          </View>
+        ) : null}
 
         <View style={styles.actions}>
           <Pressable
@@ -205,6 +279,66 @@ const styles = StyleSheet.create({
   decklistText: {
     fontSize: 15,
     lineHeight: 20,
+  },
+  eventCardsList: {
+    gap: 8,
+  },
+  eventCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: 8,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  cardPressed: {
+    opacity: 0.85,
+  },
+  eventCardLeft: {
+    flex: 1,
+    gap: 2,
+  },
+  eventCardLine: {
+    fontSize: 13.5,
+    fontWeight: '500',
+  },
+  eventCardThumbnailWrap: {
+    width: 40,
+    height: 40,
+  },
+  eventCardThumbnail: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
+  },
+  eventCardThumbnailBadge: {
+    position: 'absolute',
+    right: -4,
+    bottom: -4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    paddingHorizontal: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventCardThumbnailBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  eventCardStat: {
+    alignItems: 'flex-end',
+  },
+  eventCardStatHeadline: {
+    fontSize: 19,
+    fontWeight: '700',
+    lineHeight: 21,
+  },
+  eventCardStatRecord: {
+    fontSize: 12.5,
+    fontWeight: '700',
+    marginTop: 2,
   },
   actions: {
     flexDirection: 'row',

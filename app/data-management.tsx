@@ -8,19 +8,23 @@ import { SaveBackupModal, type BackupFormat } from '@/components/SaveBackupModal
 import { Text, View } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
+import { useDecklists } from '@/context/DecklistsContext';
 import { useEvents } from '@/context/EventsContext';
 import { useMarkers } from '@/context/MarkersContext';
 import { useTheme } from '@/context/ThemeContext';
 import { addEventPhoto, listPhotosForEvent } from '@/db/eventPhotos';
-import type { NewEventWithTimestamps } from '@/db/events';
+import { setEventDecklistId, type NewEventWithTimestamps } from '@/db/events';
 import type { NewMarkerWithTimestamps } from '@/db/markers';
 import type { EventRecord } from '@/models/types';
 import {
   buildBackupZip,
   buildExportPayload,
+  matchDecklistEventKeys,
   matchPhotoEntries,
   parseBackupZip,
   parseImportPayload,
+  toNewDecklistWithTimestamps,
+  type ExportedDecklist,
   type PhotoExportCollision,
   type PhotoMatch,
   type PhotoMatchResult,
@@ -53,6 +57,7 @@ function collisionsMessage(collisions: PhotoExportCollision[]): string {
 interface ParsedImportFile {
   events: NewEventWithTimestamps[];
   markers: NewMarkerWithTimestamps[];
+  decklists: ExportedDecklist[];
   photoEntries: ZipPhotoEntry[];
   hasPayload: boolean;
 }
@@ -64,13 +69,14 @@ async function parseImportFile(file: File): Promise<ParsedImportFile> {
     return {
       events: zip.payload?.events ?? [],
       markers: zip.payload?.markers ?? [],
+      decklists: zip.decklists,
       photoEntries: zip.photoEntries,
       hasPayload: zip.payload != null,
     };
   }
 
   const payload = parseImportPayload(await file.text());
-  return { events: payload.events, markers: payload.markers, photoEntries: [], hasPayload: true };
+  return { events: payload.events, markers: payload.markers, decklists: [], photoEntries: [], hasPayload: true };
 }
 
 interface AttachPhotosResult {
@@ -116,9 +122,39 @@ async function attachMatchedPhotos(
   return { eventCount: byEventId.size, attachedCount };
 }
 
+interface ResolveDecklistLinksResult {
+  linkedCount: number;
+  unmatchedCount: number;
+}
+
+async function resolveDecklistLinks(
+  importedDecklists: ExportedDecklist[],
+  insertedDecklistIds: number[],
+  candidates: { key: string; target: PhotoMatchTarget }[],
+  idByImportedIndex: Map<number, number>
+): Promise<ResolveDecklistLinksResult> {
+  let linkedCount = 0;
+  let unmatchedCount = 0;
+
+  for (let index = 0; index < importedDecklists.length; index++) {
+    const decklistId = insertedDecklistIds[index];
+    const { matched, unmatched } = matchDecklistEventKeys(importedDecklists[index].usedInEventKeys, candidates);
+    unmatchedCount += unmatched.length;
+    for (const { target } of matched) {
+      const eventId = target.kind === 'imported' ? idByImportedIndex.get(target.importedIndex) : target.eventId;
+      if (eventId == null) continue;
+      await setEventDecklistId(eventId, decklistId);
+      linkedCount += 1;
+    }
+  }
+
+  return { linkedCount, unmatchedCount };
+}
+
 interface ReviewState {
   importedEvents: NewEventWithTimestamps[];
   importedMarkers: NewMarkerWithTimestamps[];
+  importedDecklists: ExportedDecklist[];
   duplicates: DuplicateEventMatch[];
   /** importedIndex -> true (add anyway). Absent/false means skip. */
   decisions: Record<number, boolean>;
@@ -152,6 +188,7 @@ export default function DataManagementScreen() {
   const { palette } = useTheme();
   const { events, refresh: refreshEvents, restoreAll: restoreAllEvents, addAll: addAllEvents } = useEvents();
   const { markers, restoreAll: restoreAllMarkers, addAll: addAllMarkers } = useMarkers();
+  const { decklists, restoreAll: restoreAllDecklists, addAll: addAllDecklists } = useDecklists();
   const { alert, confirm } = useAppAlert();
   const [showSaveOptions, setShowSaveOptions] = useState(false);
   const [savingToFolder, setSavingToFolder] = useState(false);
@@ -205,7 +242,7 @@ export default function DataManagementScreen() {
         collisions: [],
       };
     }
-    const { zip, collisions } = await buildBackupZip(events, markers);
+    const { zip, collisions } = await buildBackupZip(events, markers, decklists);
     return { content: zip, filename: backupFilename('zip'), mimeType: 'application/zip', collisions };
   }
 
@@ -249,6 +286,7 @@ export default function DataManagementScreen() {
       setReview({
         importedEvents: parsed.events,
         importedMarkers: parsed.markers,
+        importedDecklists: parsed.decklists,
         duplicates,
         decisions: {},
         photoEntries: parsed.photoEntries,
@@ -296,7 +334,23 @@ export default function DataManagementScreen() {
       );
       const { matched, unmatched } = photoMatch;
       const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
-      if (attachedEventCount > 0) {
+
+      let decklistLinkedCount = 0;
+      let decklistUnmatchedCount = 0;
+      if (review.importedDecklists.length > 0) {
+        const insertedDecklistIds = await addAllDecklists(review.importedDecklists.map(toNewDecklistWithTimestamps));
+        const decklistCandidates = buildPhotoCandidates(review, events, willInsert);
+        const result = await resolveDecklistLinks(
+          review.importedDecklists,
+          insertedDecklistIds,
+          decklistCandidates,
+          idByImportedIndex
+        );
+        decklistLinkedCount = result.linkedCount;
+        decklistUnmatchedCount = result.unmatchedCount;
+      }
+
+      if (attachedEventCount > 0 || decklistLinkedCount > 0) {
         await refreshEvents();
       }
 
@@ -305,12 +359,18 @@ export default function DataManagementScreen() {
       if (review.photoEntries.length > 0) {
         parts.push(`${attachedCount} photo(s)`);
       }
+      if (review.importedDecklists.length > 0) {
+        parts.push(`${review.importedDecklists.length} decklist(s)`);
+      }
       let message = `Imported ${parts.join(', ')}.`;
       if (skippedDuplicates > 0) {
         message += ` Skipped ${skippedDuplicates} duplicate event(s).`;
       }
       if (unmatched.length > 0) {
         message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
+      }
+      if (decklistUnmatchedCount > 0) {
+        message += ` ${decklistUnmatchedCount} decklist link(s) couldn't be matched to an event and were left unlinked.`;
       }
 
       setReview(null);
@@ -324,8 +384,14 @@ export default function DataManagementScreen() {
 
   async function handleImportReplace() {
     if (!review) return;
-    const existingCount = `${events.length} event(s) and ${markers.length} marker(s)`;
-    const importedCount = `${review.importedEvents.length} event(s) and ${review.importedMarkers.length} marker(s)`;
+    const existingParts = [`${events.length} event(s)`, `${markers.length} marker(s)`];
+    const importedParts = [`${review.importedEvents.length} event(s)`, `${review.importedMarkers.length} marker(s)`];
+    if (review.importedDecklists.length > 0) {
+      existingParts.push(`${decklists.length} decklist(s)`);
+      importedParts.push(`${review.importedDecklists.length} decklist(s)`);
+    }
+    const existingCount = existingParts.join(', ');
+    const importedCount = importedParts.join(', ');
     const confirmed = await confirm(
       'Replace everything?',
       `This will replace your ${existingCount} with ${importedCount} from this backup. This can't be undone.`,
@@ -339,23 +405,42 @@ export default function DataManagementScreen() {
     try {
       const insertedIds = await restoreAllEvents(review.importedEvents);
       await restoreAllMarkers(review.importedMarkers);
+      const idByImportedIndex = new Map(insertedIds.map((id, index): [number, number] => [index, id]));
+      const importedEventCandidates = review.importedEvents.map((event, importedIndex) => ({
+        key: photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location ?? null)),
+        target: { kind: 'imported' as const, importedIndex },
+      }));
 
       let message = `Imported ${importedCount}.`;
+      let needsEventsRefresh = false;
+
       if (review.photoEntries.length > 0) {
-        const candidates = review.importedEvents.map((event, importedIndex) => ({
-          key: photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location ?? null)),
-          target: { kind: 'imported' as const, importedIndex },
-        }));
-        const { matched, unmatched } = matchPhotoEntries(review.photoEntries, candidates);
-        const idByImportedIndex = new Map(insertedIds.map((id, index): [number, number] => [index, id]));
+        const { matched, unmatched } = matchPhotoEntries(review.photoEntries, importedEventCandidates);
         const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
-        if (attachedEventCount > 0) {
-          await refreshEvents();
-        }
+        needsEventsRefresh = needsEventsRefresh || attachedEventCount > 0;
         message += ` ${attachedCount} photo(s) attached.`;
         if (unmatched.length > 0) {
           message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
         }
+      }
+
+      if (review.importedDecklists.length > 0) {
+        const insertedDecklistIds = await restoreAllDecklists(review.importedDecklists.map(toNewDecklistWithTimestamps));
+        const { linkedCount, unmatchedCount } = await resolveDecklistLinks(
+          review.importedDecklists,
+          insertedDecklistIds,
+          importedEventCandidates,
+          idByImportedIndex
+        );
+        needsEventsRefresh = needsEventsRefresh || linkedCount > 0;
+        message += ` ${review.importedDecklists.length} decklist(s) restored.`;
+        if (unmatchedCount > 0) {
+          message += ` ${unmatchedCount} decklist link(s) couldn't be matched to an event and were left unlinked.`;
+        }
+      }
+
+      if (needsEventsRefresh) {
+        await refreshEvents();
       }
 
       setReview(null);
@@ -407,8 +492,10 @@ export default function DataManagementScreen() {
         visible={review != null}
         existingEventsCount={events.length}
         existingMarkersCount={markers.length}
+        existingDecklistsCount={decklists.length}
         importedEventsCount={review?.importedEvents.length ?? 0}
         importedMarkersCount={review?.importedMarkers.length ?? 0}
+        importedDecklistsCount={review?.importedDecklists.length ?? 0}
         duplicates={review?.duplicates ?? []}
         decisions={review?.decisions ?? {}}
         onToggle={toggleDuplicateDecision}

@@ -28,6 +28,7 @@ interface EventRow {
   created_at: string;
   updated_at: string;
   round_dividers: string;
+  decklist_id: number | null;
 }
 
 interface RoundRow {
@@ -95,6 +96,7 @@ function rowToEvent(row: EventRow, rounds: RoundRecord[], photos: EventPhotoReco
     rounds,
     roundDividers: parseNumberList(row.round_dividers),
     photos,
+    decklistId: row.decklist_id,
   };
 }
 
@@ -162,8 +164,8 @@ async function insertEvent(
 
   const result = await db.runAsync(
     `INSERT INTO events
-       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, round_dividers, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, round_dividers, decklist_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.date,
     input.eventType,
     input.location ?? null,
@@ -174,6 +176,7 @@ async function insertEvent(
     input.prizeTier ?? 'none',
     input.notes ?? null,
     JSON.stringify(input.roundDividers ?? []),
+    input.decklistId ?? null,
     createdAt,
     updatedAt
   );
@@ -243,7 +246,7 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
     await db.runAsync(
       `UPDATE events
        SET date = ?, event_type = ?, location = ?, deck_name = ?, deck_pokemon = ?,
-           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, round_dividers = ?, updated_at = ?
+           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, round_dividers = ?, decklist_id = ?, updated_at = ?
        WHERE id = ?`,
       input.date,
       input.eventType,
@@ -255,6 +258,7 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
       input.prizeTier ?? 'none',
       input.notes ?? null,
       JSON.stringify(input.roundDividers ?? []),
+      input.decklistId ?? null,
       now,
       id
     );
@@ -274,6 +278,15 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
       );
     }
   });
+}
+
+/** Sets (or clears, with null) an event's decklist link without touching
+ * its other fields or rounds — used both to reconcile decklist links after
+ * import (once the linked decklist's new id is known) and by the Add/Edit
+ * Decklist screen's own "Linked Events" picker. */
+export async function setEventDecklistId(eventId: number, decklistId: number | null): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('UPDATE events SET decklist_id = ? WHERE id = ?', decklistId, eventId);
 }
 
 export async function deleteEvent(id: number): Promise<void> {

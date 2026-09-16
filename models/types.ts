@@ -89,6 +89,8 @@ export interface EventRecord {
    * Cut) — a divider with value N sits between round N and round N+1. */
   roundDividers: number[];
   photos: EventPhotoRecord[];
+  /** The decklist (from My Decklists) this event was played with, if any. */
+  decklistId: number | null;
 }
 
 export interface NewEvent {
@@ -103,6 +105,7 @@ export interface NewEvent {
   notes?: string | null;
   rounds: NewRound[];
   roundDividers?: number[];
+  decklistId?: number | null;
 }
 
 export interface EventTally {
