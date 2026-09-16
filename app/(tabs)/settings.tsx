@@ -21,39 +21,52 @@ export default function SettingsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
+        <Text style={styles.sectionTitle}>My Decklists</Text>
+        <Pressable
+          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+          onPress={() => router.push('/decklists')}>
+          <Text style={styles.secondaryButtonText}>View Decklists</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Theme</Text>
 
         <Select options={THEME_OPTIONS} value={themeId} onChange={setThemeId} />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data</Text>
-        <Pressable
-          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
-          onPress={() => router.push('/data-management')}>
-          <Text style={styles.secondaryButtonText}>Data Management</Text>
-        </Pressable>
-      </View>
+      <RNView style={styles.bottomGroup}>
+        <RNView style={[styles.divider, { backgroundColor: palette.borderSubtle }]} />
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <Pressable
-          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
-          onPress={() => Linking.openURL(GITHUB_RELEASES_URL)}>
-          <RNView style={styles.buttonRow}>
-            <Text style={styles.secondaryButtonText}>Check for updates</Text>
-            <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
-          </RNView>
-        </Pressable>
-        <Pressable
-          style={[styles.button, { backgroundColor: palette.secondaryFill }]}
-          onPress={() => Linking.openURL(BUY_ME_A_PACK_URL)}>
-          <RNView style={styles.buttonRow}>
-            <Text style={styles.secondaryButtonText}>Buy me a pack</Text>
-            <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
-          </RNView>
-        </Pressable>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Data</Text>
+          <Pressable
+            style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+            onPress={() => router.push('/data-management')}>
+            <Text style={styles.secondaryButtonText}>Data Management</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About</Text>
+          <Pressable
+            style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+            onPress={() => Linking.openURL(GITHUB_RELEASES_URL)}>
+            <RNView style={styles.buttonRow}>
+              <Text style={styles.secondaryButtonText}>Check for updates</Text>
+              <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
+            </RNView>
+          </Pressable>
+          <Pressable
+            style={[styles.button, { backgroundColor: palette.secondaryFill }]}
+            onPress={() => Linking.openURL(BUY_ME_A_PACK_URL)}>
+            <RNView style={styles.buttonRow}>
+              <Text style={styles.secondaryButtonText}>Buy me a pack</Text>
+              <SymbolView name={{ android: 'open_in_new' }} tintColor={palette.text} size={14} />
+            </RNView>
+          </Pressable>
+        </View>
+      </RNView>
 
       <Text style={styles.credits}>
         Tourney Tracker v{appVersion} — built by Koen van Meijel for Budew&apos;s Basement.{'\n'}© 2026, not
@@ -71,6 +84,13 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 8,
+  },
+  bottomGroup: {
+    marginTop: 'auto',
+    gap: 32,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
   },
   sectionTitle: {
     fontSize: 17,
@@ -92,7 +112,6 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   credits: {
-    marginTop: 'auto',
     paddingTop: 20,
     fontSize: 12,
     lineHeight: 17,

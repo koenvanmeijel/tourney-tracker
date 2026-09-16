@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 /** Bump this and add another `if (currentVersion === N)` block below when the
  * schema needs to change — never edit a past migration. */
-export const DATABASE_VERSION = 10;
+export const DATABASE_VERSION = 11;
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -204,6 +204,23 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
     // kicks in against photos saved from this version onward.
     await db.execAsync(`ALTER TABLE event_photos ADD COLUMN hash TEXT;`);
     currentVersion = 10;
+  }
+
+  if (currentVersion === 10) {
+    // Decklists: a user-maintained library of deck text (e.g. pasted from
+    // a deck builder), unrelated to event/round tracking — its own table,
+    // deliberately left out of export/import for now.
+    await db.execAsync(`
+      CREATE TABLE decklists (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        deck_name TEXT NOT NULL,
+        pokemon_names TEXT NOT NULL DEFAULT '[]',
+        decklist_text TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+    `);
+    currentVersion = 11;
   }
 
   await db.execAsync(`PRAGMA user_version = ${currentVersion}`);

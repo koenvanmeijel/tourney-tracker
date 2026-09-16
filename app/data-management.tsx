@@ -31,9 +31,14 @@ import { toIsoDateString } from '@/utils/date';
 import { computePhotoHash, savePhotoBytes } from '@/utils/eventPhotoStorage';
 import { filterNewMarkers, findDuplicateEvents, type DuplicateEventMatch } from '@/utils/importDedupe';
 import { eventPhotoZipKey, photoZipKeyId } from '@/utils/photoZip';
+import { buildTextExport } from '@/utils/textExport';
 
 function backupFilename(extension: 'json' | 'zip'): string {
   return `tourney-tracker-backup-${toIsoDateString(new Date())}.${extension}`;
+}
+
+function textExportFilename(): string {
+  return `tourney-tracker-log-${toIsoDateString(new Date())}.txt`;
 }
 
 function isPickerCancellation(err: unknown): boolean {
@@ -189,6 +194,14 @@ export default function DataManagementScreen() {
         content: JSON.stringify(payload, null, 2),
         filename: backupFilename('json'),
         mimeType: 'application/json',
+        collisions: [],
+      };
+    }
+    if (format === 'txt') {
+      return {
+        content: buildTextExport(events, markers),
+        filename: textExportFilename(),
+        mimeType: 'text/plain',
         collisions: [],
       };
     }

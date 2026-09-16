@@ -36,6 +36,18 @@ export function formatIsoDateForDisplay(isoDate: string): string {
   return date ? formatDateInput(date) : isoDate;
 }
 
+/** Formats a full ISO timestamp (e.g. a record's updatedAt) as
+ * "DD/MM/YYYY HH:MM", matching the DD/MM/YYYY date convention above. */
+export function formatIsoTimestampForDisplay(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  if (Number.isNaN(date.getTime())) {
+    return isoTimestamp;
+  }
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${formatDateInput(date)} ${hours}:${minutes}`;
+}
+
 // The actual as-you-type masking (auto-inserting "/" while typing) is
 // handled by react-native-mask-text's <MaskedTextInput> (see
 // components/form/MaskedDateInput.tsx) */

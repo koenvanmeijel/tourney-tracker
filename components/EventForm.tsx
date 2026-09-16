@@ -24,7 +24,7 @@ import {
 } from '@/utils/date';
 import { getEventTypeOptions, PRIZE_ICON_COLOR } from '@/utils/eventTheme';
 
-const PRIZE_PILL_MIN_WIDTH = 92;
+const PRIZE_PILL_MIN_WIDTH = 72;
 
 interface EventFormProps {
   initialValue?: NewEvent;
@@ -209,7 +209,7 @@ export function EventForm({ initialValue, submitLabel, onSubmit, onAddMarker }: 
                 keyboardType="number-pad"
               />
               {isFirstPlace ? (
-                <Text style={styles.firstPlaceBadge}>🏆 1st</Text>
+                <Text style={styles.firstPlaceBadge}>👑 1st</Text>
               ) : (
                 <Pressable
                   onPress={() => setPrized((value) => !value)}

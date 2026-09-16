@@ -43,3 +43,21 @@ const OPPONENT_PLACEHOLDERS: Partial<Record<RoundResult, string>> = {
 export function opponentPlaceholder(result: RoundResult): string {
   return OPPONENT_PLACEHOLDERS[result] ?? 'No opponent recorded';
 }
+
+const ROUND_RESULT_SHORT: Record<RoundResult, string> = {
+  win: 'W',
+  loss: 'L',
+  tie: 'T',
+  id: 'ID',
+  bye: 'BYE',
+  no_show: 'NS',
+  drop: 'DROP',
+};
+
+const GAME_RESULT_SHORT: Record<GameResult, string> = { win: 'W', loss: 'L', tie: 'T' };
+
+/** e.g. "WLW" for a bo3 with games recorded, or the short code (e.g. "BYE")
+ * when a round has no game-by-game detail. */
+export function roundResultLabel(result: RoundResult, games: GameResult[]): string {
+  return games.length > 0 ? games.map((game) => GAME_RESULT_SHORT[game]).join('') : ROUND_RESULT_SHORT[result];
+}

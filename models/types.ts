@@ -128,3 +128,18 @@ export interface NewMarker {
   note?: string | null;
   color: string;
 }
+
+export interface DecklistRecord {
+  id: number;
+  deckName: string;
+  pokemonNames: string[];
+  decklistText: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewDecklist {
+  deckName: string;
+  pokemonNames?: string[];
+  decklistText: string;
+}

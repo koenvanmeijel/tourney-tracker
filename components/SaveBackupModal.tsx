@@ -3,7 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useTheme } from '@/context/ThemeContext';
 
-export type BackupFormat = 'json' | 'zip';
+export type BackupFormat = 'json' | 'zip' | 'txt';
 
 interface SaveBackupModalProps {
   visible: boolean;
@@ -25,7 +25,7 @@ export function SaveBackupModal({ visible, onSelect, onCancel }: SaveBackupModal
             onPress={() => onSelect('json')}>
             <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events only (.JSON)</Text>
             <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
-              A small file with your events and markers. No photos.
+              A small file with your events and markers. (No photos.)
             </Text>
           </Pressable>
 
@@ -35,6 +35,15 @@ export function SaveBackupModal({ visible, onSelect, onCancel }: SaveBackupModal
             <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events and photos (.ZIP)</Text>
             <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
               Includes every photo, renamed for re-import.
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.option, { borderColor: palette.border }]}
+            onPress={() => onSelect('txt')}>
+            <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Readable log (.TXT)</Text>
+            <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
+              A plain-text log of your events and markers, for reading, not for restoring.
             </Text>
           </Pressable>
 

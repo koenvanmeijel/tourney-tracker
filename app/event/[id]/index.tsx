@@ -12,7 +12,7 @@ import { useAppAlert } from '@/context/AppAlertContext';
 import { useEvents } from '@/context/EventsContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
-import { EVENT_TYPE_LABELS, type GameResult, type RoundResult } from '@/models/types';
+import { EVENT_TYPE_LABELS } from '@/models/types';
 import { daysUntilIsoDate, formatIsoDateForDisplay, isFutureIsoDate } from '@/utils/date';
 import { getEventTypeTheme, getRoundResultTheme } from '@/utils/eventTheme';
 import {
@@ -22,23 +22,7 @@ import {
   formatPlacementHeadline,
   formatRecordOrNull,
 } from '@/utils/format';
-import { opponentPlaceholder } from '@/utils/rounds';
-
-const ROUND_RESULT_SHORT: Record<RoundResult, string> = {
-  win: 'W',
-  loss: 'L',
-  tie: 'T',
-  id: 'ID',
-  bye: 'BYE',
-  no_show: 'NS',
-  drop: 'DROP',
-};
-
-const GAME_RESULT_SHORT: Record<GameResult, string> = { win: 'W', loss: 'L', tie: 'T' };
-
-function roundResultLabel(result: RoundResult, games: GameResult[]): string {
-  return games.length > 0 ? games.map((game) => GAME_RESULT_SHORT[game]).join('') : ROUND_RESULT_SHORT[result];
-}
+import { opponentPlaceholder, roundResultLabel } from '@/utils/rounds';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
