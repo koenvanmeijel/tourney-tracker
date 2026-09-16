@@ -1,4 +1,4 @@
-import { Linking, Pressable, StyleSheet, View as RNView } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, View as RNView } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -19,7 +19,7 @@ export default function SettingsScreen() {
   const appVersion = Constants.expoConfig?.version;
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={{ backgroundColor: palette.background }} contentContainerStyle={styles.container}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>My Decklists</Text>
         <Pressable
@@ -72,13 +72,13 @@ export default function SettingsScreen() {
         Tourney Tracker v{appVersion} — built by Koen van Meijel for Budew&apos;s Basement.{'\n'}© 2026, not
         affiliated with Pokémon.
       </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
     gap: 32,
   },

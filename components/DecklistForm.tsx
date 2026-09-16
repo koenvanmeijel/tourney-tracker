@@ -14,6 +14,40 @@ import { useTheme } from '@/context/ThemeContext';
 import { EVENT_TYPE_LABELS, type NewDecklist } from '@/models/types';
 import { formatIsoDateForDisplay } from '@/utils/date';
 
+const DECK_NAME_PLACEHOLDER_EXAMPLES = [
+  'Festival Lead Pitch Black',
+  'Kingdra Box',
+  'Iron Thorns ex Worlds 2024',
+  `Hop's Zacian Post-Rotation`,
+  'Swim Freely',
+  'Turbo Ancient Box',
+  'Maushold Mill',
+  'Dragapult v2 (FINAL)',
+  'Mega Delphox Off-Meta',
+  'Regidrago VSTAR',
+  'Hot & Heavy',
+  'Haymaker',
+  'Snorlax Stall',
+  'Joltik Box',
+  'Juckende Pollen ad infinitum',
+  'ADP',
+  'Gardevoir ex (no Munki)',
+  'No Fun Allowed',
+  'Night March',
+  'My First Deck',
+  'United Wings January',
+  'Birmingham Regional option 3',
+  'Slop Box - September',
+  'Fezandipiti Snipe',
+  'Mega Lucario Z Control',
+  'Uxie Retro Event',
+  'Unown Box',
+  'Mega Starmie Utrecht Regional'
+];
+// Picked once per app session (module load), not on every render.
+const DECK_NAME_PLACEHOLDER =
+  DECK_NAME_PLACEHOLDER_EXAMPLES[Math.floor(Math.random() * DECK_NAME_PLACEHOLDER_EXAMPLES.length)];
+
 interface DecklistFormProps {
   initialValue?: NewDecklist;
   /** Ids of events currently linked to this decklist — only meaningful when editing. */
@@ -92,14 +126,18 @@ export function DecklistForm({
         {initialLinkedEventIds && initialLinkedEventIds.length > 0 ? (
           <View style={[styles.warningBanner, { backgroundColor: palette.dangerTint }]}>
             <Text style={[styles.warningBannerText, { color: palette.danger }]}>
-              This decklist is linked to {initialLinkedEventIds.length} event{initialLinkedEventIds.length === 1 ? '' : 's'}. Changes made here will apply to all of them. You can duplicate this decklist to create a new version.
+              This decklist is linked to {initialLinkedEventIds.length} event{initialLinkedEventIds.length === 1 ? '' : 's'}. Changes made here will affect the linked copy. You can create a new version by duplicating this decklist first.
             </Text>
           </View>
         ) : null}
 
         <Section>
           <Field label="Deck Name">
-            <FormTextInput value={deckName} onChangeText={setDeckName} placeholder="e.g. Charizard ex" />
+            <FormTextInput
+              value={deckName}
+              onChangeText={setDeckName}
+              placeholder={`e.g. ${DECK_NAME_PLACEHOLDER}`}
+            />
           </Field>
 
           <Field label="Pokémon (optional)">
