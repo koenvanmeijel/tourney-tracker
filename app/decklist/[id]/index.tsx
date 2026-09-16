@@ -247,10 +247,10 @@ const styles = StyleSheet.create({
   },
   pokemonNames: {
     fontSize: 13.5,
+    fontWeight: '700'
   },
   updatedAt: {
-    fontSize: 12.5,
-    marginTop: 4,
+    fontSize: 12.5
   },
   section: {
     gap: 8,

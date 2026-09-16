@@ -170,10 +170,10 @@ const styles = StyleSheet.create({
   expandButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 2,
     paddingVertical: 1,
-    paddingHorizontal: 5,
-    borderRadius: 8,
+    paddingHorizontal: 6,
+    borderRadius: 6,
   },
   expandButtonText: {
     fontSize: 11.5,
