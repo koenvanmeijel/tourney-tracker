@@ -1,6 +1,6 @@
 import type { NewEventWithTimestamps } from '@/db/events';
 import type { NewMarkerWithTimestamps } from '@/db/markers';
-import type { EventRecord, MarkerRecord } from '@/models/types';
+import type { DecklistRecord, EventRecord, MarkerRecord } from '@/models/types';
 
 function dedupeKey(date: string, eventType: string, location: string | null | undefined): string {
   return `${date}|${eventType}|${(location ?? '').trim().toLowerCase()}`;
@@ -24,6 +24,24 @@ export interface DuplicateEventMatch {
   imported: NewEventWithTimestamps;
   /** Already-in-the-app events with the same date/event type/location. */
   existingMatches: EventRecord[];
+}
+
+function decklistDedupeKey(deckName: string, pokemonNames: string[], decklistText: string): string {
+  return JSON.stringify([deckName, pokemonNames, decklistText]);
+}
+
+/** Returns an existing decklist's id when its name, Pokémon and full
+ * decklist text all match exactly, so "Import & Add" can re-link the
+ * imported events to it instead of inserting a byte-for-byte duplicate. */
+export function findExistingDecklistId(
+  decklist: { deckName: string; pokemonNames: string[]; decklistText: string },
+  existing: DecklistRecord[]
+): number | null {
+  const key = decklistDedupeKey(decklist.deckName, decklist.pokemonNames, decklist.decklistText);
+  const match = existing.find(
+    (candidate) => decklistDedupeKey(candidate.deckName, candidate.pokemonNames, candidate.decklistText) === key
+  );
+  return match?.id ?? null;
 }
 
 export function findDuplicateEvents(

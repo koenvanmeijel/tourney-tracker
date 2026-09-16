@@ -89,7 +89,7 @@ function LinkedEventRow({ event }: { event: EventRecord }) {
 export default function DecklistDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { decklists, addDecklist, removeDecklist } = useDecklists();
-  const { events } = useEvents();
+  const { events, refresh: refreshEvents } = useEvents();
   const { palette } = useTheme();
   const { confirm } = useAppAlert();
   const router = useRouter();
@@ -131,6 +131,10 @@ export default function DecklistDetailScreen() {
     });
     if (confirmed) {
       await removeDecklist(decklist!.id);
+      // The DB cascade already cleared decklist_id for any linked events —
+      // refresh so the in-memory events list doesn't keep the stale id
+      // (which could otherwise fail a later save with a FK error).
+      await refreshEvents();
       router.replace('/decklists');
     }
   }

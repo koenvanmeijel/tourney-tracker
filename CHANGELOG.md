@@ -27,6 +27,7 @@ and version numbers follow [Semantic Versioning](https://semver.org/).
   installed alongside a production build.
 - A "Logs + photos" backup option (alongside "Logs only") that produces a
   `.zip` with photos included, restorable back to their original events.
+- An export to `.txt` option for a readable format.
 - De-duplication on import: "Import & Add" now flags events that already
   look like ones you have (same date, event type and location) and lets you
   Add anyway or Skip each one before importing.
@@ -35,6 +36,7 @@ and version numbers follow [Semantic Versioning](https://semver.org/).
   releases) and "Buy me a pack" (paypal.me) links.
 - Dashboards section with data for total tournaments, total rounds, prizing rate, w/l/t pie chart, most played matchups, best/worst matchups, with filtering and threshold settings.
 - Most Played screen for full list.
+- My Decklists feature to store decklists, and the ability to link them to events bi-directionally.
 - Marker based date range filtering.
 
 

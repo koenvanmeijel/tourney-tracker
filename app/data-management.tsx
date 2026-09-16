@@ -33,7 +33,12 @@ import {
 } from '@/utils/backup';
 import { toIsoDateString } from '@/utils/date';
 import { computePhotoHash, savePhotoBytes } from '@/utils/eventPhotoStorage';
-import { filterNewMarkers, findDuplicateEvents, type DuplicateEventMatch } from '@/utils/importDedupe';
+import {
+  filterNewMarkers,
+  findDuplicateEvents,
+  findExistingDecklistId,
+  type DuplicateEventMatch,
+} from '@/utils/importDedupe';
 import { eventPhotoZipKey, photoZipKeyId } from '@/utils/photoZip';
 import { buildTextExport } from '@/utils/textExport';
 
@@ -337,12 +342,34 @@ export default function DataManagementScreen() {
 
       let decklistLinkedCount = 0;
       let decklistUnmatchedCount = 0;
+      let newDecklistCount = 0;
+      let duplicateDecklistCount = 0;
       if (review.importedDecklists.length > 0) {
-        const insertedDecklistIds = await addAllDecklists(review.importedDecklists.map(toNewDecklistWithTimestamps));
+        const decklistIds: number[] = new Array(review.importedDecklists.length);
+        const toInsert: ExportedDecklist[] = [];
+        const toInsertOriginalIndexes: number[] = [];
+        review.importedDecklists.forEach((decklist, index) => {
+          const existingId = findExistingDecklistId(decklist, decklists);
+          if (existingId != null) {
+            decklistIds[index] = existingId;
+          } else {
+            toInsert.push(decklist);
+            toInsertOriginalIndexes.push(index);
+          }
+        });
+        if (toInsert.length > 0) {
+          const insertedIds = await addAllDecklists(toInsert.map(toNewDecklistWithTimestamps));
+          toInsertOriginalIndexes.forEach((originalIndex, position) => {
+            decklistIds[originalIndex] = insertedIds[position];
+          });
+        }
+        newDecklistCount = toInsert.length;
+        duplicateDecklistCount = review.importedDecklists.length - toInsert.length;
+
         const decklistCandidates = buildPhotoCandidates(review, events, willInsert);
         const result = await resolveDecklistLinks(
           review.importedDecklists,
-          insertedDecklistIds,
+          decklistIds,
           decklistCandidates,
           idByImportedIndex
         );
@@ -360,7 +387,7 @@ export default function DataManagementScreen() {
         parts.push(`${attachedCount} photo(s)`);
       }
       if (review.importedDecklists.length > 0) {
-        parts.push(`${review.importedDecklists.length} decklist(s)`);
+        parts.push(`${newDecklistCount} decklist(s)`);
       }
       let message = `Imported ${parts.join(', ')}.`;
       if (skippedDuplicates > 0) {
@@ -368,6 +395,9 @@ export default function DataManagementScreen() {
       }
       if (unmatched.length > 0) {
         message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
+      }
+      if (duplicateDecklistCount > 0) {
+        message += ` ${duplicateDecklistCount} decklist(s) already existed — re-linked to the existing ones instead of duplicating.`;
       }
       if (decklistUnmatchedCount > 0) {
         message += ` ${decklistUnmatchedCount} decklist link(s) couldn't be matched to an event and were left unlinked.`;

@@ -12,7 +12,7 @@ import type { NewDecklist } from '@/models/types';
 export default function EditDecklistScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { decklists, editDecklist, removeDecklist } = useDecklists();
-  const { events, setEventDecklist } = useEvents();
+  const { events, setEventDecklist, refresh: refreshEvents } = useEvents();
   const { confirm } = useAppAlert();
   const router = useRouter();
 
@@ -59,6 +59,10 @@ export default function EditDecklistScreen() {
     });
     if (confirmed) {
       await removeDecklist(decklist!.id);
+      // The DB cascade already cleared decklist_id for any linked events —
+      // refresh so the in-memory events list doesn't keep the stale id
+      // (which could otherwise fail a later save with a FK error).
+      await refreshEvents();
       router.replace('/decklists');
     }
   }
