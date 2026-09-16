@@ -31,19 +31,19 @@ export function SaveBackupModal({ visible, onSelect, onCancel }: SaveBackupModal
 
           <Pressable
             style={[styles.option, { borderColor: palette.border }]}
-            onPress={() => onSelect('zip')}>
-            <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events and photos (.ZIP)</Text>
+            onPress={() => onSelect('txt')}>
+            <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events only (.TXT)</Text>
             <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
-              Includes every photo and decklist, renamed/linked for re-import.
+              A plain-text log for your reading pleasure, but cannot be re-imported.
             </Text>
           </Pressable>
 
           <Pressable
             style={[styles.option, { borderColor: palette.border }]}
-            onPress={() => onSelect('txt')}>
-            <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Readable log (.TXT)</Text>
+            onPress={() => onSelect('zip')}>
+            <Text style={[styles.optionTitle, { color: palette.onSurfaceText }]}>Events, photos and decklists (.ZIP)</Text>
             <Text style={[styles.optionSubtitle, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
-              A plain-text log of your events and markers, for reading, not for restoring.
+              Everything, renamed/linked for re-import.
             </Text>
           </Pressable>
 
