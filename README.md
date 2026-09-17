@@ -32,6 +32,7 @@ I'm not hacking your phone or stealing your data, this app is fully open source 
 ### New in v1.1.0
 
 - Dashboards! Statistics! Analytics! See your win rates, best match-ups, most faced opponents and a lot more. With so many filter options.
+- Manage your decklists and link them to your events.
 - Export and import all your events, now including photos
 - Use markers to quickly select a date for a date range filter (e.g. show me all events per season or rotation)
 - List upcoming events with a new countdown feature
