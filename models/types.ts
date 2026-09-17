@@ -31,7 +31,7 @@ export const EVENT_TYPE_LABELS: Record<EventType, string> = {
   other: 'Other',
 };
 
-export type RoundResult = 'win' | 'loss' | 'tie' | 'id' | 'bye' | 'no_show';
+export type RoundResult = 'win' | 'loss' | 'tie' | 'id' | 'bye' | 'no_show' | 'drop';
 
 export type GameResult = 'win' | 'loss' | 'tie';
 
@@ -60,6 +60,10 @@ export interface EventPhotoRecord {
   eventId: number;
   filename: string;
   createdAt: string;
+  isThumbnail: boolean;
+  /** SHA-256 hex digest of the photo's bytes, used to detect exact-duplicate
+   * photos on import. Null for photos saved before this field existed. */
+  hash: string | null;
 }
 
 export interface EventRecord {
@@ -81,7 +85,12 @@ export interface EventRecord {
   createdAt: string;
   updatedAt: string;
   rounds: RoundRecord[];
+  /** Round numbers after which a visual divider sits (e.g. Swiss vs Top
+   * Cut) — a divider with value N sits between round N and round N+1. */
+  roundDividers: number[];
   photos: EventPhotoRecord[];
+  /** The decklist (from My Decklists) this event was played with, if any. */
+  decklistId: number | null;
 }
 
 export interface NewEvent {
@@ -95,6 +104,8 @@ export interface NewEvent {
   prizeTier?: PrizeTier;
   notes?: string | null;
   rounds: NewRound[];
+  roundDividers?: number[];
+  decklistId?: number | null;
 }
 
 export interface EventTally {
@@ -119,4 +130,19 @@ export interface NewMarker {
   title: string;
   note?: string | null;
   color: string;
+}
+
+export interface DecklistRecord {
+  id: number;
+  deckName: string;
+  pokemonNames: string[];
+  decklistText: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NewDecklist {
+  deckName: string;
+  pokemonNames?: string[];
+  decklistText: string;
 }

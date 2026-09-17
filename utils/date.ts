@@ -36,6 +36,18 @@ export function formatIsoDateForDisplay(isoDate: string): string {
   return date ? formatDateInput(date) : isoDate;
 }
 
+/** Formats a full ISO timestamp (e.g. a record's updatedAt) as
+ * "DD/MM/YYYY HH:MM", matching the DD/MM/YYYY date convention above. */
+export function formatIsoTimestampForDisplay(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  if (Number.isNaN(date.getTime())) {
+    return isoTimestamp;
+  }
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${formatDateInput(date)} ${hours}:${minutes}`;
+}
+
 // The actual as-you-type masking (auto-inserting "/" while typing) is
 // handled by react-native-mask-text's <MaskedTextInput> (see
 // components/form/MaskedDateInput.tsx) */
@@ -56,4 +68,28 @@ export function parseDateDigits(digits: string): Date | null {
 
   const isRealDate = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
   return isRealDate ? date : null;
+}
+
+function startOfToday(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+export function isFutureDate(date: Date): boolean {
+  return date.getTime() > startOfToday().getTime();
+}
+
+export function isFutureIsoDate(isoDate: string): boolean {
+  const date = parseIsoDateString(isoDate);
+  return date != null && isFutureDate(date);
+}
+
+export function daysUntilDate(date: Date): number {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((date.getTime() - startOfToday().getTime()) / msPerDay);
+}
+
+export function daysUntilIsoDate(isoDate: string): number {
+  const date = parseIsoDateString(isoDate);
+  return date ? daysUntilDate(date) : 0;
 }

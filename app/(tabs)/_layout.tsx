@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 
 import { HEADER_TITLE_STYLE } from '@/constants/headerStyle';
 import { PokemonIcon } from '@/components/PokemonIcon';
@@ -19,6 +19,23 @@ function HeaderTitle() {
       </View>
       <Text style={[HEADER_TITLE_STYLE, { color: palette.text }]}>Tourney Tracker</Text>
     </View>
+  );
+}
+
+function DashboardButton() {
+  const { palette } = useTheme();
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() => router.push('/dashboard')}
+      style={styles.headerButton}
+      hitSlop={8}>
+      <SymbolView
+        name={{ ios: 'chart.pie', android: 'pie_chart', web: 'pie_chart' }}
+        tintColor={palette.text}
+        size={24}
+      />
+    </Pressable>
   );
 }
 
@@ -44,12 +61,9 @@ export default function TabLayout() {
           title: 'Tourney Tracker',
           tabBarLabel: 'Events',
           headerTitle: () => <HeaderTitle />,
+          headerRight: () => <DashboardButton />,
           tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'list.bullet', android: 'list', web: 'list' }}
-              tintColor={color}
-              size={28}
-            />
+            <SymbolView name={{ ios: 'list.bullet', android: 'list', web: 'list' }} tintColor={color} size={28} />
           ),
         }}
       />
@@ -69,14 +83,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: 'More',
           tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'gearshape', android: 'settings', web: 'settings' }}
-              tintColor={color}
-              size={28}
-            />
+            <SymbolView name={{ ios: 'ellipsis.circle', android: 'more_horiz', web: 'more_horiz' }} tintColor={color} size={28} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="dashboard"
+        options={{
+          title: 'Dashboard',
+          href: null,
         }}
       />
     </Tabs>
@@ -91,5 +108,9 @@ const styles = StyleSheet.create({
   },
   headerIconWrap: {
     marginVertical: 0,
+  },
+  headerButton: {
+    marginRight: 16,
+    padding: 4,
   },
 });

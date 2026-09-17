@@ -1,3 +1,5 @@
+import type { EventTally } from '@/models/types';
+
 export function ordinal(n: number): string {
   const rem100 = n % 100;
   if (rem100 >= 11 && rem100 <= 13) {
@@ -47,4 +49,13 @@ export function formatPlacement(placement: number | null, placementTotal: number
 export function formatPlacementHeadline(placement: number | null, placementTotal: number | null): string | null {
   if (placement == null) return null;
   return placementTotal != null ? `${ordinal(placement)}/${placementTotal}` : ordinal(placement);
+}
+
+export function formatRecordOrNull(tally: EventTally): string | null {
+  if (tally.wins === 0 && tally.losses === 0 && tally.ties === 0) return null;
+  return `${tally.wins}-${tally.losses}-${tally.ties}`;
+}
+
+export function formatDaysUntil(days: number): string {
+  return `in ${days} ${days === 1 ? 'day' : 'days'}`;
 }

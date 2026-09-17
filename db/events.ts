@@ -27,6 +27,8 @@ interface EventRow {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  round_dividers: string;
+  decklist_id: number | null;
 }
 
 interface RoundRow {
@@ -43,6 +45,15 @@ function parsePokemonList(json: string): string[] {
   try {
     const parsed = JSON.parse(json);
     return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseNumberList(json: string): number[] {
+  try {
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) ? parsed.filter((item): item is number => typeof item === 'number') : [];
   } catch {
     return [];
   }
@@ -83,7 +94,9 @@ function rowToEvent(row: EventRow, rounds: RoundRecord[], photos: EventPhotoReco
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     rounds,
+    roundDividers: parseNumberList(row.round_dividers),
     photos,
+    decklistId: row.decklist_id,
   };
 }
 
@@ -151,8 +164,8 @@ async function insertEvent(
 
   const result = await db.runAsync(
     `INSERT INTO events
-       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (date, event_type, location, deck_name, deck_pokemon, placement, placement_total, prize_tier, notes, round_dividers, decklist_id, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.date,
     input.eventType,
     input.location ?? null,
@@ -162,6 +175,8 @@ async function insertEvent(
     input.placementTotal ?? null,
     input.prizeTier ?? 'none',
     input.notes ?? null,
+    JSON.stringify(input.roundDividers ?? []),
+    input.decklistId ?? null,
     createdAt,
     updatedAt
   );
@@ -195,28 +210,32 @@ export async function createEvent(input: NewEvent): Promise<number> {
   return eventId;
 }
 
-export async function replaceAllEvents(events: NewEventWithTimestamps[]): Promise<void> {
+export async function replaceAllEvents(events: NewEventWithTimestamps[]): Promise<number[]> {
   const db = await getDb();
   const now = new Date().toISOString();
+  const ids: number[] = [];
 
   await deleteAllPhotoFiles(db);
   await db.withTransactionAsync(async () => {
     await db.runAsync('DELETE FROM events'); // cascades to rounds/event_photos
     for (const event of events) {
-      await insertEvent(db, event, now);
+      ids.push(await insertEvent(db, event, now));
     }
   });
+  return ids;
 }
 
-export async function addEvents(events: NewEventWithTimestamps[]): Promise<void> {
+export async function addEvents(events: NewEventWithTimestamps[]): Promise<number[]> {
   const db = await getDb();
   const now = new Date().toISOString();
+  const ids: number[] = [];
 
   await db.withTransactionAsync(async () => {
     for (const event of events) {
-      await insertEvent(db, event, now);
+      ids.push(await insertEvent(db, event, now));
     }
   });
+  return ids;
 }
 
 export async function updateEvent(id: number, input: NewEvent): Promise<void> {
@@ -227,7 +246,7 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
     await db.runAsync(
       `UPDATE events
        SET date = ?, event_type = ?, location = ?, deck_name = ?, deck_pokemon = ?,
-           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, updated_at = ?
+           placement = ?, placement_total = ?, prize_tier = ?, notes = ?, round_dividers = ?, decklist_id = ?, updated_at = ?
        WHERE id = ?`,
       input.date,
       input.eventType,
@@ -238,6 +257,8 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
       input.placementTotal ?? null,
       input.prizeTier ?? 'none',
       input.notes ?? null,
+      JSON.stringify(input.roundDividers ?? []),
+      input.decklistId ?? null,
       now,
       id
     );
@@ -259,6 +280,15 @@ export async function updateEvent(id: number, input: NewEvent): Promise<void> {
   });
 }
 
+/** Sets (or clears, with null) an event's decklist link without touching
+ * its other fields or rounds — used both to reconcile decklist links after
+ * import (once the linked decklist's new id is known) and by the Add/Edit
+ * Decklist screen's own "Linked Events" picker. */
+export async function setEventDecklistId(eventId: number, decklistId: number | null): Promise<void> {
+  const db = await getDb();
+  await db.runAsync('UPDATE events SET decklist_id = ? WHERE id = ?', decklistId, eventId);
+}
+
 export async function deleteEvent(id: number): Promise<void> {
   const db = await getDb();
   // Deletes the photo files before the cascade wipes their DB rows - needed.
@@ -272,7 +302,7 @@ export function tallyRounds(rounds: RoundRecord[]): EventTally {
       const result = tallyableResult(round.result);
       if (result === 'win') tally.wins += 1;
       else if (result === 'loss') tally.losses += 1;
-      else tally.ties += 1;
+      else if (result === 'tie') tally.ties += 1;
       return tally;
     },
     { wins: 0, losses: 0, ties: 0 }

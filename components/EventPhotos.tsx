@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FlatList, Image, Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SymbolView } from 'expo-symbols';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
@@ -19,9 +20,10 @@ interface EventPhotosProps {
 
 export function EventPhotos({ eventId, photos }: EventPhotosProps) {
   const { palette } = useTheme();
-  const { addPhoto, removePhoto, reorderPhotos } = useEvents();
+  const { addPhoto, removePhoto, setThumbnail } = useEvents();
   const { alert, confirm } = useAppAlert();
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const [viewingIndex, setViewingIndex] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -79,11 +81,7 @@ export function EventPhotos({ eventId, photos }: EventPhotosProps) {
 
   async function handleSetThumbnail(photo: EventPhotoRecord) {
     setViewingIndex(null);
-    const reordered = [photo, ...photos.filter((candidate) => candidate.id !== photo.id)];
-    await reorderPhotos(
-      eventId,
-      reordered.map((candidate) => candidate.id)
-    );
+    await setThumbnail(eventId, photo.id);
   }
 
   return (
@@ -113,10 +111,12 @@ export function EventPhotos({ eventId, photos }: EventPhotosProps) {
           {photos.map((photo, index) => (
             <Pressable key={photo.id} onPress={() => setViewingIndex(index)}>
               <Image source={{ uri: photoFileUri(photo.filename) }} style={styles.thumbnail} />
-              {index === 0 ? (
-                <View style={styles.thumbnailBadge}>
-                  <SymbolView name={{ android: 'star' }} tintColor="#FFFFFF" size={13} style={styles.thumbnailBadgeIcon} />
-                </View>
+              {photo.isThumbnail ? (
+                <Image
+                  source={require('@/assets/sprites/icons/star.png')}
+                  style={styles.thumbnailBadgeIcon}
+                  resizeMode="contain"
+                />
               ) : null}
             </Pressable>
           ))}
@@ -158,8 +158,8 @@ export function EventPhotos({ eventId, photos }: EventPhotosProps) {
             <Pressable style={styles.viewerCloseButton} onPress={() => setViewingIndex(null)} hitSlop={12}>
               <SymbolView name={{ android: 'close' }} tintColor="#FFFFFF" size={22} />
             </Pressable>
-            <View style={styles.viewerActions}>
-              {viewingIndex > 0 ? (
+            <View style={[styles.viewerActions, { bottom: 32 + insets.bottom }]}>
+              {!photos[viewingIndex].isThumbnail ? (
                 <Pressable style={styles.viewerActionButton} onPress={() => handleSetThumbnail(photos[viewingIndex])}>
                   <SymbolView name={{ android: 'star_border' }} tintColor="#FFFFFF" size={18} />
                   <Text style={styles.viewerActionText}>Set as thumbnail</Text>
@@ -220,19 +220,12 @@ const styles = StyleSheet.create({
     height: THUMBNAIL_SIZE,
     borderRadius: 10,
   },
-  thumbnailBadge: {
+  thumbnailBadgeIcon: {
     position: 'absolute',
     top: 4,
     left: 4,
     width: 20,
     height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  thumbnailBadgeIcon: {
-    transform: [{ translateX: 1 }, { translateY: 1 }],
   },
   viewerBackdrop: {
     flex: 1,
@@ -263,7 +256,6 @@ const styles = StyleSheet.create({
   },
   viewerActions: {
     position: 'absolute',
-    bottom: 48,
     flexDirection: 'row',
     gap: 12,
   },
@@ -274,7 +266,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(0,0,0,0.65)',
   },
   viewerActionText: {
     color: '#FFFFFF',

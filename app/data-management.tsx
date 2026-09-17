@@ -1,71 +1,269 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
-import { Directory, File, Paths } from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import { Directory, File } from 'expo-file-system';
 
+import { ImportReviewModal, type ImportAction } from '@/components/ImportReviewModal';
+import { SaveBackupModal, type BackupFormat } from '@/components/SaveBackupModal';
 import { Text, View } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
+import { useDecklists } from '@/context/DecklistsContext';
 import { useEvents } from '@/context/EventsContext';
 import { useMarkers } from '@/context/MarkersContext';
 import { useTheme } from '@/context/ThemeContext';
-import { buildExportPayload, parseImportPayload } from '@/utils/backup';
+import { addEventPhoto, listPhotosForEvent } from '@/db/eventPhotos';
+import { setEventDecklistId, type NewEventWithTimestamps } from '@/db/events';
+import type { NewMarkerWithTimestamps } from '@/db/markers';
+import type { EventRecord } from '@/models/types';
+import {
+  buildBackupZip,
+  buildExportPayload,
+  matchDecklistEventKeys,
+  matchPhotoEntries,
+  parseBackupZip,
+  parseImportPayload,
+  toNewDecklistWithTimestamps,
+  type ExportedDecklist,
+  type PhotoExportCollision,
+  type PhotoMatch,
+  type PhotoMatchResult,
+  type PhotoMatchTarget,
+  type ZipPhotoEntry,
+} from '@/utils/backup';
 import { toIsoDateString } from '@/utils/date';
+import { computePhotoHash, savePhotoBytes } from '@/utils/eventPhotoStorage';
+import {
+  filterNewMarkers,
+  findDuplicateEvents,
+  findExistingDecklistId,
+  type DuplicateEventMatch,
+} from '@/utils/importDedupe';
+import { eventPhotoZipKey, photoZipKeyId } from '@/utils/photoZip';
+import { buildTextExport } from '@/utils/textExport';
 
-function backupFilename(): string {
-  return `tourney-tracker-backup-${toIsoDateString(new Date())}.json`;
+function backupFilename(extension: 'json' | 'zip'): string {
+  return `tourney-tracker-backup-${toIsoDateString(new Date())}.${extension}`;
+}
+
+function textExportFilename(): string {
+  return `tourney-tracker-log-${toIsoDateString(new Date())}.txt`;
 }
 
 function isPickerCancellation(err: unknown): boolean {
   return err instanceof Error && err.message.includes('cancelled by the user');
 }
 
-type ImportMode = 'replace' | 'add';
+function collisionsMessage(collisions: PhotoExportCollision[]): string {
+  const count = collisions.reduce((sum, collision) => sum + collision.events.length, 0);
+  return `${count} event(s) share the same date, event type and location as another event, so their photos couldn't be uniquely named for this export and were left out. Give one a distinct location to include its photos next time.`;
+}
 
-export default function DataManagementScreen() {
-  const { palette } = useTheme();
-  const { events, restoreAll: restoreAllEvents, addAll: addAllEvents } = useEvents();
-  const { markers, restoreAll: restoreAllMarkers, addAll: addAllMarkers } = useMarkers();
-  const { alert, confirm } = useAppAlert();
-  const [sharing, setSharing] = useState(false);
-  const [savingToFolder, setSavingToFolder] = useState(false);
-  const [importingMode, setImportingMode] = useState<ImportMode | null>(null);
+interface ParsedImportFile {
+  events: NewEventWithTimestamps[];
+  markers: NewMarkerWithTimestamps[];
+  decklists: ExportedDecklist[];
+  photoEntries: ZipPhotoEntry[];
+  hasPayload: boolean;
+}
 
-  async function handleShare() {
-    setSharing(true);
-    try {
-      const payload = buildExportPayload(events, markers);
-      const json = JSON.stringify(payload, null, 2);
-      const file = new File(Paths.cache, backupFilename());
-      file.create({ overwrite: true });
-      file.write(json);
+async function parseImportFile(file: File): Promise<ParsedImportFile> {
+  if (file.name.toLowerCase().endsWith('.zip')) {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const zip = await parseBackupZip(bytes);
+    return {
+      events: zip.payload?.events ?? [],
+      markers: zip.payload?.markers ?? [],
+      decklists: zip.decklists,
+      photoEntries: zip.photoEntries,
+      hasPayload: zip.payload != null,
+    };
+  }
 
-      if (!(await Sharing.isAvailableAsync())) {
-        await alert('Sharing unavailable', "Your device doesn't support the share sheet.");
-        return;
-      }
-      await Sharing.shareAsync(file.uri, {
-        mimeType: 'application/json',
-        dialogTitle: 'Export Tourney Tracker backup',
-      });
-    } catch (err) {
-      await alert('Error', err instanceof Error ? err.message : 'Failed to export backup.');
-    } finally {
-      setSharing(false);
+  const payload = parseImportPayload(await file.text());
+  return { events: payload.events, markers: payload.markers, decklists: [], photoEntries: [], hasPayload: true };
+}
+
+interface AttachPhotosResult {
+  /** Number of distinct events that had at least one photo attached. */
+  eventCount: number;
+  /** Number of photos actually written — excludes byte-identical duplicates
+   * silently skipped because the event already has that exact photo. */
+  attachedCount: number;
+}
+
+async function attachMatchedPhotos(
+  matched: PhotoMatch[],
+  idByImportedIndex: Map<number, number>
+): Promise<AttachPhotosResult> {
+  const byEventId = new Map<number, PhotoMatch[]>();
+  for (const match of matched) {
+    const eventId = match.target.kind === 'imported' ? idByImportedIndex.get(match.target.importedIndex) : match.target.eventId;
+    if (eventId == null) continue;
+    const bucket = byEventId.get(eventId);
+    if (bucket) {
+      bucket.push(match);
+    } else {
+      byEventId.set(eventId, [match]);
     }
   }
 
-  async function handleSaveToFolder() {
+  let attachedCount = 0;
+  for (const [eventId, group] of byEventId) {
+    group.sort((a, b) => a.entry.index - b.entry.index);
+    const existingPhotos = await listPhotosForEvent(eventId);
+    const seenHashes = new Set(existingPhotos.map((photo) => photo.hash).filter((hash): hash is string => hash != null));
+    for (const match of group) {
+      const hash = await computePhotoHash(match.entry.data);
+      if (seenHashes.has(hash)) {
+        continue;
+      }
+      const filename = savePhotoBytes(match.entry.data, match.entry.extension);
+      await addEventPhoto(eventId, filename, hash);
+      seenHashes.add(hash);
+      attachedCount += 1;
+    }
+  }
+  return { eventCount: byEventId.size, attachedCount };
+}
+
+interface ResolveDecklistLinksResult {
+  linkedCount: number;
+  unmatchedCount: number;
+}
+
+async function resolveDecklistLinks(
+  importedDecklists: ExportedDecklist[],
+  insertedDecklistIds: number[],
+  candidates: { key: string; target: PhotoMatchTarget }[],
+  idByImportedIndex: Map<number, number>
+): Promise<ResolveDecklistLinksResult> {
+  let linkedCount = 0;
+  let unmatchedCount = 0;
+
+  for (let index = 0; index < importedDecklists.length; index++) {
+    const decklistId = insertedDecklistIds[index];
+    const { matched, unmatched } = matchDecklistEventKeys(importedDecklists[index].usedInEventKeys, candidates);
+    unmatchedCount += unmatched.length;
+    for (const { target } of matched) {
+      const eventId = target.kind === 'imported' ? idByImportedIndex.get(target.importedIndex) : target.eventId;
+      if (eventId == null) continue;
+      await setEventDecklistId(eventId, decklistId);
+      linkedCount += 1;
+    }
+  }
+
+  return { linkedCount, unmatchedCount };
+}
+
+interface ReviewState {
+  importedEvents: NewEventWithTimestamps[];
+  importedMarkers: NewMarkerWithTimestamps[];
+  importedDecklists: ExportedDecklist[];
+  duplicates: DuplicateEventMatch[];
+  /** importedIndex -> true (add anyway). Absent/false means skip. */
+  decisions: Record<number, boolean>;
+  photoEntries: ZipPhotoEntry[];
+}
+
+function buildPhotoCandidates(
+  review: ReviewState,
+  existingEvents: EventRecord[],
+  willInsert: (importedIndex: number) => boolean
+): { key: string; target: PhotoMatchTarget }[] {
+  const candidates: { key: string; target: PhotoMatchTarget }[] = [];
+  for (const event of existingEvents) {
+    candidates.push({
+      key: photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location)),
+      target: { kind: 'existing', eventId: event.id },
+    });
+  }
+  review.importedEvents.forEach((event, importedIndex) => {
+    if (willInsert(importedIndex)) {
+      candidates.push({
+        key: photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location ?? null)),
+        target: { kind: 'imported', importedIndex },
+      });
+    }
+  });
+  return candidates;
+}
+
+export default function DataManagementScreen() {
+  const { palette } = useTheme();
+  const { events, refresh: refreshEvents, restoreAll: restoreAllEvents, addAll: addAllEvents } = useEvents();
+  const { markers, restoreAll: restoreAllMarkers, addAll: addAllMarkers } = useMarkers();
+  const { decklists, restoreAll: restoreAllDecklists, addAll: addAllDecklists } = useDecklists();
+  const { alert, confirm } = useAppAlert();
+  const [showSaveOptions, setShowSaveOptions] = useState(false);
+  const [savingToFolder, setSavingToFolder] = useState(false);
+  const [pickingFile, setPickingFile] = useState(false);
+  const [review, setReview] = useState<ReviewState | null>(null);
+  const [confirmingAction, setConfirmingAction] = useState<ImportAction | null>(null);
+
+  const duplicateIndexSet = useMemo(
+    () => new Set(review?.duplicates.map((duplicate) => duplicate.importedIndex) ?? []),
+    [review]
+  );
+
+  const willInsert = useCallback(
+    (importedIndex: number) => !duplicateIndexSet.has(importedIndex) || review?.decisions[importedIndex] === true,
+    [duplicateIndexSet, review]
+  );
+
+  const photoMatch: PhotoMatchResult = useMemo(() => {
+    if (!review) {
+      return { matched: [], unmatched: [] };
+    }
+    const candidates = buildPhotoCandidates(review, events, willInsert);
+    return matchPhotoEntries(review.photoEntries, candidates);
+  }, [review, events, willInsert]);
+
+  const eventsToInsertCount = useMemo(() => {
+    if (!review) return 0;
+    return review.importedEvents.reduce((count, _event, index) => count + (willInsert(index) ? 1 : 0), 0);
+  }, [review, willInsert]);
+
+  async function buildBackupFile(format: BackupFormat): Promise<{
+    content: string | Uint8Array;
+    filename: string;
+    mimeType: string;
+    collisions: PhotoExportCollision[];
+  }> {
+    if (format === 'json') {
+      const payload = buildExportPayload(events, markers);
+      return {
+        content: JSON.stringify(payload, null, 2),
+        filename: backupFilename('json'),
+        mimeType: 'application/json',
+        collisions: [],
+      };
+    }
+    if (format === 'txt') {
+      return {
+        content: buildTextExport(events, markers),
+        filename: textExportFilename(),
+        mimeType: 'text/plain',
+        collisions: [],
+      };
+    }
+    const { zip, collisions } = await buildBackupZip(events, markers, decklists);
+    return { content: zip, filename: backupFilename('zip'), mimeType: 'application/zip', collisions };
+  }
+
+  async function handleSaveFormat(format: BackupFormat) {
+    setShowSaveOptions(false);
     setSavingToFolder(true);
     try {
       const directory = await Directory.pickDirectoryAsync();
-      const payload = buildExportPayload(events, markers);
-      const json = JSON.stringify(payload, null, 2);
-      const filename = backupFilename();
-      const file = directory.createFile(filename, 'application/json');
-      file.write(json);
-      await alert('Saved', `Saved as "${filename}".`);
+      const built = await buildBackupFile(format);
+      const file = directory.createFile(built.filename, built.mimeType);
+      file.write(built.content);
+      let message = `Saved as "${built.filename}".`;
+      if (built.collisions.length > 0) {
+        message += ` ${collisionsMessage(built.collisions)}`;
+      }
+      await alert('Saved', message);
     } catch (err) {
       if (!isPickerCancellation(err)) {
         await alert('Error', err instanceof Error ? err.message : 'Failed to save backup.');
@@ -75,49 +273,212 @@ export default function DataManagementScreen() {
     }
   }
 
-  async function handleImport(mode: ImportMode) {
-    setImportingMode(mode);
+  async function handlePickImportFile() {
+    setPickingFile(true);
     try {
       const pick = await File.pickFileAsync();
       if (pick.canceled) {
         return;
       }
 
-      const text = await pick.result.text();
-      const imported = parseImportPayload(text);
-      const importedCount = `${imported.events.length} event(s) and ${imported.markers.length} marker(s)`;
-      const existingCount = `${events.length} event(s) and ${markers.length} marker(s)`;
-
-      const confirmTitle = mode === 'replace' ? 'Replace everything?' : 'Add this backup?';
-      const confirmMessage =
-        mode === 'replace'
-          ? `This will replace your ${existingCount} with ${importedCount} from this backup. This can't be undone.`
-          : `This will add ${importedCount} from this backup to your ${existingCount}.`;
-
-      const confirmed = await confirm(confirmTitle, confirmMessage, {
-        confirmLabel: mode === 'replace' ? 'Replace' : 'Add',
-        destructive: mode === 'replace',
-      });
-      if (!confirmed) {
+      const parsed = await parseImportFile(pick.result);
+      if (!parsed.hasPayload) {
+        await alert('Nothing to import', "That file doesn't look like a Tourney Tracker backup.");
         return;
       }
 
-      try {
-        if (mode === 'replace') {
-          await restoreAllEvents(imported.events);
-          await restoreAllMarkers(imported.markers);
-        } else {
-          await addAllEvents(imported.events);
-          await addAllMarkers(imported.markers);
-        }
-        await alert(mode === 'replace' ? 'Restored' : 'Added', `Imported ${importedCount}.`);
-      } catch (err) {
-        await alert('Error', err instanceof Error ? err.message : 'Failed to import backup.');
-      }
+      const duplicates = findDuplicateEvents(parsed.events, events);
+      setReview({
+        importedEvents: parsed.events,
+        importedMarkers: parsed.markers,
+        importedDecklists: parsed.decklists,
+        duplicates,
+        decisions: {},
+        photoEntries: parsed.photoEntries,
+      });
     } catch (err) {
       await alert('Invalid backup file', err instanceof Error ? err.message : 'Could not read that file.');
     } finally {
-      setImportingMode(null);
+      setPickingFile(false);
+    }
+  }
+
+  function toggleDuplicateDecision(importedIndex: number) {
+    setReview((current) => {
+      if (!current) return current;
+      const adding = current.decisions[importedIndex] === true;
+      const decisions = { ...current.decisions };
+      if (adding) {
+        delete decisions[importedIndex];
+      } else {
+        decisions[importedIndex] = true;
+      }
+      return { ...current, decisions };
+    });
+  }
+
+  async function handleImportAdd() {
+    if (!review) return;
+    setConfirmingAction('add');
+    try {
+      const eventsToInsert: NewEventWithTimestamps[] = [];
+      const originalIndexes: number[] = [];
+      review.importedEvents.forEach((event, index) => {
+        if (willInsert(index)) {
+          eventsToInsert.push(event);
+          originalIndexes.push(index);
+        }
+      });
+
+      const insertedIds = await addAllEvents(eventsToInsert);
+      const markersToInsert = filterNewMarkers(review.importedMarkers, markers);
+      await addAllMarkers(markersToInsert);
+
+      const idByImportedIndex = new Map(
+        originalIndexes.map((originalIndex, position): [number, number] => [originalIndex, insertedIds[position]])
+      );
+      const { matched, unmatched } = photoMatch;
+      const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
+
+      let decklistLinkedCount = 0;
+      let decklistUnmatchedCount = 0;
+      let newDecklistCount = 0;
+      let duplicateDecklistCount = 0;
+      if (review.importedDecklists.length > 0) {
+        const decklistIds: number[] = new Array(review.importedDecklists.length);
+        const toInsert: ExportedDecklist[] = [];
+        const toInsertOriginalIndexes: number[] = [];
+        review.importedDecklists.forEach((decklist, index) => {
+          const existingId = findExistingDecklistId(decklist, decklists);
+          if (existingId != null) {
+            decklistIds[index] = existingId;
+          } else {
+            toInsert.push(decklist);
+            toInsertOriginalIndexes.push(index);
+          }
+        });
+        if (toInsert.length > 0) {
+          const insertedIds = await addAllDecklists(toInsert.map(toNewDecklistWithTimestamps));
+          toInsertOriginalIndexes.forEach((originalIndex, position) => {
+            decklistIds[originalIndex] = insertedIds[position];
+          });
+        }
+        newDecklistCount = toInsert.length;
+        duplicateDecklistCount = review.importedDecklists.length - toInsert.length;
+
+        const decklistCandidates = buildPhotoCandidates(review, events, willInsert);
+        const result = await resolveDecklistLinks(
+          review.importedDecklists,
+          decklistIds,
+          decklistCandidates,
+          idByImportedIndex
+        );
+        decklistLinkedCount = result.linkedCount;
+        decklistUnmatchedCount = result.unmatchedCount;
+      }
+
+      if (attachedEventCount > 0 || decklistLinkedCount > 0) {
+        await refreshEvents();
+      }
+
+      const skippedDuplicates = review.duplicates.length - review.duplicates.filter((d) => willInsert(d.importedIndex)).length;
+      const parts = [`${eventsToInsert.length} event(s)`, `${markersToInsert.length} marker(s)`];
+      if (review.photoEntries.length > 0) {
+        parts.push(`${attachedCount} photo(s)`);
+      }
+      if (review.importedDecklists.length > 0) {
+        parts.push(`${newDecklistCount} decklist(s)`);
+      }
+      let message = `Imported ${parts.join(', ')}.`;
+      if (skippedDuplicates > 0) {
+        message += ` Skipped ${skippedDuplicates} duplicate event(s).`;
+      }
+      if (unmatched.length > 0) {
+        message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
+      }
+      if (duplicateDecklistCount > 0) {
+        message += ` ${duplicateDecklistCount} decklist(s) already existed — re-linked to the existing ones instead of duplicating.`;
+      }
+      if (decklistUnmatchedCount > 0) {
+        message += ` ${decklistUnmatchedCount} decklist link(s) couldn't be matched to an event and were left unlinked.`;
+      }
+
+      setReview(null);
+      await alert('Added', message);
+    } catch (err) {
+      await alert('Error', err instanceof Error ? err.message : 'Failed to import backup.');
+    } finally {
+      setConfirmingAction(null);
+    }
+  }
+
+  async function handleImportReplace() {
+    if (!review) return;
+    const existingParts = [`${events.length} event(s)`, `${markers.length} marker(s)`];
+    const importedParts = [`${review.importedEvents.length} event(s)`, `${review.importedMarkers.length} marker(s)`];
+    if (review.importedDecklists.length > 0) {
+      existingParts.push(`${decklists.length} decklist(s)`);
+      importedParts.push(`${review.importedDecklists.length} decklist(s)`);
+    }
+    const existingCount = existingParts.join(', ');
+    const importedCount = importedParts.join(', ');
+    const confirmed = await confirm(
+      'Replace everything?',
+      `This will replace your ${existingCount} with ${importedCount} from this backup. This can't be undone.`,
+      { confirmLabel: 'Replace', destructive: true }
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    setConfirmingAction('replace');
+    try {
+      const insertedIds = await restoreAllEvents(review.importedEvents);
+      await restoreAllMarkers(review.importedMarkers);
+      const idByImportedIndex = new Map(insertedIds.map((id, index): [number, number] => [index, id]));
+      const importedEventCandidates = review.importedEvents.map((event, importedIndex) => ({
+        key: photoZipKeyId(eventPhotoZipKey(event.date, event.eventType, event.location ?? null)),
+        target: { kind: 'imported' as const, importedIndex },
+      }));
+
+      let message = `Imported ${importedCount}.`;
+      let needsEventsRefresh = false;
+
+      if (review.photoEntries.length > 0) {
+        const { matched, unmatched } = matchPhotoEntries(review.photoEntries, importedEventCandidates);
+        const { eventCount: attachedEventCount, attachedCount } = await attachMatchedPhotos(matched, idByImportedIndex);
+        needsEventsRefresh = needsEventsRefresh || attachedEventCount > 0;
+        message += ` ${attachedCount} photo(s) attached.`;
+        if (unmatched.length > 0) {
+          message += ` ${unmatched.length} photo(s) couldn't be matched to an event and were left out.`;
+        }
+      }
+
+      if (review.importedDecklists.length > 0) {
+        const insertedDecklistIds = await restoreAllDecklists(review.importedDecklists.map(toNewDecklistWithTimestamps));
+        const { linkedCount, unmatchedCount } = await resolveDecklistLinks(
+          review.importedDecklists,
+          insertedDecklistIds,
+          importedEventCandidates,
+          idByImportedIndex
+        );
+        needsEventsRefresh = needsEventsRefresh || linkedCount > 0;
+        message += ` ${review.importedDecklists.length} decklist(s) restored.`;
+        if (unmatchedCount > 0) {
+          message += ` ${unmatchedCount} decklist link(s) couldn't be matched to an event and were left unlinked.`;
+        }
+      }
+
+      if (needsEventsRefresh) {
+        await refreshEvents();
+      }
+
+      setReview(null);
+      await alert('Restored', message);
+    } catch (err) {
+      await alert('Error', err instanceof Error ? err.message : 'Failed to import backup.');
+    } finally {
+      setConfirmingAction(null);
     }
   }
 
@@ -127,43 +488,56 @@ export default function DataManagementScreen() {
       <View style={styles.container}>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Backup</Text>
-          <Text style={styles.sectionSubtitle}>Photo attachments aren&apos;t included in this file.</Text>
           <Pressable
             style={[styles.button, { backgroundColor: palette.accent }]}
-            onPress={handleSaveToFolder}
+            onPress={() => setShowSaveOptions(true)}
             disabled={savingToFolder}>
             <Text style={[styles.buttonText, { color: palette.onAccentText }]}>
-              {savingToFolder ? 'Saving…' : 'Save to a folder'}
+              {savingToFolder ? 'Saving…' : 'Save backup'}
             </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.button, { backgroundColor: palette.secondaryFill }]}
-            onPress={handleShare}
-            disabled={sharing}>
-            <Text style={styles.secondaryButtonText}>{sharing ? 'Sharing…' : 'Share (email, etc.)'}</Text>
           </Pressable>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Restore</Text>
+          <Text style={styles.sectionSubtitle}>Accepted file types: .JSON and .ZIP</Text>
           <Pressable
             style={[styles.button, { backgroundColor: palette.accent }]}
-            onPress={() => handleImport('add')}
-            disabled={importingMode !== null}>
+            onPress={handlePickImportFile}
+            disabled={pickingFile}>
             <Text style={[styles.buttonText, { color: palette.onAccentText }]}>
-              {importingMode === 'add' ? 'Adding…' : 'Import & Add'}
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.button, { backgroundColor: palette.dangerTint }]}
-            onPress={() => handleImport('replace')}
-            disabled={importingMode !== null}>
-            <Text style={[styles.dangerButtonText, { color: palette.danger }]}>
-              {importingMode === 'replace' ? 'Replacing…' : 'Import & Replace'}
+              {pickingFile ? 'Reading…' : 'Import backup'}
             </Text>
           </Pressable>
         </View>
       </View>
+
+      <SaveBackupModal
+        visible={showSaveOptions}
+        onSelect={handleSaveFormat}
+        onCancel={() => setShowSaveOptions(false)}
+      />
+
+      <ImportReviewModal
+        visible={review != null}
+        existingEventsCount={events.length}
+        existingMarkersCount={markers.length}
+        existingDecklistsCount={decklists.length}
+        importedEventsCount={review?.importedEvents.length ?? 0}
+        importedMarkersCount={review?.importedMarkers.length ?? 0}
+        importedDecklistsCount={review?.importedDecklists.length ?? 0}
+        duplicates={review?.duplicates ?? []}
+        decisions={review?.decisions ?? {}}
+        onToggle={toggleDuplicateDecision}
+        totalPhotoCount={review?.photoEntries.length ?? 0}
+        matchedPhotoCount={photoMatch.matched.length}
+        unmatchedPhotos={photoMatch.unmatched}
+        eventsToInsertCount={eventsToInsertCount}
+        onCancel={() => setReview(null)}
+        onImportAdd={handleImportAdd}
+        onImportReplace={handleImportReplace}
+        confirming={confirmingAction}
+      />
     </>
   );
 }
@@ -192,12 +566,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontWeight: '700',
-  },
-  secondaryButtonText: {
-    fontWeight: '700',
-  },
-  dangerButtonText: {
     fontWeight: '700',
   },
 });

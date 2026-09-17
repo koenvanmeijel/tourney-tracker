@@ -10,6 +10,8 @@ interface EventPhotoRow {
   filename: string;
   created_at: string;
   position: number;
+  is_thumbnail: number;
+  hash: string | null;
 }
 
 function rowToPhoto(row: EventPhotoRow): EventPhotoRecord {
@@ -18,6 +20,8 @@ function rowToPhoto(row: EventPhotoRow): EventPhotoRecord {
     eventId: row.event_id,
     filename: row.filename,
     createdAt: row.created_at,
+    isThumbnail: row.is_thumbnail === 1,
+    hash: row.hash,
   };
 }
 
@@ -55,7 +59,7 @@ export async function listPhotosForEvents(eventIds: number[]): Promise<Map<numbe
   return photosByEvent;
 }
 
-export async function addEventPhoto(eventId: number, filename: string): Promise<EventPhotoRecord> {
+export async function addEventPhoto(eventId: number, filename: string, hash: string): Promise<EventPhotoRecord> {
   const db = await getDb();
   const now = new Date().toISOString();
   const maxPosition = await db.getFirstAsync<{ maxPosition: number | null }>(
@@ -63,14 +67,29 @@ export async function addEventPhoto(eventId: number, filename: string): Promise<
     eventId
   );
   const position = (maxPosition?.maxPosition ?? -1) + 1;
+  const isThumbnail = maxPosition?.maxPosition == null;
   const result = await db.runAsync(
-    'INSERT INTO event_photos (event_id, filename, created_at, position) VALUES (?, ?, ?, ?)',
+    'INSERT INTO event_photos (event_id, filename, created_at, position, is_thumbnail, hash) VALUES (?, ?, ?, ?, ?, ?)',
     eventId,
     filename,
     now,
-    position
+    position,
+    isThumbnail ? 1 : 0,
+    hash
   );
-  return { id: result.lastInsertRowId, eventId, filename, createdAt: now };
+  return { id: result.lastInsertRowId, eventId, filename, createdAt: now, isThumbnail, hash };
+}
+
+export async function setEventPhotoThumbnail(eventId: number, photoId: number): Promise<void> {
+  const db = await getDb();
+  await db.withTransactionAsync(async () => {
+    await db.runAsync('UPDATE event_photos SET is_thumbnail = 0 WHERE event_id = ?', eventId);
+    await db.runAsync(
+      'UPDATE event_photos SET is_thumbnail = 1 WHERE id = ? AND event_id = ?',
+      photoId,
+      eventId
+    );
+  });
 }
 
 export async function reorderEventPhotos(eventId: number, photoIds: number[]): Promise<void> {
@@ -95,6 +114,18 @@ export async function removeEventPhoto(photoId: number): Promise<void> {
   }
   await db.runAsync('DELETE FROM event_photos WHERE id = ?', photoId);
   deletePhotoFile(row.filename);
+
+  // Deleting the thumbnail shouldn't leave the event with none — promote
+  // whichever photo is now first, if any remain.
+  if (row.is_thumbnail === 1) {
+    const next = await db.getFirstAsync<{ id: number }>(
+      'SELECT id FROM event_photos WHERE event_id = ? ORDER BY position ASC, id ASC LIMIT 1',
+      row.event_id
+    );
+    if (next) {
+      await db.runAsync('UPDATE event_photos SET is_thumbnail = 1 WHERE id = ?', next.id);
+    }
+  }
 }
 
 export async function deletePhotoFilesForEvents(db: SQLiteDatabase, eventIds: number[]): Promise<void> {

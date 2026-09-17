@@ -8,8 +8,11 @@ import 'react-native-reanimated';
 
 import { HEADER_TITLE_STYLE } from '@/constants/headerStyle';
 import { AppAlertProvider } from '@/context/AppAlertContext';
+import { DecklistsProvider } from '@/context/DecklistsContext';
 import { EventsProvider } from '@/context/EventsContext';
 import { MarkersProvider } from '@/context/MarkersContext';
+import { MatchModeSettingsProvider } from '@/context/MatchModeSettingsContext';
+import { OverviewFiltersProvider } from '@/context/OverviewFiltersContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 
 export {
@@ -80,14 +83,20 @@ function RootLayoutNav() {
         <AppAlertProvider>
           <EventsProvider>
             <MarkersProvider>
-              <Stack
-                screenOptions={{
-                  headerTitleStyle: HEADER_TITLE_STYLE,
-                  headerStyle: { backgroundColor: palette.surface },
-                  headerTintColor: palette.text,
-                }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
+              <DecklistsProvider>
+                <OverviewFiltersProvider>
+                  <MatchModeSettingsProvider>
+                    <Stack
+                      screenOptions={{
+                        headerTitleStyle: HEADER_TITLE_STYLE,
+                        headerStyle: { backgroundColor: palette.surface },
+                        headerTintColor: palette.text,
+                      }}>
+                      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                    </Stack>
+                  </MatchModeSettingsProvider>
+                </OverviewFiltersProvider>
+              </DecklistsProvider>
             </MarkersProvider>
           </EventsProvider>
         </AppAlertProvider>

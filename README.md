@@ -6,7 +6,7 @@ Tourney Tracker is an Android app that stores all your data on *your* device. No
 
 ## ![Porygon2](/assets/sprites/pokemon-icons/233.png) How to get it
 
-On this GitHub page, there should be a section that says **Releases**, and in there you'll find a `.apk` file. Simply download this file to your phone and open it to install it. 
+On this GitHub page, there should be a section that says [**Releases**](https://github.com/koenvanmeijel/tourney-tracker/releases), and in there you'll find a `.apk` file, labeled latest version. Simply download this file to your phone and open it to install it. 
 
 Your phone will give you one or two warnings about installing apps from untrusted sources and that's because I'm not putting this on the Google Play store because I assume that costs money (not sure actually?), and because I do some minor copyright infringement. Anyway, make sure to click like "Allow apps from untrusted sources" and "Install anyway". 
 
@@ -28,6 +28,15 @@ I'm not hacking your phone or stealing your data, this app is fully open source 
 ### Themes
 
 - Comes in **four** different colour schemes: default, Sylveon, Knospi and Umbreon.
+
+### New in v1.1.0
+
+- Dashboards! Statistics! Analytics! See your win rates, best match-ups, most faced opponents and a lot more. With so many filter options.
+- Manage your decklists and link them to your events.
+- Export and import all your events, now including photos
+- Use markers to quickly select a date for a date range filter (e.g. show me all events per season or rotation)
+- List upcoming events with a new countdown feature
+- Joltik theme
 
 ---
 

@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SymbolView } from 'expo-symbols';
 
 import { EventBand } from '@/components/EventBand';
 import { EventPhotos } from '@/components/EventPhotos';
@@ -8,35 +10,30 @@ import { PokemonIcon } from '@/components/PokemonIcon';
 import { Text as ThemedText, View as ThemedView } from '@/components/Themed';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
 import { useAppAlert } from '@/context/AppAlertContext';
+import { useDecklists } from '@/context/DecklistsContext';
 import { useEvents } from '@/context/EventsContext';
 import { useTheme } from '@/context/ThemeContext';
 import { tallyRounds } from '@/db/events';
-import { EVENT_TYPE_LABELS, type GameResult, type RoundResult } from '@/models/types';
-import { formatIsoDateForDisplay } from '@/utils/date';
+import { EVENT_TYPE_LABELS } from '@/models/types';
+import { daysUntilIsoDate, formatIsoDateForDisplay, isFutureIsoDate } from '@/utils/date';
 import { getEventTypeTheme, getRoundResultTheme } from '@/utils/eventTheme';
-import { formatDeckLabelOrNull, formatDeckTitle, formatPlacementHeadline } from '@/utils/format';
-
-const ROUND_RESULT_SHORT: Record<RoundResult, string> = {
-  win: 'W',
-  loss: 'L',
-  tie: 'T',
-  id: 'ID',
-  bye: 'BYE',
-  no_show: 'NS',
-};
-
-const GAME_RESULT_SHORT: Record<GameResult, string> = { win: 'W', loss: 'L', tie: 'T' };
-
-function roundResultLabel(result: RoundResult, games: GameResult[]): string {
-  return games.length > 0 ? games.map((game) => GAME_RESULT_SHORT[game]).join('') : ROUND_RESULT_SHORT[result];
-}
+import {
+  formatDaysUntil,
+  formatDeckLabelOrNull,
+  formatDeckTitle,
+  formatPlacementHeadline,
+  formatRecordOrNull,
+} from '@/utils/format';
+import { opponentPlaceholder, roundResultLabel } from '@/utils/rounds';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { events, removeEvent } = useEvents();
+  const { decklists } = useDecklists();
   const { confirm } = useAppAlert();
   const router = useRouter();
   const { palette, themeId } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const event = useMemo(() => events.find((candidate) => String(candidate.id) === id), [events, id]);
 
@@ -48,11 +45,13 @@ export default function EventDetailScreen() {
     );
   }
 
+  const linkedDecklist = event.decklistId != null ? decklists.find((d) => d.id === event.decklistId) ?? null : null;
   const tally = tallyRounds(event.rounds);
   const theme = getEventTypeTheme(themeId)[event.eventType];
   const roundResultTheme = getRoundResultTheme(themeId);
+  const isUpcoming = isFutureIsoDate(event.date);
   const placementHeadline = formatPlacementHeadline(event.placement, event.placementTotal);
-  const record = `${tally.wins}-${tally.losses}-${tally.ties}`;
+  const record = formatRecordOrNull(tally);
   const deckTitle = formatDeckTitle(event.deckName, event.deckPokemon);
 
   async function handleDelete() {
@@ -67,7 +66,7 @@ export default function EventDetailScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 48 + insets.bottom }]}>
       <Stack.Screen options={{ title: deckTitle }} />
 
       <View style={[styles.hero, { backgroundColor: palette.surface }]}>
@@ -77,6 +76,7 @@ export default function EventDetailScreen() {
           deckPokemon={event.deckPokemon}
           prizeTier={event.prizeTier}
           large
+          isUpcoming={isUpcoming}
         />
         <View style={[styles.heroBody, { backgroundColor: palette.surface }]}>
           <View style={styles.heroBodyLeft}>
@@ -87,75 +87,91 @@ export default function EventDetailScreen() {
               <Text style={[styles.eventLine, { color: palette.onSurfaceText }]}>{event.location}</Text>
             ) : null}
           </View>
-          <View style={styles.statBlock}>
-            <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
-              {placementHeadline ?? record}
-            </Text>
-            {placementHeadline ? (
-              <Text style={[styles.statRecord, { color: theme.accentText }]}>{record}</Text>
-            ) : null}
-          </View>
+          {isUpcoming ? (
+            <View style={styles.statBlock}>
+              <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
+                {formatDaysUntil(daysUntilIsoDate(event.date))}
+              </Text>
+            </View>
+          ) : placementHeadline || record ? (
+            <View style={styles.statBlock}>
+              <Text style={[styles.statHeadline, { color: palette.onSurfaceText }]}>
+                {placementHeadline ?? record}
+              </Text>
+              {placementHeadline && record ? (
+                <Text style={[styles.statRecord, { color: theme.accentText }]}>{record}</Text>
+              ) : null}
+            </View>
+          ) : null}
         </View>
       </View>
 
       {event.rounds.length > 0 ? (
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: palette.text }]}>Rounds</Text>
-          <View style={styles.roundsHeaderRow}>
-            <Text
-              style={[styles.roundsHeaderText, styles.roundNumberColumn, { color: palette.text }]}
-              numberOfLines={1}>
-              Round
-            </Text>
-            <Text style={[styles.roundsHeaderText, styles.roundsHeaderDeck, { color: palette.text }]} numberOfLines={1}>
-              Deck
-            </Text>
-            <Text
-              style={[styles.roundsHeaderText, styles.roundResultColumn, { color: palette.text }]}
-              numberOfLines={1}>
-              Result
-            </Text>
-          </View>
+          <Text style={[styles.sectionLabel, { color: palette.text }]}>Results</Text>
           <View style={styles.roundsBlock}>
             {event.rounds.map((round, index) => {
               const opponent = formatDeckLabelOrNull(round.opponentDeckName, round.opponentDeckPokemon);
               const resultTheme = roundResultTheme[round.result];
               const spriteCount = Math.min(round.opponentDeckPokemon.length, 2);
+              const dividerBefore = index > 0 && event.roundDividers.includes(event.rounds[index - 1].roundNumber);
               return (
-                <View
-                  key={round.id}
-                  style={[
-                    styles.roundRow,
-                    { backgroundColor: resultTheme.background },
-                    index > 0 && styles.roundRowDivider,
-                  ]}>
-                  <Text style={[styles.roundNumberColumn, styles.roundNumberText, { color: resultTheme.text }]}>
-                    {round.roundNumber}
-                  </Text>
-                  <View style={styles.roundDeckColumn}>
-                    <View style={styles.roundSprites}>
-                      {[0, 1].map((slotIndex) =>
-                        slotIndex < spriteCount ? (
-                          <PokemonIcon key={slotIndex} name={round.opponentDeckPokemon[slotIndex]} />
-                        ) : (
-                          <View key={slotIndex} style={styles.roundSpriteSpacer} />
-                        )
-                      )}
+                <Fragment key={round.id}>
+                  <View
+                    style={[
+                      styles.roundRow,
+                      { backgroundColor: resultTheme.background },
+                      index > 0 && !dividerBefore && styles.roundRowDivider,
+                    ]}>
+                    <Text style={[styles.roundNumberColumn, styles.roundNumberText, { color: resultTheme.text }]}>
+                      R{round.roundNumber}
+                    </Text>
+                    <View style={styles.roundDeckColumn}>
+                      <View style={styles.roundSprites}>
+                        {[0, 1].map((slotIndex) =>
+                          slotIndex < spriteCount ? (
+                            <PokemonIcon key={slotIndex} name={round.opponentDeckPokemon[slotIndex]} />
+                          ) : (
+                            <View key={slotIndex} style={styles.roundSpriteSpacer} />
+                          )
+                        )}
+                      </View>
+                      <Text style={[styles.roundDeckText, { color: resultTheme.text }]} numberOfLines={1}>
+                        {opponent ?? opponentPlaceholder(round.result)}
+                      </Text>
                     </View>
-                    <Text style={[styles.roundDeckText, { color: resultTheme.text }]} numberOfLines={1}>
-                      {opponent ?? 'No opponent recorded'}
+                    <Text
+                      style={[styles.roundResultColumn, styles.roundResultText, { color: resultTheme.text }]}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit>
+                      {roundResultLabel(round.result, round.games)}
                     </Text>
                   </View>
-                  <Text
-                    style={[styles.roundResultColumn, styles.roundResultText, { color: resultTheme.text }]}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit>
-                    {roundResultLabel(round.result, round.games)}
-                  </Text>
-                </View>
+                  {event.roundDividers.includes(round.roundNumber) ? (
+                    <View style={[styles.roundsSectionDivider, { backgroundColor: palette.background }]} />
+                  ) : null}
+                </Fragment>
               );
             })}
           </View>
+        </View>
+      ) : null}
+
+      {linkedDecklist ? (
+        <View style={styles.section}>
+          <Text style={[styles.sectionLabel, { color: palette.text }]}>Decklist</Text>
+          <Pressable
+            style={[styles.decklistLinkButton, { backgroundColor: palette.secondaryFill }]}
+            onPress={() => router.push({ pathname: '/decklist/[id]', params: { id: String(linkedDecklist.id) } })}>
+            <SymbolView
+              name={{ ios: 'link', android: 'link', web: 'link' }}
+              tintColor={palette.onSurfaceText}
+              size={16}
+            />
+            <Text style={[styles.decklistLinkText, { color: palette.onSurfaceText }]}>
+              {linkedDecklist.deckName}
+            </Text>
+          </Pressable>
         </View>
       ) : null}
 
@@ -242,19 +258,6 @@ const styles = StyleSheet.create({
     opacity: MUTED_TEXT_OPACITY,
     textTransform: 'uppercase',
   },
-  roundsHeaderRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 14,
-  },
-  roundsHeaderText: {
-    fontSize: 11,
-    fontWeight: '700',
-    opacity: MUTED_TEXT_OPACITY,
-    textTransform: 'uppercase',
-  },
-  roundsHeaderDeck: {
-    flex: 1,
-  },
   roundsBlock: {
     borderRadius: 12,
     overflow: 'hidden',
@@ -270,8 +273,11 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: 'rgba(0,0,0,0.18)',
   },
+  roundsSectionDivider: {
+    height: 10,
+  },
   roundNumberColumn: {
-    width: 42,
+    width: 32,
   },
   roundNumberText: {
     fontSize: 15,
@@ -281,11 +287,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
   roundSprites: {
     flexDirection: 'row',
-    gap: 4,
+    gap: 0,
     flexShrink: 0,
   },
   roundSpriteSpacer: {
@@ -304,6 +310,18 @@ const styles = StyleSheet.create({
   roundResultText: {
     fontSize: 15,
     fontWeight: '700',
+  },
+  decklistLinkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+  },
+  decklistLinkText: {
+    fontSize: 14.5,
+    fontWeight: '600',
   },
   notesBox: {
     borderRadius: 12,

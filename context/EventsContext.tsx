@@ -7,12 +7,18 @@ import {
   deleteEvent as deleteEventRow,
   listEvents,
   replaceAllEvents,
+  setEventDecklistId,
   updateEvent as updateEventRow,
   type NewEventWithTimestamps,
 } from '@/db/events';
-import { addEventPhoto, removeEventPhoto, reorderEventPhotos } from '@/db/eventPhotos';
+import {
+  addEventPhoto,
+  removeEventPhoto,
+  reorderEventPhotos,
+  setEventPhotoThumbnail,
+} from '@/db/eventPhotos';
 import type { EventRecord, NewEvent } from '@/models/types';
-import { savePhotoFile } from '@/utils/eventPhotoStorage';
+import { computePhotoHash, readPhotoBytes, savePhotoFile } from '@/utils/eventPhotoStorage';
 
 interface EventsContextValue {
   events: EventRecord[];
@@ -22,11 +28,13 @@ interface EventsContextValue {
   addEvent: (input: NewEvent) => Promise<number>;
   editEvent: (id: number, input: NewEvent) => Promise<void>;
   removeEvent: (id: number) => Promise<void>;
-  restoreAll: (events: NewEventWithTimestamps[]) => Promise<void>;
-  addAll: (events: NewEventWithTimestamps[]) => Promise<void>;
+  setEventDecklist: (eventId: number, decklistId: number | null) => Promise<void>;
+  restoreAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
+  addAll: (events: NewEventWithTimestamps[]) => Promise<number[]>;
   addPhoto: (eventId: number, sourceUri: string) => Promise<void>;
   removePhoto: (photoId: number) => Promise<void>;
   reorderPhotos: (eventId: number, photoIds: number[]) => Promise<void>;
+  setThumbnail: (eventId: number, photoId: number) => Promise<void>;
 }
 
 const EventsContext = createContext<EventsContextValue | null>(null);
@@ -76,18 +84,28 @@ export function EventsProvider({ children }: { children: ReactNode }) {
     [refresh]
   );
 
+  const setEventDecklist = useCallback(
+    async (eventId: number, decklistId: number | null) => {
+      await setEventDecklistId(eventId, decklistId);
+      await refresh();
+    },
+    [refresh]
+  );
+
   const restoreAll = useCallback(
     async (events: NewEventWithTimestamps[]) => {
-      await replaceAllEvents(events);
+      const ids = await replaceAllEvents(events);
       await refresh();
+      return ids;
     },
     [refresh]
   );
 
   const addAll = useCallback(
     async (events: NewEventWithTimestamps[]) => {
-      await addEventsRows(events);
+      const ids = await addEventsRows(events);
       await refresh();
+      return ids;
     },
     [refresh]
   );
@@ -95,7 +113,8 @@ export function EventsProvider({ children }: { children: ReactNode }) {
   const addPhoto = useCallback(
     async (eventId: number, sourceUri: string) => {
       const filename = await savePhotoFile(sourceUri);
-      await addEventPhoto(eventId, filename);
+      const hash = await computePhotoHash(await readPhotoBytes(filename));
+      await addEventPhoto(eventId, filename, hash);
       await refresh();
     },
     [refresh]
@@ -117,6 +136,14 @@ export function EventsProvider({ children }: { children: ReactNode }) {
     [refresh]
   );
 
+  const setThumbnail = useCallback(
+    async (eventId: number, photoId: number) => {
+      await setEventPhotoThumbnail(eventId, photoId);
+      await refresh();
+    },
+    [refresh]
+  );
+
   const value = useMemo(
     () => ({
       events,
@@ -126,11 +153,13 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addEvent,
       editEvent,
       removeEvent,
+      setEventDecklist,
       restoreAll,
       addAll,
       addPhoto,
       removePhoto,
       reorderPhotos,
+      setThumbnail,
     }),
     [
       events,
@@ -140,11 +169,13 @@ export function EventsProvider({ children }: { children: ReactNode }) {
       addEvent,
       editEvent,
       removeEvent,
+      setEventDecklist,
       restoreAll,
       addAll,
       addPhoto,
       removePhoto,
       reorderPhotos,
+      setThumbnail,
     ]
   );
 

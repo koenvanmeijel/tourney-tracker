@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { SymbolView } from 'expo-symbols';
 
 import { MaskedDateInput } from '@/components/form/MaskedDateInput';
 import { MUTED_TEXT_OPACITY } from '@/constants/Colors';
+import { useMarkers } from '@/context/MarkersContext';
 import { useTheme } from '@/context/ThemeContext';
-import { dateToDigits, formatDateInput, parseDateDigits, parseIsoDateString, toIsoDateString } from '@/utils/date';
+import type { MarkerRecord } from '@/models/types';
+import {
+  dateToDigits,
+  formatDateInput,
+  formatIsoDateForDisplay,
+  parseDateDigits,
+  parseIsoDateString,
+  toIsoDateString,
+} from '@/utils/date';
 
 export interface DateRange {
   from: string;
@@ -28,6 +37,7 @@ function DateField({
   display,
   digits,
   resetToken,
+  markers,
   onPicked,
   onTyped,
 }: {
@@ -35,10 +45,12 @@ function DateField({
   display: string;
   digits: string;
   resetToken: number;
+  markers: MarkerRecord[];
   onPicked: (selected: Date) => void;
   onTyped: (masked: string, digits: string) => void;
 }) {
   const { palette } = useTheme();
+  const [markerMenuOpen, setMarkerMenuOpen] = useState(false);
 
   function openPicker() {
     DateTimePickerAndroid.open({
@@ -46,6 +58,14 @@ function DateField({
       mode: 'date',
       onValueChange: (_event, selectedDate) => onPicked(selectedDate),
     });
+  }
+
+  function pickMarker(marker: MarkerRecord) {
+    const date = parseIsoDateString(marker.date);
+    if (date) {
+      onPicked(date);
+    }
+    setMarkerMenuOpen(false);
   }
 
   return (
@@ -63,6 +83,57 @@ function DateField({
           onPress={openPicker}>
           <SymbolView name={{ android: 'calendar_today' }} tintColor={palette.accent} size={18} />
         </Pressable>
+        <View style={styles.markerMenuAnchor}>
+          <Pressable
+            style={[
+              styles.dateIconButton,
+              { backgroundColor: palette.surface, borderColor: palette.border },
+              markerMenuOpen && { backgroundColor: palette.accent, borderColor: palette.accent },
+            ]}
+            onPress={() => setMarkerMenuOpen((open) => !open)}>
+            <SymbolView
+              name={{ android: 'flag' }}
+              tintColor={markerMenuOpen ? palette.onAccentText : palette.accent}
+              size={18}
+            />
+          </Pressable>
+          {markerMenuOpen ? (
+            <View
+              style={[
+                styles.markerMenu,
+                { backgroundColor: palette.surface, borderColor: palette.border },
+              ]}>
+              {markers.length === 0 ? (
+                <Text
+                  style={[styles.markerMenuEmpty, { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY }]}>
+                  No markers yet
+                </Text>
+              ) : (
+                <ScrollView style={styles.markerMenuScroll} keyboardShouldPersistTaps="handled">
+                  {markers.map((marker) => (
+                    <Pressable
+                      key={marker.id}
+                      style={styles.markerMenuRow}
+                      onPress={() => pickMarker(marker)}>
+                      <Text
+                        style={[styles.markerMenuTitle, { color: palette.onSurfaceText }]}
+                        numberOfLines={1}>
+                        {marker.title}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.markerMenuDate,
+                          { color: palette.onSurfaceText, opacity: MUTED_TEXT_OPACITY },
+                        ]}>
+                        {formatIsoDateForDisplay(marker.date)}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )}
+            </View>
+          ) : null}
+        </View>
       </View>
     </View>
   );
@@ -70,6 +141,7 @@ function DateField({
 
 export function DateRangeDialog({ visible, from, to, hasActiveRange, onApply, onClear, onClose }: DateRangeDialogProps) {
   const { palette } = useTheme();
+  const { markers } = useMarkers();
   const [fromDisplay, setFromDisplay] = useState('');
   const [fromDigits, setFromDigits] = useState('');
   const [fromResetToken, setFromResetToken] = useState(0);
@@ -77,6 +149,11 @@ export function DateRangeDialog({ visible, from, to, hasActiveRange, onApply, on
   const [toDigits, setToDigits] = useState('');
   const [toResetToken, setToResetToken] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  const sortedMarkers = useMemo(
+    () => [...markers].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
+    [markers]
+  );
 
   useEffect(() => {
     if (visible) {
@@ -139,6 +216,7 @@ export function DateRangeDialog({ visible, from, to, hasActiveRange, onApply, on
             display={fromDisplay}
             digits={fromDigits}
             resetToken={fromResetToken}
+            markers={sortedMarkers}
             onPicked={applyFrom}
             onTyped={(masked, digits) => {
               setFromDisplay(masked);
@@ -150,6 +228,7 @@ export function DateRangeDialog({ visible, from, to, hasActiveRange, onApply, on
             display={toDisplay}
             digits={toDigits}
             resetToken={toResetToken}
+            markers={sortedMarkers}
             onPicked={applyTo}
             onTyped={(masked, digits) => {
               setToDisplay(masked);
@@ -232,6 +311,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
+  },
+  markerMenuAnchor: {
+    position: 'relative',
+  },
+  markerMenu: {
+    position: 'absolute',
+    top: 46,
+    right: 0,
+    width: 220,
+    maxHeight: 220,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 6,
+    zIndex: 20,
+    elevation: 20,
+    shadowColor: '#0f172a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  markerMenuScroll: {
+    maxHeight: 208,
+  },
+  markerMenuEmpty: {
+    fontSize: 13,
+    padding: 8,
+  },
+  markerMenuRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  markerMenuTitle: {
+    flex: 1,
+    fontSize: 13.5,
+    fontWeight: '600',
+  },
+  markerMenuDate: {
+    fontSize: 12,
   },
   errorText: {
     fontSize: 13.5,

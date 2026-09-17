@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 /** Bump this and add another `if (currentVersion === N)` block below when the
  * schema needs to change — never edit a past migration. */
-export const DATABASE_VERSION = 7;
+export const DATABASE_VERSION = 12;
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
@@ -163,6 +163,73 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
       await db.runAsync('UPDATE event_photos SET position = ? WHERE id = ?', position, row.id);
     }
     currentVersion = 7;
+  }
+
+  if (currentVersion === 7) {
+    // Decouple the thumbnail from photo order: an explicit is_thumbnail
+    // flag instead of implying "the thumbnail" from position 0, so setting
+    // a new thumbnail no longer has to reshuffle every other photo's
+    // position. Backfilled so upgrading doesn't change which photo shows
+    // as the thumbnail: whichever photo already sits at position 0 (per
+    // event) keeps that role, explicitly now instead of implicitly.
+    await db.execAsync(
+      `ALTER TABLE event_photos ADD COLUMN is_thumbnail INTEGER NOT NULL DEFAULT 0;`
+    );
+    await db.execAsync(`
+      UPDATE event_photos SET is_thumbnail = 1
+      WHERE id IN (
+        SELECT id FROM event_photos AS p
+        WHERE p.position = (
+          SELECT MIN(position) FROM event_photos WHERE event_id = p.event_id
+        )
+      );
+    `);
+    currentVersion = 8;
+  }
+
+  if (currentVersion === 8) {
+    // Round dividers — a lightweight visual split of one event's round
+    // list into groups (e.g. Swiss vs Top Cut). Stored on `events` as a
+    // JSON array of round numbers, the same pattern as deck_pokemon/
+    // opponent_deck_pokemon: a divider with value N sits between round N
+    // and round N+1. Purely additive.
+    await db.execAsync(`ALTER TABLE events ADD COLUMN round_dividers TEXT NOT NULL DEFAULT '[]';`);
+    currentVersion = 9;
+  }
+
+  if (currentVersion === 9) {
+    // SHA-256 hash of each photo's bytes, so imports can silently skip
+    // re-attaching a photo that's already on an event instead of duplicating
+    // the file. Nullable: existing photos aren't backfilled, so dedup only
+    // kicks in against photos saved from this version onward.
+    await db.execAsync(`ALTER TABLE event_photos ADD COLUMN hash TEXT;`);
+    currentVersion = 10;
+  }
+
+  if (currentVersion === 10) {
+    // Decklists: a user-maintained library of deck text (e.g. pasted from
+    // a deck builder), unrelated to event/round tracking — its own table.
+    await db.execAsync(`
+      CREATE TABLE decklists (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        deck_name TEXT NOT NULL,
+        pokemon_names TEXT NOT NULL DEFAULT '[]',
+        decklist_text TEXT NOT NULL DEFAULT '',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+    `);
+    currentVersion = 11;
+  }
+
+  if (currentVersion === 11) {
+    // Links an event to the decklist it was played with. Nullable, and
+    // ON DELETE SET NULL rather than CASCADE — deleting a decklist should
+    // unlink it from any events, not delete the events themselves.
+    await db.execAsync(
+      `ALTER TABLE events ADD COLUMN decklist_id INTEGER REFERENCES decklists(id) ON DELETE SET NULL;`
+    );
+    currentVersion = 12;
   }
 
   await db.execAsync(`PRAGMA user_version = ${currentVersion}`);

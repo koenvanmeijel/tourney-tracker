@@ -13,25 +13,25 @@ export interface EventTypeTheme {
 const NEUTRAL: EventTypeTheme = {
   band: '#23262F',
   onBand: '#F7F7F8',
-  accentText: '#52565F',
+  accentText: '#23262F',
 };
 
 const CHALLENGE: EventTypeTheme = {
   band: '#2FA98C',
   onBand: '#FFFFFF',
-  accentText: '#1F7A68',
+  accentText: '#2FA98C',
 };
 
 const CUP: EventTypeTheme = {
   band: '#E3B341',
   onBand: '#2B2108',
-  accentText: '#96741F',
+  accentText: '#E3B341',
 };
 
 const PRESTIGE: EventTypeTheme = {
   band: '#6D4AB8',
   onBand: '#FFFFFF',
-  accentText: '#4F3585',
+  accentText: '#6D4AB8',
 };
 
 export const EVENT_TYPE_THEME: Record<EventType, EventTypeTheme> = {
@@ -93,6 +93,7 @@ export const ROUND_RESULT_THEME: Record<RoundResult, RoundResultTheme> = {
   id: { background: CUP.band, text: CUP.onBand },
   bye: { background: CHALLENGE.band, text: CHALLENGE.onBand },
   no_show: { background: CHALLENGE.band, text: CHALLENGE.onBand },
+  drop: { background: NEUTRAL.band, text: NEUTRAL.onBand },
 };
 
 /** Sylveon/Pink theme overwrites ROUND_RESULT_THEME colors */
@@ -103,6 +104,7 @@ const ROUND_RESULT_THEME_SYLVEON: Record<RoundResult, RoundResultTheme> = {
   id: { background: '#F5E3B3', text: '#6B4F14' },
   bye: { background: '#BFE8DC', text: '#1F6F5C' },
   no_show: { background: '#BFE8DC', text: '#1F6F5C' },
+  drop: { background: '#DCD8E0', text: '#5B5560' },
 };
 
 export function getRoundResultTheme(themeId: ThemeId): Record<RoundResult, RoundResultTheme> {
